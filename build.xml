@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="compile" name="NET-Simulator">
+    
+    <target name="init">
+        <property name="project.name" value="${ant.project.name}"/>
+        <property location="bin" name="classes.dir"/>
+        <property location="cfg" name="cfg.dir"/>
+        <property location="img" name="img.dir"/>
+        <property location="src" name="src.dir"/>
+        <property location="lib" name="lib.dir"/>
+        <property location="test" name="test.dir"/>
+        <property location="distr" name="distr.dir"/>
+        <property location="dtd" name="dtd.dir"/>
+        <property location="xml" name="xml.dir"/>
+        <property location="doc/api" name="javadoc.dir"/>
+        <property location="${project.name}.jar" name="jar"/>
+        <path id="run.classpath">
+            <pathelement location="${classes.dir}" />
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </path>
+        <path id="test.classpath">
+            <pathelement location="${classes.dir}" />
+            <pathelement location="${test.dir}" />
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </path>
+    </target>
+    
+    
+    <target depends="init" name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac debug="true" encoding="utf8" target="1.5" deprecation="true" destdir="${classes.dir}" srcdir="${src.dir}">
+            <classpath refid="run.classpath"/>
+            <compilerarg value="-Xlint:unchecked"/>
+        </javac>
+        <copy  todir="${classes.dir}">
+            <fileset file="${src.dir}/netsimulator*.properties"/>
+        </copy>
+        <copy  tofile="${classes.dir}/netsimulator.properties">
+            <fileset file="${src.dir}/netsimulator_en_EN.properties"/>
+        </copy>
+    </target>
+    
+    
+    
+    
+    <target depends="init,compile" name="compile-test">
+        <mkdir dir="${classes.dir}"/>
+        <javac debug="true" encoding="utf8" target="1.5" deprecation="true" destdir="${classes.dir}" srcdir="${test.dir}">
+            <classpath refid="test.classpath"/>
+            <compilerarg value="-Xlint:unchecked"/>
+        </javac>
+    </target>
+    
+    
+    <target depends="init,compile" name="jar">
+        <!-- To make a standalone app, insert into <jar>: -->
+        <!-- <manifest><attribute name="Main-Class" value="com.foo.Main"/></manifest> -->
+        <jar basedir="${classes.dir}" compress="true" jarfile="${jar}"/>
+    </target>
+    
+    <target depends="init,jar" description="Build everything." name="all"/>
+    
+    <target depends="init" description="Javadoc" name="javadoc">
+        <mkdir dir="${javadoc.dir}"/>
+        <javadoc destdir="${javadoc.dir}" packagenames="*">
+            <sourcepath>
+                <pathelement location="${src.dir}"/>
+            </sourcepath>
+        </javadoc>
+    </target>
+    
+    <target depends="init" description="Clean all build products." name="clean">
+        <delete dir="${classes.dir}"/>
+        <delete dir="${javadoc.dir}"/>
+        <delete dir="${distr.dir}"/>
+        <delete file="${jar}"/>
+    </target>
+    
+    
+    <target depends="init,compile" name="run">
+        <java classname="org.netsimulator.netsimulator" fork="true">
+            <classpath refid="run.classpath"/>
+        </java>
+    </target>
+    
+    
+    <target depends="init,compile-test" name="test">
+        <junit fork="yes" haltonfailure="yes">
+            <test name="org.netsimulator.net.RowComparatorTest" />
+            <test name="org.netsimulator.net.RoutingTableTest" />
+            <formatter type="plain" usefile="false" />
+            <classpath refid="test.classpath" />
+        </junit>
+    </target>
+    
+    
+    <target depends="init,clean,compile" name="distr" description="Make distro">
+        <copy todir="${distr.dir}/lib">
+            <fileset file="${lib.dir}/commons-lang-2.3.jar" />
+            <fileset file="${lib.dir}/commons-cli-1.0.jar" />
+            <fileset file="${lib.dir}/xercesImpl.jar" />
+            <fileset file="${lib.dir}/serializer.jar" />
+        </copy>
+        <copy todir="${distr.dir}/cfg">
+            <fileset dir="${cfg.dir}" />
+        </copy>
+        <copy todir="${distr.dir}/dtd">
+            <fileset dir="${dtd.dir}" />
+        </copy>
+        <copy todir="${distr.dir}/xml">
+            <fileset dir="${xml.dir}" />
+        </copy>
+        <copy todir="${distr.dir}/bin">
+            <fileset dir="${classes.dir}" />
+        </copy>
+        <copy todir="${distr.dir}/img">
+            <fileset dir="${img.dir}" />
+        </copy>
+        <copy todir="${distr.dir}">
+            <fileset file="COPYING" />
+            <fileset file="about*.html" />
+            <fileset file="install.txt" />
+            <fileset file="run.bat" />
+            <fileset file="run.sh" />
+        </copy>
+    </target>
+    
+    
+    <target name="debug" depends="init,compile" description="Debug Project">
+        <fail unless="netbeans.home">This target can only run inside the NetBeans IDE.</fail>
+        <nbjpdastart name="${project.name}" addressproperty="jpda.address" transport="dt_socket">
+            <classpath refid="run.classpath"/>
+        </nbjpdastart>
+        <java fork="true" classname="org.netsimulator.netsimulator">
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xnoagent"/>
+            <jvmarg value="-Djava.compiler=none"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+            <classpath refid="run.classpath"/>
+        </java>
+    </target>    
+    
+</project>

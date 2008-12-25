@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE config PUBLIC "NET-Simulator/dtd/config.dtd" "http://www.net-simulator.org/dtd/1.0/config.dtd">
+<config>
+	<whatOpenAfterStart value="lastProject" />
+	<lastProject value="/home/max/NET-Simulator/xml/Example_switch.xml" />
+	<currentSkin name="basic" />
+	<background value="#ffffff" />
+	<skins>
+		<skin name="basic">
+			<shape name="router" socketsX="30" socketsY="18" socketsStep="8" />
+			<shape name="desktop" socketsX="38" socketsY="35" socketsStep="0" />
+			<shape name="hub" socketsX="30" socketsY="18" socketsStep="8" />
+			<shape name="switch" socketsX="30" socketsY="18" socketsStep="8" />
+		</skin>
+	</skins>
+	<debug>
+		<logger name="org.netsimulator.term.RouteCLICommand" logLevel="INFO" />
+		<logger name="org.netsimulator.term.IfconfigCLICommand" logLevel="ALL" />
+		<logger name="org.netsimulator.term.PingCLICommand" logLevel="INFO" />
+		<logger name="org.netsimulator.term.Terminal" logLevel="INFO" />
+		<logger name="org.netsimulator.net.RoutingTable" logLevel="ALL" />
+		<logger name="org.netsimulator.net.Media" logLevel="INFO" />
+		<logger name="org.netsimulator.net.IP4Router" logLevel="INFO" />
+		<logger name="org.netsimulator.net.RoutingTableRow" logLevel="ALL" />
+		<logger name="org.netsimulator.net.ICMPEchoPacket" logLevel="INFO" />
+		<logger name="org.netsimulator.net.EthernetInterface" logLevel="FINE" />
+		<logger name="org.netsimulator.net.MACAddressesTable" logLevel="INFO" />
+		<logger name="org.netsimulator.net.Switch" logLevel="INFO" />
+		<logger name="org.netsimulator.gui.MainFrame" logLevel="INFO" />
+	</debug>
+</config>
