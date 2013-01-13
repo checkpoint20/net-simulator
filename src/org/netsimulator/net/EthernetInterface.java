@@ -220,7 +220,7 @@ public class EthernetInterface
     {
         
         /*
-         *  Should we drop counters if the interface is coming down?
+         *  Should we drop counters when the interface is coming down?
          */
   
         if( router instanceof IP4Router )
@@ -240,15 +240,15 @@ public class EthernetInterface
                     {
                         setNetmaskAddress( evaluateNetmaskAddress( getInetAddress() ) );
                     }
-                    if( getInetAddress() == getNetworkAddress() ) 
+                    if( getInetAddress().equals(getNetworkAddress()) ) 
                     {
-                        throw new ChangeInterfacePropertyException( "Inet address can not be equal network one." );
+                        throw new ChangeInterfacePropertyException( "Inet address cannot be equal network one." );
                     }
                     if( getBroadcastAddress() == null ) 
                     {
                         setBroadcastAddress( evaluateBroadcastAddress( getInetAddress(), getNetmaskAddress() ) );
                     }
-                    if( getInetAddress() == getBroadcastAddress() ) 
+                    if( getInetAddress().equals(getBroadcastAddress()) ) 
                     {
                         throw new ChangeInterfacePropertyException( "Inet address can not be equal broadcast one." );
                     }

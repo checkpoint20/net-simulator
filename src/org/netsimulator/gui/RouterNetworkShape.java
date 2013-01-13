@@ -318,6 +318,12 @@ public class RouterNetworkShape
         popupX = popup.getLocationOnScreen().x;
         popupY = popup.getLocationOnScreen().y;
     }
+
+    @Override
+    public String toString() {
+        return "RouterNetworkShape{name=" + name + '}';
+    }
+    
 }
 
 

@@ -89,8 +89,8 @@ public class IP4Router implements Router {
                 ip4packet.setTTL( ip4packet.getTTL() - 1 );
             }
 
-            if( ip4packet.getTTL() == 0 ) {
-                logger.fine( getId() + ": packet " + packet + " TTL=0 packet dropped" );
+            if( ip4packet.getTTL() <= 0 ) {
+                logger.fine( getId() + ": packet " + packet + " TTL=" + ip4packet.getTTL() + ", packet dropped" );
                 return;
             }
         } else {

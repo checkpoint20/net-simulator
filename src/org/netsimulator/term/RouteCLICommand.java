@@ -24,7 +24,6 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 import org.apache.commons.cli.*;
-import org.netsimulator.gui.MainFrame;
 import org.netsimulator.net.AddressException;
 import org.netsimulator.net.IP4Address;
 import org.netsimulator.net.IP4EnabledInterface;
@@ -32,8 +31,6 @@ import org.netsimulator.net.IP4Router;
 import org.netsimulator.net.Interface;
 import org.netsimulator.net.RoutingTable;
 import org.netsimulator.net.RoutingTableRow;
-import org.netsimulator.util.LogFormatter;
-import org.netsimulator.util.LoggersConfig;
 
 
 public class RouteCLICommand implements CLICommand
@@ -259,7 +256,6 @@ public class RouteCLICommand implements CLICommand
                 if( curInterface instanceof IP4EnabledInterface )
                 {
                     RoutingTable rt = router.getRoutingTable();
-                    IP4EnabledInterface iface = (IP4EnabledInterface)curInterface;
                     try
                     {
                         rt.addRoute( target, 
@@ -313,11 +309,9 @@ public class RouteCLICommand implements CLICommand
                     
                 if( curInterface instanceof IP4EnabledInterface )
                 {
-                    RoutingTable rt = router.getRoutingTable();
-                    IP4EnabledInterface iface = (IP4EnabledInterface)curInterface;
                     try
                     {
-                        rt.addRoute( target, 
+                        router.getRoutingTable().addRoute( target, 
                                      netmask,
                                      gw,
                                      metric==-1 ? 0 : metric, 

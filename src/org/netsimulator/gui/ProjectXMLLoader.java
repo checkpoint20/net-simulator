@@ -26,12 +26,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 package org.netsimulator.gui;
 
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.netsimulator.util.Dateutil;
 import java.io.*;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.JProgressBar;
 import org.netsimulator.net.AddressException;
 import org.netsimulator.net.ChangeInterfacePropertyException;
@@ -44,7 +41,6 @@ import org.netsimulator.net.Interface;
 import org.netsimulator.net.MACAddress;
 import org.netsimulator.net.Media;
 import org.netsimulator.net.NetworkDevice;
-import org.netsimulator.net.NotAllowedAddressException;
 import org.netsimulator.net.Port;
 import org.netsimulator.net.RoutingTable;
 import org.netsimulator.net.Switch;
@@ -373,6 +369,8 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             
             currentSocketsHolder = new_shape;
             currentRouterHolder = new_shape;
+            
+            System.out.println("Start loading: " + currentRouterHolder);
         }catch(Exception e)
         {
             throw new SAXException(e);
@@ -726,6 +724,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingRouterShape()
     {
+        System.out.println("Stop loading: " + currentRouterHolder);
         currentSocketsHolder = null;
         currentRouterHolder = null;
     }

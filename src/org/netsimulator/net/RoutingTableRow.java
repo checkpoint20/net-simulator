@@ -242,40 +242,65 @@ public class RoutingTableRow
         public static final int LT = -1;
         public static final int EQ = 0;
         public static final int GT = 1;
+        public static final int ERR = 2;
         
         
         public int compare(RoutingTableRow r1, RoutingTableRow r2)
         {
-            logger.fine( hashCode()+": compare rows:\n"+r1+"\n"+r2 );
-            
+//            logger.fine( hashCode()+": compare rows:\n"+r1+"\n"+r2 );
+            int res = ERR;
             if( r1.equals( r2 ) ) 
             {
-                return EQ;
+                res = EQ;
             } else
             {
                 if( r1.getNetmask().equals(r2.getNetmask()) ) 
                 {
                     if(r1.getMetric() <= r2.getMetric())
                     {
-                        return LT; // r1 has higher priority than r2
+                        res = LT; // r1 has higher priority than r2
                     }else
                     {
-                        return GT; // r1 has lower priority than r2
+                        res = GT; // r1 has lower priority than r2
                     }    
                 }
                 else if( countNetmaskLength(r1.getNetmask()) >
                          countNetmaskLength(r2.getNetmask()) )
                 {
-                    return LT; // r1 has higher priority than r2
+                    res = LT; // r1 has higher priority than r2
                 }
                 else
                 {
-                    return GT; // r1 has lower priority than r2
+                    res = GT; // r1 has lower priority than r2
                 }
             }
+            
+            if(res == ERR) {
+                throw new IllegalStateException("Internall error in comparator.");
+            }
+
+            if(logger.isLoggable(Level.FINE)) {
+                logger.log( Level.FINE, hashCode() + ": res: " + convertResToString(res));
+            }
+            
+            return res;
         }
 
-
+        private String convertResToString(int res) {
+            String str = "ERR";
+            switch(res) {
+                case EQ: 
+                    str = "EQ";
+                    break;
+                case LT: 
+                    str = "LT";
+                    break;
+                case GT: 
+                    str = "GT";
+                    break;
+            }
+            return str;
+        }
 
 
 
@@ -303,6 +328,7 @@ public class RoutingTableRow
             return count;
              */
         }
+
     }
 
 }

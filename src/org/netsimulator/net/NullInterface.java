@@ -15,7 +15,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 package org.netsimulator.net;
 
-import java.util.*;
 import java.util.logging.*;
 import org.netsimulator.util.IdGenerator;
 
