@@ -35,10 +35,33 @@ public class LogFormatter extends Formatter
 
     public String format(LogRecord record)
     {
-        String str = record.getLevel()+": "+
-                record.getLoggerName()+" "+
-                record.getSourceMethodName()+": "+
-                record.getMessage()+"\n";
-        return str;
+        return new StringBuilder().
+            append(record.getLevel()).
+            append(": ").
+            append(record.getThreadID()).
+            append(" ").
+            append(record.getLoggerName()).
+            append(".").
+            append(record.getSourceMethodName()).
+            append(": ").
+            append(formatMessage(record.getMessage(), record.getParameters())).
+            append("\n").
+            toString();
+    }
+    
+    
+    private String formatMessage(String message, Object parameters[]) {
+        
+        String res = message;
+        
+        if (message.indexOf("{0") >= 0 ||
+            message.indexOf("{1") >= 0 ||
+            message.indexOf("{2") >= 0 || 
+            message.indexOf("{3") >= 0) {
+            
+            res = java.text.MessageFormat.format(message, parameters);
+        }
+        
+        return res;
     }
 }

@@ -20,18 +20,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 package org.netsimulator.gui;
 
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
+import javax.imageio.*;
+import javax.swing.*;
+import javax.xml.transform.*;
 import org.netsimulator.util.*;
 import org.xml.sax.*;
-import javax.xml.transform.*;
-import javax.xml.transform.stream.*;
-import javax.imageio.*;
 
 
 public class MainFrame
@@ -981,20 +980,15 @@ implements
     {
         for( String loggerName : loggersConfig.getLoggerNames() )
         {
-            Logger logger = Logger.getLogger( loggerName );
-            ConsoleHandler ch = new ConsoleHandler();
+            Logger foundLogger = Logger.getLogger( loggerName );
             
-            logger.setUseParentHandlers(false);
-            logger.addHandler(ch);
-            Level level = loggersConfig.getLevelByLoggerName(logger.getName());
+            Level level = loggersConfig.getLevelByLoggerName(foundLogger.getName());
             if(level == null)
             {
-                System.err.println("Can not find log level for logger '"+logger.getName()+"', will use ALL by default.");
+                logger.log(Level.WARNING, "Can not find log level for logger ''{0}'', will use ALL by default.", foundLogger.getName());
                 level = Level.ALL;
             }        
-            ch.setLevel(level);
-            logger.setLevel(level);
-            ch.setFormatter(new LogFormatter());        
+            foundLogger.setLevel(level);
         }       
     }
             

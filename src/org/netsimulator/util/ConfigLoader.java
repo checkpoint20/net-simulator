@@ -26,10 +26,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 package org.netsimulator.util;
 
 
+import java.awt.Color;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
-import java.awt.Color;
 import org.xml.sax.*;
 import org.xml.sax.helpers.XMLReaderFactory;
 

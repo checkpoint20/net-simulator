@@ -16,7 +16,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 package org.netsimulator.gui;
 
 import java.awt.*;
-import java.awt.geom.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
@@ -334,6 +333,11 @@ public class DesktopNetworkShape
         popupShown = true;
         popupX = popup.getLocationOnScreen().x;
         popupY = popup.getLocationOnScreen().y;
+    }
+    
+    @Override
+    public String toString() {
+        return "DesktopNetworkShape{name=" + name + '}';
     }
 }
 

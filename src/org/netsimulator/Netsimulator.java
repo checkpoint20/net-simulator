@@ -19,10 +19,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 package org.netsimulator;
 
+import java.util.logging.Logger;
 import org.netsimulator.gui.MainFrame;
 
-public class netsimulator
+public class Netsimulator
 {
+    private static final Logger logger = Logger.getLogger(Netsimulator.class.getName());
+
+    
     public static void main(String argv[])
     {
         if(argv.length>=1 && argv[0]!=null && argv[0].equals("-h"))
@@ -38,6 +42,9 @@ public class netsimulator
             lang=argv[0];
             country=argv[1];
         }
+
+        logger.info("Starting NetSimulator!");        
+        
         new MainFrame(lang, country);
     }
 }

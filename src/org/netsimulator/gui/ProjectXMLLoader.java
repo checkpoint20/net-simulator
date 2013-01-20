@@ -29,6 +29,8 @@ package org.netsimulator.gui;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JProgressBar;
 import org.netsimulator.net.AddressException;
 import org.netsimulator.net.ChangeInterfacePropertyException;
@@ -52,6 +54,8 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 public class ProjectXMLLoader implements ContentHandler, Runnable
 {
+    private static final Logger LOGGER = Logger.getLogger(ProjectXMLLoader.class.getName());
+    
     private XMLReader reader;
     private InputSource inputSource;
     private NetworkPanel panel;
@@ -136,7 +140,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
 
     public void processingInstruction(String target, String data) throws SAXException
     {
-        System.out.println("PI target="+target+" data="+data);
+        LOGGER.log(Level.FINE, "Processing instruction target={0} data={1}", new Object[]{target, data});
     }
 
     public void endDocument() throws SAXException
@@ -357,7 +361,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
                 new_shape = new RouterNetworkShape(panel, id);
             }catch(InterruptedException ie)
             {
-                ie.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Unexpected exception.", ie);
             }
             panel.putOnDevicesLayer(new_shape);
 
@@ -370,7 +374,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             currentSocketsHolder = new_shape;
             currentRouterHolder = new_shape;
             
-            System.out.println("Start loading: " + currentRouterHolder);
+            LOGGER.log(Level.FINE, "Start loading: {0}", currentRouterHolder);
         }catch(Exception e)
         {
             throw new SAXException(e);
@@ -424,7 +428,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
                 new_shape = new DesktopNetworkShape(panel, id);
             }catch(InterruptedException ie)
             {
-                ie.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Unexpected exception.", ie);
             }
             panel.putOnDevicesLayer(new_shape);
 
@@ -436,6 +440,8 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             
             currentSocketsHolder = new_shape;
             currentRouterHolder = new_shape;
+            
+            LOGGER.log(Level.FINE, "Start loading: {0}", currentRouterHolder);
         }catch(Exception e)
         {
             throw new SAXException(e);
@@ -470,6 +476,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         
         currentRouterHolder.setRouter(router);
         currentRouter = router;
+        LOGGER.log(Level.FINE, "Start loading: {0}", currentRouter);
     }
     
     
@@ -479,6 +486,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingIP4Router()
     {
+        LOGGER.log(Level.FINE, "End loading: {0}", currentRouter);
         currentRouter = null;
     }
     
@@ -501,6 +509,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         PatchcordNetworkLink link = 
                 new PatchcordNetworkLink(panel, id);
         currentPatchcord = link;
+        LOGGER.log(Level.FINE, "Start loading: {0}", currentPatchcord);
     }    
     
     
@@ -509,6 +518,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingPatchcord()
     {
+        LOGGER.log(Level.FINE, "End loading: {0}", currentPatchcord);
         currentPatchcord = null;
     }
     
@@ -558,7 +568,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
                 new_shape = new SwitchNetworkShape(panel, id);
             }catch(InterruptedException ie)
             {
-                ie.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Unexpected exception.", ie);
             }
             panel.putOnDevicesLayer(new_shape);
 
@@ -570,6 +580,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             
             currentSocketsHolder = new_shape;
             currentSwitchHolder = new_shape;
+            LOGGER.log(Level.FINE, "Start loading: {0}", currentSwitchHolder);
             
         }catch(Exception e)
         {
@@ -596,6 +607,8 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         _switch_ = new Switch(panel.getIdGenerator(), 0, id);
         currentSwitchHolder.setSwitch(_switch_);
         currentConcentrator = _switch_;
+        LOGGER.log(Level.FINE, "Start loading: {0}", currentConcentrator);
+        
     }
     
      
@@ -604,6 +617,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingSwitch()
     {
+        LOGGER.log(Level.FINE, "End loading: {0}", currentConcentrator);
         currentConcentrator = null;
     }
         
@@ -654,7 +668,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
                 new_shape = new HubNetworkShape(panel, id);
             }catch(InterruptedException ie)
             {
-                ie.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Unexpected exception.", ie);
             }
             panel.putOnDevicesLayer(new_shape);
 
@@ -666,6 +680,8 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             
             currentSocketsHolder = new_shape;
             currentHubHolder = new_shape;
+            LOGGER.log(Level.FINE, "Start loading: {0}", currentHubHolder);
+            
         }catch(Exception e)
         {
             throw new SAXException(e);
@@ -677,6 +693,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingHubShape()
     {
+        LOGGER.log(Level.FINE, "End loading: {0}", currentHubHolder);
         currentSocketsHolder = null;
         currentHubHolder = null;
     }    
@@ -701,6 +718,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         hub = new Hub(panel.getIdGenerator(), 0, id);
         currentHubHolder.setHub(hub);
         currentConcentrator = hub;
+        LOGGER.log(Level.FINE, "Start loading: {0}", currentConcentrator);
     }
     
     
@@ -710,6 +728,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingHub()
     {
+        LOGGER.log(Level.FINE, "End loading: {0}", currentConcentrator);
         currentConcentrator = null;
     }
         
@@ -719,12 +738,13 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     private void startLoadingRoutingTable(Attributes atts)
     {
         currentRoutingTable = currentRouter.getRoutingTable();
+        LOGGER.log(Level.FINE, "Start loading: {0}", currentRoutingTable);
     }
     
     
     private void endLoadingRouterShape()
     {
-        System.out.println("Stop loading: " + currentRouterHolder);
+        LOGGER.log(Level.FINE, "End loading: {0}", currentRouterHolder);
         currentSocketsHolder = null;
         currentRouterHolder = null;
     }
@@ -732,6 +752,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
 
     private void endLoadingDesktopShape()
     {
+        LOGGER.log(Level.FINE, "End loading: {0}", currentRouterHolder);
         currentSocketsHolder = null;
         currentRouterHolder = null;
     }
@@ -740,6 +761,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
 
     private void endLoadingSwitchShape()
     {
+        LOGGER.log(Level.FINE, "End loading: {0}", currentSwitchHolder);
         currentSocketsHolder = null;
         currentSwitchHolder = null;
     }
@@ -747,6 +769,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingRoutingTable()
     {
+        LOGGER.log(Level.FINE, "End loading: {0}", currentRoutingTable);
         currentRoutingTable = null;
     }
     
@@ -1071,10 +1094,10 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             reader.parse(inputSource);         
         }catch(IOException ioe)
         {
-            ioe.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected exception.", ioe);
         }catch(SAXException saxe)
         {
-            saxe.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected exception.", saxe);
         }finally
         {
             for(Iterator<ProjectXMLLoadingCompleteListener> i=loadingListeners.iterator(); i.hasNext(); )
