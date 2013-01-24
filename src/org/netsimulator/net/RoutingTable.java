@@ -53,15 +53,11 @@ public class RoutingTable {
     }
 
     public void addRoute( RoutingTableRow row ) {
-        
-        logger.log( Level.FINE, toString());
-        logger.log( Level.FINE, "----------------------------------");
-        
         if( !table.contains(row) && table.add( row ) ) {
-            logger.log( Level.FINE, "{0}: the row:\n{1}\n was added to the routing table", new Object[]{hashCode() + "", row});
+            logger.log( Level.FINEST, "{0}: the row:\n{1}\n was added to the routing table", new Object[]{hashCode() + "", row});
             Collections.sort(table, RoutingTableRow.COMPARATOR);
         } else {
-            logger.log( Level.FINE, "{0}: the row:\n{1}\n was not added to the routing table", new Object[]{hashCode() + "", row});
+            logger.log( Level.FINEST, "{0}: the row:\n{1}\n wasn't added to the routing table", new Object[]{hashCode() + "", row});
         }
     }
 

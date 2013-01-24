@@ -251,9 +251,6 @@ public class RoutingTableRow
         
         public int compare(RoutingTableRow r1, RoutingTableRow r2)
         {
-            logger.fine( hashCode()+": compare rows:\n"+
-                    r1+" - " +r1.hashCode()+ "\n"+
-                    r2+" - " +r2.hashCode()  );
             int res = ERR;
             if( r1.equals( r2 ) ) 
             {
@@ -284,31 +281,9 @@ public class RoutingTableRow
             if(res == ERR) {
                 throw new IllegalStateException("Internall error in comparator.");
             }
-
-            if(logger.isLoggable(Level.FINE)) {
-                logger.log( Level.FINE, hashCode() + ": res: " + convertResToString(res));
-            }
             
             return res;
         }
-
-        private String convertResToString(int res) {
-            String str = "ERR";
-            switch(res) {
-                case EQ: 
-                    str = "EQ";
-                    break;
-                case LT: 
-                    str = "LT";
-                    break;
-                case GT: 
-                    str = "GT";
-                    break;
-            }
-            return str;
-        }
-
-
 
         private int countNetmaskLength(IP4Address netmask)
         {

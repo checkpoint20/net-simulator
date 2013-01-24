@@ -374,7 +374,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             currentSocketsHolder = new_shape;
             currentRouterHolder = new_shape;
             
-            LOGGER.log(Level.FINE, "Start loading: {0}", currentRouterHolder);
+            LOGGER.log(Level.FINEST, "Start loading: {0}", currentRouterHolder);
         }catch(Exception e)
         {
             throw new SAXException(e);
@@ -441,7 +441,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             currentSocketsHolder = new_shape;
             currentRouterHolder = new_shape;
             
-            LOGGER.log(Level.FINE, "Start loading: {0}", currentRouterHolder);
+            LOGGER.log(Level.FINEST, "Start loading: {0}", currentRouterHolder);
         }catch(Exception e)
         {
             throw new SAXException(e);
@@ -476,7 +476,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         
         currentRouterHolder.setRouter(router);
         currentRouter = router;
-        LOGGER.log(Level.FINE, "Start loading: {0}", currentRouter.hashCode() + "");
+        LOGGER.log(Level.FINEST, "Start loading: {0}", currentRouter.hashCode() + "");
     }
     
     
@@ -486,7 +486,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingIP4Router()
     {
-        LOGGER.log(Level.FINE, "End loading: {0}", currentRouter.hashCode() + "");
+        LOGGER.log(Level.FINEST, "End loading: {0}", currentRouter.hashCode() + "");
         currentRouter = null;
     }
     
@@ -509,7 +509,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         PatchcordNetworkLink link = 
                 new PatchcordNetworkLink(panel, id);
         currentPatchcord = link;
-        LOGGER.log(Level.FINE, "Start loading: {0}", currentPatchcord);
+        LOGGER.log(Level.FINEST, "Start loading: {0}", currentPatchcord);
     }    
     
     
@@ -518,7 +518,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingPatchcord()
     {
-        LOGGER.log(Level.FINE, "End loading: {0}", currentPatchcord);
+        LOGGER.log(Level.FINEST, "End loading: {0}", currentPatchcord);
         currentPatchcord = null;
     }
     
@@ -580,7 +580,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             
             currentSocketsHolder = new_shape;
             currentSwitchHolder = new_shape;
-            LOGGER.log(Level.FINE, "Start loading: {0}", currentSwitchHolder);
+            LOGGER.log(Level.FINEST, "Start loading: {0}", currentSwitchHolder);
             
         }catch(Exception e)
         {
@@ -607,7 +607,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         _switch_ = new Switch(panel.getIdGenerator(), 0, id);
         currentSwitchHolder.setSwitch(_switch_);
         currentConcentrator = _switch_;
-        LOGGER.log(Level.FINE, "Start loading: {0}", currentConcentrator);
+        LOGGER.log(Level.FINEST, "Start loading: {0}", currentConcentrator);
         
     }
     
@@ -617,7 +617,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingSwitch()
     {
-        LOGGER.log(Level.FINE, "End loading: {0}", currentConcentrator);
+        LOGGER.log(Level.FINEST, "End loading: {0}", currentConcentrator);
         currentConcentrator = null;
     }
         
@@ -680,7 +680,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             
             currentSocketsHolder = new_shape;
             currentHubHolder = new_shape;
-            LOGGER.log(Level.FINE, "Start loading: {0}", currentHubHolder);
+            LOGGER.log(Level.FINEST, "Start loading: {0}", currentHubHolder);
             
         }catch(Exception e)
         {
@@ -693,7 +693,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingHubShape()
     {
-        LOGGER.log(Level.FINE, "End loading: {0}", currentHubHolder);
+        LOGGER.log(Level.FINEST, "End loading: {0}", currentHubHolder);
         currentSocketsHolder = null;
         currentHubHolder = null;
     }    
@@ -718,7 +718,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         hub = new Hub(panel.getIdGenerator(), 0, id);
         currentHubHolder.setHub(hub);
         currentConcentrator = hub;
-        LOGGER.log(Level.FINE, "Start loading: {0}", currentConcentrator);
+        LOGGER.log(Level.FINEST, "Start loading: {0}", currentConcentrator);
     }
     
     
@@ -728,7 +728,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingHub()
     {
-        LOGGER.log(Level.FINE, "End loading: {0}", currentConcentrator);
+        LOGGER.log(Level.FINEST, "End loading: {0}", currentConcentrator);
         currentConcentrator = null;
     }
         
@@ -738,13 +738,13 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     private void startLoadingRoutingTable(Attributes atts)
     {
         currentRoutingTable = currentRouter.getRoutingTable();
-        LOGGER.log(Level.FINE, "Start loading: {0}, current router: {1}", new Object[]{currentRoutingTable.hashCode() + "", currentRouter.hashCode() + ""});
+        LOGGER.log(Level.FINEST, "Start loading: {0}, current router: {1}", new Object[]{currentRoutingTable.hashCode() + "", currentRouter.hashCode() + ""});
     }
     
     
     private void endLoadingRouterShape()
     {
-        LOGGER.log(Level.FINE, "End loading: {0}", currentRouterHolder);
+        LOGGER.log(Level.FINEST, "End loading: {0}", currentRouterHolder);
         currentSocketsHolder = null;
         currentRouterHolder = null;
     }
@@ -752,7 +752,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
 
     private void endLoadingDesktopShape()
     {
-        LOGGER.log(Level.FINE, "End loading: {0}", currentRouterHolder);
+        LOGGER.log(Level.FINEST, "End loading: {0}", currentRouterHolder);
         currentSocketsHolder = null;
         currentRouterHolder = null;
     }
@@ -761,7 +761,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
 
     private void endLoadingSwitchShape()
     {
-        LOGGER.log(Level.FINE, "End loading: {0}", currentSwitchHolder);
+        LOGGER.log(Level.FINEST, "End loading: {0}", currentSwitchHolder);
         currentSocketsHolder = null;
         currentSwitchHolder = null;
     }
@@ -769,7 +769,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingRoutingTable()
     {
-        LOGGER.log(Level.FINE, "End loading: {0}, current router: {1}", new Object[]{currentRoutingTable.hashCode() + "", currentRouter.hashCode() + ""});
+        LOGGER.log(Level.FINEST, "End loading: {0}, current router: {1}", new Object[]{currentRoutingTable.hashCode() + "", currentRouter.hashCode() + ""});
         currentRoutingTable = null;
     }
     
@@ -826,7 +826,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         int bandwidth = 0;
         String name = atts.getValue("name");
 
-        LOGGER.log(Level.FINE, "Start loading: {0}, current router: {1}", new Object[]{name, currentRouter.hashCode() + ""});
+        LOGGER.log(Level.FINEST, "Start loading: {0}, current router: {1}", new Object[]{name, currentRouter.hashCode() + ""});
         
         MACAddress mac = null;
         try {
@@ -887,7 +887,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             throw new SAXException( e );
         }
         
-        LOGGER.log(Level.FINE, "End loading: {0}, current router: {1}", new Object[]{name, currentRouter.hashCode() + ""});
+        LOGGER.log(Level.FINEST, "End loading: {0}, current router: {1}", new Object[]{name, currentRouter.hashCode() + ""});
     }    
     
     
@@ -1038,7 +1038,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     private void loadRoutingTableRow(Attributes atts)
     throws SAXException
     {
-        LOGGER.log(Level.FINE, "Start loading routing table row, current router: {0}, current routing table: {1}", new Object[]{currentRouter.hashCode() + "", currentRoutingTable.hashCode() + ""});
+        LOGGER.log(Level.FINEST, "Start loading routing table row, current router: {0}, current routing table: {1}", new Object[]{currentRouter.hashCode() + "", currentRoutingTable.hashCode() + ""});
         
         IP4Address target = null;
         try
@@ -1094,7 +1094,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         {
             throw new SAXException(e);
         }
-        LOGGER.log(Level.FINE, "End loading routing table row, current router: {0}, current routing table: {1}", new Object[]{currentRouter.hashCode() + "", currentRoutingTable.hashCode() + ""});
+        LOGGER.log(Level.FINEST, "End loading routing table row, current router: {0}, current routing table: {1}", new Object[]{currentRouter.hashCode() + "", currentRoutingTable.hashCode() + ""});
     }    
 
     
