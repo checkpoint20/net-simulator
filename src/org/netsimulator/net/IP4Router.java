@@ -156,18 +156,17 @@ public class IP4Router implements Router {
         throw new NoSuchDeviceException("There is not device with id '"+id+"'");
     }
 
-    public Interface getInterface( String name ) {
-        Interface iface = null;
+    public Interface getInterface( String nameToFind ) {
+        Interface foundIface = null;
 
-        for( Iterator<Interface> i = interfaces.iterator(); i.hasNext();) {
-            Interface buf = i.next();
-            if( buf.getName().equals( name ) ) {
-                iface = buf;
+        for( Interface iface :interfaces) {
+            if( iface.getName().equals( nameToFind ) ) {
+                foundIface = iface;
                 break;
             }
         }
 
-        return iface;
+        return foundIface;
     }
 
     public int getInterfaceCount() {

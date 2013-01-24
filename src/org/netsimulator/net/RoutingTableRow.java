@@ -32,6 +32,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class RoutingTableRow
 {
+    public static final Comparator COMPARATOR = new RowComparator();
+    
     private IP4Address target  = null; 
     private IP4Address netmask = null; 
     private IP4Address gateway = null;
@@ -58,6 +60,7 @@ public class RoutingTableRow
     
     
     
+    @Override
     public boolean equals(Object obj)
     {
         if( !(obj instanceof RoutingTableRow) )
@@ -80,9 +83,10 @@ public class RoutingTableRow
     }
 
 
+    @Override
     public int hashCode()
     {
-        return new HashCodeBuilder(934543, 85659).
+        return new HashCodeBuilder(93894543, 85659999).
             append(target).
             append(netmask).
             append(gateway).
@@ -122,7 +126,7 @@ public class RoutingTableRow
     }
     
     
-    public void setTarget(IP4Address target) throws NotAllowedAddressException 
+    private void setTarget(IP4Address target) throws NotAllowedAddressException 
     {
         if(target == null)
         {
@@ -155,7 +159,7 @@ public class RoutingTableRow
     
     
     
-    public void setNetmask(IP4Address netmask) 
+    private void setNetmask(IP4Address netmask) 
         throws NotAllowedAddressException
     {
         if(netmask == null)
@@ -169,13 +173,13 @@ public class RoutingTableRow
     }
     
 
-    public void setGateway(IP4Address gateway)
+    private void setGateway(IP4Address gateway)
     {
         this.gateway = gateway;
     }
     
 
-    public void setMetric(int metric) 
+    private void setMetric(int metric) 
     {
         if(metric < 0)
         {
@@ -187,7 +191,7 @@ public class RoutingTableRow
     }
     
 
-    public void setInterface(Interface iface)
+    private void setInterface(Interface iface)
     {
         if(target == null)
         {
@@ -218,9 +222,9 @@ public class RoutingTableRow
                getMetric()+"\t"+
                getInterface();
     }
+
     
-    
-    
+
     /**
      * This comparator is intended for control the order 
      * of <code>RoutingTableRow</code>-s in the <code>RoutingTable</code>. 
@@ -247,7 +251,9 @@ public class RoutingTableRow
         
         public int compare(RoutingTableRow r1, RoutingTableRow r2)
         {
-//            logger.fine( hashCode()+": compare rows:\n"+r1+"\n"+r2 );
+            logger.fine( hashCode()+": compare rows:\n"+
+                    r1+" - " +r1.hashCode()+ "\n"+
+                    r2+" - " +r2.hashCode()  );
             int res = ERR;
             if( r1.equals( r2 ) ) 
             {

@@ -1,8 +1,7 @@
 #!/bin/bash
 
-export JAVA_HOME="/opt/java"
-#export JAVA_HOME="/opt/jdk1.5.0_11.x64"
-#export JAVA_HOME="/opt/jdk1.5.0_10.i386"
+#export JAVA_HOME="/opt/java"
+export JAVA_HOME="/usr"
 
 #export LANG=C
 

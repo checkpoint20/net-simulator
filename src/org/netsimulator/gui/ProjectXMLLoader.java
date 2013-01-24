@@ -476,7 +476,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         
         currentRouterHolder.setRouter(router);
         currentRouter = router;
-        LOGGER.log(Level.FINE, "Start loading: {0}", currentRouter);
+        LOGGER.log(Level.FINE, "Start loading: {0}", currentRouter.hashCode() + "");
     }
     
     
@@ -486,7 +486,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingIP4Router()
     {
-        LOGGER.log(Level.FINE, "End loading: {0}", currentRouter);
+        LOGGER.log(Level.FINE, "End loading: {0}", currentRouter.hashCode() + "");
         currentRouter = null;
     }
     
@@ -738,7 +738,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     private void startLoadingRoutingTable(Attributes atts)
     {
         currentRoutingTable = currentRouter.getRoutingTable();
-        LOGGER.log(Level.FINE, "Start loading: {0}", currentRoutingTable);
+        LOGGER.log(Level.FINE, "Start loading: {0}, current router: {1}", new Object[]{currentRoutingTable.hashCode() + "", currentRouter.hashCode() + ""});
     }
     
     
@@ -769,7 +769,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     
     private void endLoadingRoutingTable()
     {
-        LOGGER.log(Level.FINE, "End loading: {0}", currentRoutingTable);
+        LOGGER.log(Level.FINE, "End loading: {0}, current router: {1}", new Object[]{currentRoutingTable.hashCode() + "", currentRouter.hashCode() + ""});
         currentRoutingTable = null;
     }
     
@@ -825,6 +825,9 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         int status = Interface.UNKNOWN;
         int bandwidth = 0;
         String name = atts.getValue("name");
+
+        LOGGER.log(Level.FINE, "Start loading: {0}, current router: {1}", new Object[]{name, currentRouter.hashCode() + ""});
+        
         MACAddress mac = null;
         try {
             mac = new MACAddress(atts.getValue("mac"));
@@ -883,6 +886,8 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         {
             throw new SAXException( e );
         }
+        
+        LOGGER.log(Level.FINE, "End loading: {0}, current router: {1}", new Object[]{name, currentRouter.hashCode() + ""});
     }    
     
     
@@ -1033,6 +1038,8 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
     private void loadRoutingTableRow(Attributes atts)
     throws SAXException
     {
+        LOGGER.log(Level.FINE, "Start loading routing table row, current router: {0}, current routing table: {1}", new Object[]{currentRouter.hashCode() + "", currentRoutingTable.hashCode() + ""});
+        
         IP4Address target = null;
         try
         {
@@ -1076,6 +1083,10 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         Interface iface = 
                 currentRouter.getInterface(atts.getValue("iface"));
         
+        if(iface == null) {
+            throw new IllegalStateException("Faild to find interface by name: " + atts.getValue("iface"));
+        }
+        
         try
         {
             currentRoutingTable.addRoute(target, netmask, gateway, metric, iface);
@@ -1083,6 +1094,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
         {
             throw new SAXException(e);
         }
+        LOGGER.log(Level.FINE, "End loading routing table row, current router: {0}, current routing table: {1}", new Object[]{currentRouter.hashCode() + "", currentRoutingTable.hashCode() + ""});
     }    
 
     

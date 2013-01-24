@@ -26,13 +26,14 @@ import java.util.logging.*;
 
 public class RoutingTable {
 
-    private SortedSet<RoutingTableRow> table = null;
-    private static final Logger logger = Logger.getLogger( "org.netsimulator.net.RoutingTable" );
+    private final List<RoutingTableRow> table = 
+            Collections.synchronizedList(new ArrayList<RoutingTableRow>());
+
+
+    private static final Logger logger = Logger.getLogger( RoutingTable.class.getName() );
 
     /** Creates a new instance of RoutingTable */
     public RoutingTable() {
-        table = Collections.synchronizedSortedSet(
-                new TreeSet<RoutingTableRow>( new RoutingTableRow.RowComparator() ) );
     }
 
     public void addRoute(
@@ -52,10 +53,15 @@ public class RoutingTable {
     }
 
     public void addRoute( RoutingTableRow row ) {
-        if( table.add( row ) ) {
-            logger.fine( hashCode() + ": the row:\n" + row + "\n was added to the routing table" );
+        
+        logger.log( Level.FINE, toString());
+        logger.log( Level.FINE, "----------------------------------");
+        
+        if( !table.contains(row) && table.add( row ) ) {
+            logger.log( Level.FINE, "{0}: the row:\n{1}\n was added to the routing table", new Object[]{hashCode() + "", row});
+            Collections.sort(table, RoutingTableRow.COMPARATOR);
         } else {
-            logger.fine( hashCode() + ": the row:\n" + row + "\n was not added to the routing table" );
+            logger.log( Level.FINE, "{0}: the row:\n{1}\n was not added to the routing table", new Object[]{hashCode() + "", row});
         }
     }
 
@@ -116,14 +122,14 @@ public class RoutingTable {
             for( Iterator<RoutingTableRow> i = table.iterator(); i.hasNext();) {
                 RoutingTableRow r = i.next();
 
-                logger.fine( "Processing row: " + r );
+                logger.log( Level.FINE, "Processing row: {0}", r);
 
                 if( r.match( destination ) ) {
-                    logger.fine( "the destination " + destination + " matchs the row" );
+                    logger.log( Level.FINE, "the destination {0} matchs the row", destination);
                     res = r;
                     break;
                 } else {
-                    logger.fine( "the destination " + destination + " doesn't match the row" );
+                    logger.log( Level.FINE, "the destination {0} doesn''t match the row", destination);
                 }
             }
         }
@@ -161,8 +167,17 @@ public class RoutingTable {
      * It is imperative that the user manually synchronize on the returned sorted set 
      * when iterating over it or any of its subSet, headSet, or tailSet views.
      */
-    public SortedSet<RoutingTableRow> getRows() {
+    public List<RoutingTableRow> getRows() {
         return table;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder curTable = new StringBuilder("Routing table:\n");
+        for (RoutingTableRow routingTableRow : table) {
+            curTable.append(routingTableRow.toString()).append("\n");
+        }
+        return curTable.toString();
     }
 }
 

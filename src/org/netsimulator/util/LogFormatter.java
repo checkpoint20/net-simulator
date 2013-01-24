@@ -19,12 +19,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 /*
  * LogFormatter.java
+ * We dont't need timestamps but thread ids are very usefull.
  *
  * Created on 4.12.2005, 0:25
  */
 
 package org.netsimulator.util;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.logging.*;
 
 public class LogFormatter extends Formatter
@@ -35,7 +39,7 @@ public class LogFormatter extends Formatter
 
     public String format(LogRecord record)
     {
-        return new StringBuilder().
+        StringBuilder builder =  new StringBuilder().
             append(record.getLevel()).
             append(": ").
             append(record.getThreadID()).
@@ -45,8 +49,22 @@ public class LogFormatter extends Formatter
             append(record.getSourceMethodName()).
             append(": ").
             append(formatMessage(record.getMessage(), record.getParameters())).
-            append("\n").
-            toString();
+            append("\n");
+
+        if(record.getThrown() != null) {
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            record.getThrown().printStackTrace(printWriter);
+            printWriter.close();
+            try {
+                stringWriter.close();
+            } catch (IOException ex) {
+                Logger.getLogger(LogFormatter.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            builder.append(stringWriter.toString());
+        }
+                    
+         return builder.toString();
     }
     
     
