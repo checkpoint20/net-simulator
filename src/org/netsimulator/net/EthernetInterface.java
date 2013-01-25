@@ -236,10 +236,16 @@ public class EthernetInterface
                     {
                         throw new ChangeInterfacePropertyException( "Can not change inteface status, set inet address befor." );
                     }
+                    
                     if( getNetmaskAddress() == null ) 
                     {
                         setNetmaskAddress( evaluateNetmaskAddress( getInetAddress() ) );
+                    } 
+                    else if(!IP4Address.isNetmaskAddressValid(getNetmaskAddress()))
+                    {
+                        throw new ChangeInterfacePropertyException( "Invalid netmask." );
                     }
+                    
                     if( getInetAddress().equals(getNetworkAddress()) ) 
                     {
                         throw new ChangeInterfacePropertyException( "Inet address cannot be equal network one." );
