@@ -2,7 +2,7 @@
 <!DOCTYPE config PUBLIC "NET-Simulator/dtd/config.dtd" "http://www.net-simulator.org/dtd/1.0/config.dtd">
 <config>
 	<whatOpenAfterStart value="lastProject" />
-	<lastProject value="/home/max/NET-Simulator/xml/Example_switch.xml" />
+	<lastProject value="xml/test.xml" />
 	<currentSkin name="basic" />
 	<background value="#ffffff" />
 	<skins>
