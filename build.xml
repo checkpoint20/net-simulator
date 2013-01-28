@@ -32,7 +32,14 @@
     
     <target depends="init" name="compile">
         <mkdir dir="${classes.dir}"/>
-        <javac debug="true" encoding="utf8" target="1.5" deprecation="true" destdir="${classes.dir}" srcdir="${src.dir}">
+        <javac 
+            debug="true" 
+            encoding="utf8" 
+            target="1.5" 
+            source="1.5" 
+            deprecation="true" 
+            destdir="${classes.dir}" 
+            srcdir="${src.dir}">
             <classpath refid="run.classpath"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
@@ -49,7 +56,14 @@
     
     <target depends="init,compile" name="compile-test">
         <mkdir dir="${classes.dir}"/>
-        <javac debug="true" encoding="utf8" target="1.5" deprecation="true" destdir="${classes.dir}" srcdir="${test.dir}">
+        <javac 
+            debug="true" 
+            encoding="utf8" 
+            target="1.5" 
+            source="1.5" 
+            deprecation="true" 
+            destdir="${classes.dir}" 
+            srcdir="${test.dir}">
             <classpath refid="test.classpath"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
@@ -93,6 +107,7 @@
         <junit fork="yes" haltonfailure="yes">
             <test name="org.netsimulator.net.RowComparatorTest" />
             <test name="org.netsimulator.net.RoutingTableTest" />
+            <test name="org.netsimulator.net.IP4AddressTest" />
             <formatter type="plain" usefile="false" />
             <classpath refid="test.classpath" />
         </junit>
@@ -124,7 +139,7 @@
         <copy todir="${distr.dir}">
             <fileset file="COPYING" />
             <fileset file="about*.html" />
-            <fileset file="install.txt" />
+            <fileset file="install*.txt" />
             <fileset file="run.bat" />
             <fileset file="run.sh" />
         </copy>
