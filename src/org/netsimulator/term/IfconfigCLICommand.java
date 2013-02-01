@@ -41,8 +41,8 @@ public class IfconfigCLICommand implements CLICommand
     private IP4Router router;
     private static final Options options = new Options();
 
-    private static final Logger logger = 
-            Logger.getLogger("org.netsimulator.term.IfconfigCLICommand");
+    private static final Logger LOGGER = 
+            Logger.getLogger(IfconfigCLICommand.class.getName());
 
     
     public IfconfigCLICommand(Terminal term, IP4Router router)
@@ -174,9 +174,14 @@ public class IfconfigCLICommand implements CLICommand
                 broadcast  = new IP4Address(cmd.getOptionValue("broadcast"));
             }catch(AddressException ae)
             {
-                ae.printStackTrace();
+                LOGGER.log(Level.FINE, "Invalid broadcast address.", ae);
                 writer.write("Error: Invalid broadcast address\n");
                 return -1;
+            }
+            if( address.equals(broadcast) ) 
+            {
+                writer.write("Error: Inet address can not be equal broadcast one.\n");
+                return -1;                
             }
         }        
 
@@ -189,8 +194,19 @@ public class IfconfigCLICommand implements CLICommand
                 netmask  = new IP4Address(cmd.getOptionValue("netmask"));
             }catch(AddressException ae)
             {
-                ae.printStackTrace();
+                LOGGER.log(Level.FINE, "Invalid netmask address.", ae);
                 writer.write("Error: Invalid netmask address\n");
+                return -1;
+            }
+
+            if(IP4Address.isNetmaskAddressValid(netmask)) {
+                writer.write("Error: Invalid netmask address\n");
+                return -1;
+            }
+            
+            if( address.equals(netmask) ) 
+            {
+                writer.write("Error: Inet address cannot be equal network one.\n");
                 return -1;
             }
         }        
@@ -326,7 +342,7 @@ public class IfconfigCLICommand implements CLICommand
             text += "\n";
 
             writer.write(text);
-            logger.info("router id "+router.getId()+":\n"+text);
+            LOGGER.log(Level.FINE, "router id {0}:\n{1}", new Object[]{router.getId(), text});
         }
     }
     
