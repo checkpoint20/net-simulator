@@ -151,11 +151,12 @@
         <nbjpdastart name="${project.name}" addressproperty="jpda.address" transport="dt_socket">
             <classpath refid="run.classpath"/>
         </nbjpdastart>
-        <java fork="true" classname="org.netsimulator.netsimulator">
+        <java fork="true" classname="org.netsimulator.Netsimulator">
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xnoagent"/>
             <jvmarg value="-Djava.compiler=none"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+            <jvmarg value="-Djava.util.logging.config.file=bin/logging.properties"/>
             <classpath refid="run.classpath"/>
         </java>
     </target>    

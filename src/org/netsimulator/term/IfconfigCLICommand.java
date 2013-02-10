@@ -199,7 +199,7 @@ public class IfconfigCLICommand implements CLICommand
                 return -1;
             }
 
-            if(IP4Address.isNetmaskAddressValid(netmask)) {
+            if(!IP4Address.isNetmaskAddressValid(netmask)) {
                 writer.write("Error: Invalid netmask address\n");
                 return -1;
             }

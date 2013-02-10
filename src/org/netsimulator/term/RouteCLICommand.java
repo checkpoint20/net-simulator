@@ -183,10 +183,16 @@ public class RouteCLICommand implements CLICommand
                     netmask  = new IP4Address(cmd.getOptionValue("netmask"));
                 }catch(AddressException ae)
                 {
-                    ae.printStackTrace();
+                    logger.log(Level.FINE, "Invalid netmask address.", ae);
                     writer.write("Error: Invalid netmask address\n");
                     return -1;
                 }
+                
+                if(!IP4Address.isNetmaskAddressValid(netmask)) {
+                    writer.write("Error: Invalid netmask address\n");
+                    return -1;
+                }                
+                
             }else
             {
                 netmask = new IP4Address(0xFFFFFFFF);

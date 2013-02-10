@@ -225,67 +225,77 @@ public class EthernetInterface
   
         if( router instanceof IP4Router )
         {
-            RoutingTable rt = ((IP4Router)router).getRoutingTable();
             switch( status )
             {
                 case UP:
-                    logger.fine("Setting "+getName()+" UP, address "+getInetAddress()+
-                            ", mask "+getNetmaskAddress()+", broadcast "+getBroadcastAddress() );
-                    if( this.status == UP ) { return; }
-                    if( getInetAddress() == null ) 
-                    {
-                        throw new ChangeInterfacePropertyException( "Can not change inteface status, set inet address befor." );
+                    if( this.status != UP ) 
+                    { 
+                        logger.log(Level.FINE, "Setting {0} UP, address {1}, mask {2}, broadcast {3}", 
+                                new Object[]{getName(), getInetAddress(), getNetmaskAddress(), getBroadcastAddress()});
+                        
+                        if( getInetAddress() == null ) 
+                        {
+                            throw new ChangeInterfacePropertyException( "Cannot change interface status, set inet address before." );
+                        }
+
+                        if( getNetmaskAddress() == null ) 
+                        {
+                            setNetmaskAddress( evaluateNetmaskAddress( getInetAddress() ) );
+                        } 
+                        else if(!IP4Address.isNetmaskAddressValid(getNetmaskAddress()))
+                        {
+                            throw new ChangeInterfacePropertyException( "Invalid netmask." );
+                        }
+
+                        if( getInetAddress().equals(getNetworkAddress()) ) 
+                        {
+                            throw new ChangeInterfacePropertyException( "Inet address cannot be equal network one." );
+                        }
+                        
+                        if( getBroadcastAddress() == null ) 
+                        {
+                            setBroadcastAddress( evaluateBroadcastAddress( getInetAddress(), getNetmaskAddress() ) );
+                        }
+                        
+                        if( getInetAddress().equals(getBroadcastAddress()) ) 
+                        {
+                            throw new ChangeInterfacePropertyException( "Inet address can not be equal broadcast one." );
+                        }
+                        
+                        try
+                        {
+                            ((IP4Router)router).getRoutingTable().addRoute( getNetworkAddress(), 
+                                         getNetmaskAddress(),
+                                         null,
+                                         1, 
+                                         this );
+                            this.status = status;                            
+                        } catch ( NotAllowedAddressException e ) 
+                        {
+                            throw new ChangeInterfacePropertyException( e.getMessage() );
+                        }
                     }
+                    break;
                     
-                    if( getNetmaskAddress() == null ) 
-                    {
-                        setNetmaskAddress( evaluateNetmaskAddress( getInetAddress() ) );
-                    } 
-                    else if(!IP4Address.isNetmaskAddressValid(getNetmaskAddress()))
-                    {
-                        throw new ChangeInterfacePropertyException( "Invalid netmask." );
-                    }
+                case DOWN:
+                    if( this.status != DOWN ) 
+                    { 
+                        logger.log(Level.FINE, "Setting {0} DOWN, address {1}, mask {2}, broadcast {3}", 
+                                new Object[]{getName(), getInetAddress(), getNetmaskAddress(), getBroadcastAddress()});
                     
-                    if( getInetAddress().equals(getNetworkAddress()) ) 
-                    {
-                        throw new ChangeInterfacePropertyException( "Inet address cannot be equal network one." );
-                    }
-                    if( getBroadcastAddress() == null ) 
-                    {
-                        setBroadcastAddress( evaluateBroadcastAddress( getInetAddress(), getNetmaskAddress() ) );
-                    }
-                    if( getInetAddress().equals(getBroadcastAddress()) ) 
-                    {
-                        throw new ChangeInterfacePropertyException( "Inet address can not be equal broadcast one." );
-                    }
-                    try
-                    {
-                        rt.addRoute( getNetworkAddress(), 
+                        ((IP4Router)router).getRoutingTable().deleteRoute( getNetworkAddress(), 
                                      getNetmaskAddress(),
                                      null,
                                      1, 
                                      this );
-                    } catch ( NotAllowedAddressException e ) 
-                    {
-                        throw new ChangeInterfacePropertyException( e.getMessage() );
+                        this.status = status;                        
                     }
                     break;
-                case DOWN:
-                    logger.fine("Setting "+getName()+" DOWN, address "+getInetAddress()+
-                            ", mask "+getNetmaskAddress()+", broadcast "+getBroadcastAddress() );
-                    if( this.status == DOWN ) { return; }
-                    rt.deleteRoute( getNetworkAddress(), 
-                                 getNetmaskAddress(),
-                                 null,
-                                 1, 
-                                 this );
-                    break;
+                    
                 default:
                     throw new IllegalStateException("Unknown status.");
             }
         }
-
-        this.status = status;
     }
 
 
