@@ -37,7 +37,6 @@ public class PingCLICommand implements CLICommand, ICMPEchoReplayListener
     private static final Logger logger = 
             Logger.getLogger("org.netsimulator.term.PingCLICommand");
 
-    private Terminal term;
     private PrintWriter writer;
     private IP4Router router;
     private static final Options options = new Options();
@@ -51,7 +50,6 @@ public class PingCLICommand implements CLICommand, ICMPEchoReplayListener
     
     public PingCLICommand(Terminal term, IP4Router router)
     {
-        this.term = term;
         this.router = router;
 
         Option help = new Option("h", false, "display this help");

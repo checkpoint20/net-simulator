@@ -27,7 +27,6 @@ import org.apache.commons.cli.*;
 
 public class EchoCLICommand implements CLICommand
 {
-    Terminal term;
     Writer writer;
 
     private static final Options options = new Options();

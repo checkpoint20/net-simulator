@@ -21,15 +21,10 @@ package org.netsimulator.term;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.logging.*;
-import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import org.netsimulator.gui.MainFrame;
-import org.netsimulator.util.LoggersConfig;
-import org.netsimulator.util.LogFormatter;
 
 
 public class Terminal extends TextScreen implements Runnable
@@ -72,24 +67,6 @@ public class Terminal extends TextScreen implements Runnable
         commands.put(command.getName(), command);
         command.setOutputWriter(writer);
     }
-
-
-
-    public void printAllCommands()
-    {
-        for(Iterator i=commands.keySet().iterator(); i.hasNext(); )
-        {
-            try
-            {
-                writer.write(i.next()+"\n");
-            }catch(IOException ioe)
-            {
-                ioe.printStackTrace();
-            }
-        }
-    }
-
-
 
 
     public void clear()
@@ -520,4 +497,8 @@ public class Terminal extends TextScreen implements Runnable
          printPS1();
     }
 
+    public TreeMap<String, CLICommand> getCommands() {
+        return commands;
+    }
+    
 }

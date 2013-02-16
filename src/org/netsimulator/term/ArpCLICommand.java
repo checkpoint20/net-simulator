@@ -36,14 +36,12 @@ import org.netsimulator.net.MACAddress;
 
 public class ArpCLICommand implements CLICommand
 {
-    private Terminal term;
     private Writer writer;
     private static final Options options = new Options();
     private IP4Router router;
 
     public ArpCLICommand(Terminal term, IP4Router router)
     {
-        this.term = term;
         this.router = router;
         
         Option help = new Option("h", false, "display this help");

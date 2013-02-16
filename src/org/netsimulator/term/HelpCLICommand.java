@@ -22,6 +22,7 @@ package org.netsimulator.term;
 import java.io.Writer;
 import java.io.PrintWriter;
 import java.io.IOException;
+import java.util.Iterator;
 import org.apache.commons.cli.*;
 
 
@@ -71,7 +72,7 @@ public class HelpCLICommand implements CLICommand
                     true);
         }else
         {
-            term.printAllCommands();
+            printAllCommands();
         }
 
         return 0;
@@ -86,4 +87,20 @@ public class HelpCLICommand implements CLICommand
     public void Stop()
     {
     }
+    
+
+    private void printAllCommands()
+    {
+        for(Iterator i=term.getCommands().keySet().iterator(); i.hasNext(); )
+        {
+            try
+            {
+                writer.write(i.next()+"\n");
+            }catch(IOException ioe)
+            {
+                ioe.printStackTrace();
+            }
+        }
+    }
+
 }

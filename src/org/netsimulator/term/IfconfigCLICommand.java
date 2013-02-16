@@ -36,7 +36,7 @@ import org.netsimulator.net.Interface;
 
 public class IfconfigCLICommand implements CLICommand
 {
-    private Terminal term;
+//    private Terminal term;
     private Writer writer;
     private IP4Router router;
     private static final Options options = new Options();
@@ -47,7 +47,7 @@ public class IfconfigCLICommand implements CLICommand
     
     public IfconfigCLICommand(Terminal term, IP4Router router)
     {
-        this.term = term;
+//        this.term = term;
         this.router = router;
 
         Option help = new Option("h", false, "display this help");
