@@ -167,7 +167,8 @@ public class PingCLICommand implements CLICommand, ICMPEchoReplayListener
                 return 1;
             }
             
-            writer.write("PING "+dest+"\n");
+            writeBanner(dest);
+            
             int icmp_seq=0;
             while(go)
             {
@@ -282,6 +283,10 @@ public class PingCLICommand implements CLICommand, ICMPEchoReplayListener
         }
         
         timerTask.cancel();
+    }
+
+    private void writeBanner(IP4Address dest) {
+        writer.write("PING "+dest+"\nPress Ctrl-C то abort.\n");
     }
         
 }
