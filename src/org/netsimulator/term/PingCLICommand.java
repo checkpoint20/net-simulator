@@ -48,7 +48,7 @@ public class PingCLICommand implements CLICommand, ICMPEchoReplayListener
     private TimerTaskPing timerTask;
    
     
-    public PingCLICommand(Terminal term, IP4Router router)
+    public PingCLICommand(IP4Router router)
     {
         this.router = router;
 
@@ -284,7 +284,7 @@ public class PingCLICommand implements CLICommand, ICMPEchoReplayListener
     }
 
     private void writeBanner(IP4Address dest) {
-        writer.write("PING "+dest+"\nPress Ctrl-C то abort.\n");
+        writer.write("PING "+dest+"\nPress Ctrl+C то abort.\n");
     }
         
 }

@@ -21,7 +21,6 @@ package org.netsimulator.gui;
 
 
 import java.awt.*;
-import java.awt.geom.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
@@ -84,7 +83,7 @@ public class SwitchNetworkShape
         }        
         
         terminalDialog.getTerminal().
-                addCommand(new ShowMACAddressesTableCLICommand(terminalDialog.getTerminal(), _switch_));        
+                addCommand(new ShowMACAddressesTableCLICommand(_switch_));        
     }
    
 
@@ -151,7 +150,7 @@ public class SwitchNetworkShape
         
         //terminalDialog = new TerminalDialog(panel.getMainFrame());
         terminalDialog.getTerminal().
-                addCommand(new ShowMACAddressesTableCLICommand(terminalDialog.getTerminal(), _switch_));        
+                addCommand(new ShowMACAddressesTableCLICommand(_switch_));        
     }
     
     

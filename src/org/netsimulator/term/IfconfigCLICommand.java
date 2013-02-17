@@ -36,7 +36,6 @@ import org.netsimulator.net.Interface;
 
 public class IfconfigCLICommand implements CLICommand
 {
-//    private Terminal term;
     private Writer writer;
     private IP4Router router;
     private static final Options options = new Options();
@@ -45,9 +44,8 @@ public class IfconfigCLICommand implements CLICommand
             Logger.getLogger(IfconfigCLICommand.class.getName());
 
     
-    public IfconfigCLICommand(Terminal term, IP4Router router)
+    public IfconfigCLICommand(IP4Router router)
     {
-//        this.term = term;
         this.router = router;
 
         Option help = new Option("h", false, "display this help");
@@ -128,12 +126,6 @@ public class IfconfigCLICommand implements CLICommand
 
 
         String args[] = cmd.getArgs();
-        
-       /* for(int i=0; i!=args.length; i++)
-        {    
-            System.err.println("args["+i+"]="+args[i]);
-        }
-        */
         
         Interface curInterface = null;
         IP4Address address = null;

@@ -32,14 +32,12 @@ import org.netsimulator.net.Switch;
 
 public class ShowMACAddressesTableCLICommand implements CLICommand
 {
-    private Terminal term;
     private Writer writer;
     private static final Options options = new Options();
     private Switch _switch_;
 
-    public ShowMACAddressesTableCLICommand(Terminal term, Switch _switch_)
+    public ShowMACAddressesTableCLICommand(Switch _switch_)
     {
-        this.term = term;
         this._switch_ = _switch_;
         
         Option help = new Option("h", false, "display this help");

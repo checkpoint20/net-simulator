@@ -108,13 +108,13 @@ public class DesktopNetworkShape
         terminalDialog = new TerminalDialog( panel.getMainFrame() );
 
         terminalDialog.getTerminal().
-                addCommand( new ArpCLICommand( terminalDialog.getTerminal(), router ) );
+                addCommand( new ArpCLICommand( router ) );
         terminalDialog.getTerminal().
-                addCommand( new IfconfigCLICommand( terminalDialog.getTerminal(), router ) );
+                addCommand( new IfconfigCLICommand( router ) );
         terminalDialog.getTerminal().
-                addCommand( new RouteCLICommand( terminalDialog.getTerminal(), router ) );
+                addCommand( new RouteCLICommand( router ) );
         terminalDialog.getTerminal().
-                addCommand( new PingCLICommand( terminalDialog.getTerminal(), router ) );
+                addCommand( new PingCLICommand( router ) );
     }
 
     public DesktopNetworkShape( NetworkPanel panel, Router router, int id )
@@ -152,13 +152,13 @@ public class DesktopNetworkShape
         this.router = (IP4Router) router;
 
         terminalDialog.getTerminal().
-                addCommand( new ArpCLICommand( terminalDialog.getTerminal(), this.router ) );
+                addCommand( new ArpCLICommand( this.router ) );
         terminalDialog.getTerminal().
-                addCommand( new IfconfigCLICommand( terminalDialog.getTerminal(), this.router ) );
+                addCommand( new IfconfigCLICommand( this.router ) );
         terminalDialog.getTerminal().
-                addCommand( new RouteCLICommand( terminalDialog.getTerminal(), this.router ) );
+                addCommand( new RouteCLICommand( this.router ) );
         terminalDialog.getTerminal().
-                addCommand( new PingCLICommand( terminalDialog.getTerminal(), this.router ) );
+                addCommand( new PingCLICommand( this.router ) );
 
     }
 

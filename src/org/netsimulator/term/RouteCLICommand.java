@@ -35,7 +35,6 @@ import org.netsimulator.net.RoutingTableRow;
 
 public class RouteCLICommand implements CLICommand
 {
-    private Terminal term;
     private PrintWriter writer;
     private IP4Router router;
     private static final Options options = new Options();
@@ -44,9 +43,8 @@ public class RouteCLICommand implements CLICommand
             Logger.getLogger("org.netsimulator.term.RouteCLICommand");
     
     
-    public RouteCLICommand(Terminal term, IP4Router router)
+    public RouteCLICommand(IP4Router router)
     {
-        this.term = term;
         this.router = router;
 
         Option help = new Option("h", false, "display this help");

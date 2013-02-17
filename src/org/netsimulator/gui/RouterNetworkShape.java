@@ -16,7 +16,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 package org.netsimulator.gui;
 
 import java.awt.*;
-import java.awt.geom.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
@@ -109,13 +108,13 @@ public class RouterNetworkShape
         }
 
         terminalDialog.getTerminal().
-                addCommand( new ArpCLICommand( terminalDialog.getTerminal(), router ) );
+                addCommand( new ArpCLICommand( router ) );
         terminalDialog.getTerminal().
-                addCommand( new IfconfigCLICommand( terminalDialog.getTerminal(), router ) );
+                addCommand( new IfconfigCLICommand( router ) );
         terminalDialog.getTerminal().
-                addCommand( new RouteCLICommand( terminalDialog.getTerminal(), router ) );
+                addCommand( new RouteCLICommand( router ) );
         terminalDialog.getTerminal().
-                addCommand( new PingCLICommand( terminalDialog.getTerminal(), router ) );
+                addCommand( new PingCLICommand( router ) );
     }
 
     public RouterNetworkShape( NetworkPanel panel, Router router, int id )
@@ -137,13 +136,13 @@ public class RouterNetworkShape
         this.router = (IP4Router) router;
 
         terminalDialog.getTerminal().
-                addCommand( new ArpCLICommand( terminalDialog.getTerminal(), this.router ) );
+                addCommand( new ArpCLICommand( this.router ) );
         terminalDialog.getTerminal().
-                addCommand( new IfconfigCLICommand( terminalDialog.getTerminal(), this.router ) );
+                addCommand( new IfconfigCLICommand( this.router ) );
         terminalDialog.getTerminal().
-                addCommand( new RouteCLICommand( terminalDialog.getTerminal(), this.router ) );
+                addCommand( new RouteCLICommand( this.router ) );
         terminalDialog.getTerminal().
-                addCommand( new PingCLICommand( terminalDialog.getTerminal(), this.router ) );
+                addCommand( new PingCLICommand( this.router ) );
 
     }
 
