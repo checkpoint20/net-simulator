@@ -36,6 +36,21 @@ import org.netsimulator.net.Interface;
 
 public class IfconfigCLICommand implements CLICommand
 {
+    public static final int ERROR_RETCODE = -1;
+    public static final int MISSING_ARGUMENT_RETCODE = -2;
+    public static final int UNRECOGNIZED_OPTION_RETCODE = -3;
+    public static final int PARSE_EXCEPTION_RETCODE = -4;
+    public static final int NO_SUCH_INTERFACE_RETCODE = -5;
+    public static final int INVALID_ADDRESS_RETCODE = -6;
+    public static final int INVALID_BROADCAST_RETCODE = -7;
+    public static final int ADDRESS_CAN_NOT_BE_EQUAL_BROADCAST_RETCODE = -8;
+    public static final int INVALID_NETMASK_RETCODE = -9;
+    public static final int ADDRESS_CANNOT_BE_EQUAL_NETWORK_RETCODE = -10;
+    public static final int UP_AND_DOWN_ARE_MUTUALLY_EXCLUSIVE_RETCODE = -11;
+    public static final int INTERFACE_IS_NOT_IP4_ENABLED_RETCODE = -12;              
+    public static final int CHANGE_INTERFACE_PROPERTY_EXCEPTION_RETCODE = -13;                
+    public static final int OK_RETCODE = 0;
+            
     private Writer writer;
     private IP4Router router;
     private static final Options options = new Options();
@@ -94,15 +109,15 @@ public class IfconfigCLICommand implements CLICommand
         }catch(MissingArgumentException mae)
         {
             writer.write("Error: Missing arguments\n");
-            return -1;
+            return MISSING_ARGUMENT_RETCODE;
         }catch(UnrecognizedOptionException uoe)
         {
             writer.write("Error: "+uoe.getMessage()+"\n");
-            return -1;
+            return UNRECOGNIZED_OPTION_RETCODE;
         }catch(ParseException pe)
         {
             pe.printStackTrace();
-            return -1;
+            return PARSE_EXCEPTION_RETCODE;
         }
  
         if(cmd.hasOption("h"))
@@ -121,7 +136,7 @@ public class IfconfigCLICommand implements CLICommand
                     null,
                     false);
             
-            return 0;
+            return OK_RETCODE;
         }
 
 
@@ -140,7 +155,7 @@ public class IfconfigCLICommand implements CLICommand
             if(curInterface == null)
             {
                 writer.write("Error: No such interface\n");
-                return -1;
+                return NO_SUCH_INTERFACE_RETCODE;
             }
         }    
             
@@ -153,7 +168,7 @@ public class IfconfigCLICommand implements CLICommand
             {
                 ae.printStackTrace();
                 writer.write("Error: Invalid address\n");
-                return -1;
+                return INVALID_ADDRESS_RETCODE;
             }
         }    
             
@@ -168,12 +183,12 @@ public class IfconfigCLICommand implements CLICommand
             {
                 LOGGER.log(Level.FINE, "Invalid broadcast address.", ae);
                 writer.write("Error: Invalid broadcast address\n");
-                return -1;
+                return INVALID_BROADCAST_RETCODE;
             }
             if( address.equals(broadcast) ) 
             {
                 writer.write("Error: Inet address can not be equal broadcast one.\n");
-                return -1;                
+                return ADDRESS_CAN_NOT_BE_EQUAL_BROADCAST_RETCODE;                
             }
         }        
 
@@ -188,18 +203,18 @@ public class IfconfigCLICommand implements CLICommand
             {
                 LOGGER.log(Level.FINE, "Invalid netmask address.", ae);
                 writer.write("Error: Invalid netmask address\n");
-                return -1;
+                return INVALID_NETMASK_RETCODE;
             }
 
             if(!IP4Address.isNetmaskAddressValid(netmask)) {
                 writer.write("Error: Invalid netmask address\n");
-                return -1;
+                return INVALID_NETMASK_RETCODE;
             }
             
             if( address.equals(netmask) ) 
             {
                 writer.write("Error: Inet address cannot be equal network one.\n");
-                return -1;
+                return ADDRESS_CANNOT_BE_EQUAL_NETWORK_RETCODE;
             }
         }        
 
@@ -208,7 +223,7 @@ public class IfconfigCLICommand implements CLICommand
         if(cmd.hasOption("up") && cmd.hasOption("down"))
         {
             writer.write("Error: '-up' and '-down' are mutually exclusive options\n");
-            return -1;
+            return UP_AND_DOWN_ARE_MUTUALLY_EXCLUSIVE_RETCODE;
         }else
         {
             if(cmd.hasOption("up"))
@@ -244,7 +259,7 @@ public class IfconfigCLICommand implements CLICommand
                 }else
                 {
                     writer.write("Error: the interface '"+curInterface+" is not IP4 enabled\n");
-                    return -1;
+                    return INTERFACE_IS_NOT_IP4_ENABLED_RETCODE;
                 }
 
                 if( address != null ) { iface.setInetAddress(address); }
@@ -259,7 +274,7 @@ public class IfconfigCLICommand implements CLICommand
             } catch ( ChangeInterfacePropertyException e )
             {
                 writer.write("Error: "+e.getMessage()+"\n");
-                return -1;
+                return CHANGE_INTERFACE_PROPERTY_EXCEPTION_RETCODE;
             }
             
         } else 
@@ -285,7 +300,7 @@ public class IfconfigCLICommand implements CLICommand
 
         //System.out.println("*** end of ifconfig");
 
-        return 1;    
+        return OK_RETCODE;    
     }
 
     

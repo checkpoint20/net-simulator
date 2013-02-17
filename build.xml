@@ -105,9 +105,10 @@
     
     <target depends="init,compile-test" name="test">
         <junit fork="yes" haltonfailure="yes">
+            <test name="org.netsimulator.net.IP4AddressTest" />
             <test name="org.netsimulator.net.RowComparatorTest" />
             <test name="org.netsimulator.net.RoutingTableTest" />
-            <test name="org.netsimulator.net.IP4AddressTest" />
+            <test name="org.netsimulator.net.IfconfigCLICommandTest" />
             <formatter type="plain" usefile="false" />
             <classpath refid="test.classpath" />
         </junit>
