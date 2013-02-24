@@ -49,6 +49,7 @@ public class IfconfigCLICommand implements CLICommand
     public static final int UP_AND_DOWN_ARE_MUTUALLY_EXCLUSIVE_RETCODE = -11;
     public static final int INTERFACE_IS_NOT_IP4_ENABLED_RETCODE = -12;              
     public static final int CHANGE_INTERFACE_PROPERTY_EXCEPTION_RETCODE = -13;                
+    public static final int INET_ADDRESS_NOT_SPECIFIED_RETCODE = -14;                
     public static final int OK_RETCODE = 0;
             
     private Writer writer;
@@ -211,7 +212,15 @@ public class IfconfigCLICommand implements CLICommand
                 return INVALID_NETMASK_RETCODE;
             }
             
-            if( address.equals(netmask) ) 
+            IP4Address addressToEvaluateNetmask = 
+                    address != null ? address : ((IP4EnabledInterface)curInterface).getInetAddress();
+            if(addressToEvaluateNetmask == null) 
+            {
+                writer.write("Error: Inet address not specified\n");
+                return INET_ADDRESS_NOT_SPECIFIED_RETCODE;
+            } 
+            else
+            if( address.equals(IP4Address.evaluateNetworkAddress(address, netmask)) ) 
             {
                 writer.write("Error: Inet address cannot be equal network one.\n");
                 return ADDRESS_CANNOT_BE_EQUAL_NETWORK_RETCODE;

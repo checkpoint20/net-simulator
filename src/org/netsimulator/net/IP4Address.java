@@ -17,9 +17,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 package org.netsimulator.net;
 
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IP4Address implements Address {
 
+    private static final Logger LOGGER = 
+            Logger.getLogger(IP4Address.class.getName());
+    
     private int address = 0;
 
     public IP4Address() {
@@ -209,6 +214,46 @@ public class IP4Address implements Address {
             }
         }
         return res;
+    }
+
+     
+    public static IP4Address evaluateNetworkAddress(IP4Address inetAddress, IP4Address netmaskAddress) {
+        if(inetAddress==null || netmaskAddress==null) {
+            return null;
+        }else {
+            return new IP4Address(inetAddress.toIntValue() & netmaskAddress.toIntValue());
+        }
+    }
+
+    
+    /**
+     * Trying to evaluate broadcast for given address and netmask.
+     */
+    public static IP4Address evaluateBroadcastAddress( IP4Address address, IP4Address netmask ) {
+        int broadcastInt = address.toIntValue() | ~netmask.toIntValue();
+        return new IP4Address( broadcastInt );
+    }    
+    
+    /**
+     * Trying to evaluate netmask for given address by its class.
+     * Returns null if failed to evaluate netmask address.
+     */
+    public static IP4Address evaluateNetmaskAddress(IP4Address address) {
+        
+        IP4Address netmask = null;
+
+        if (address.isClassA()) {
+            netmask = new IP4Address(0xFF000000); // 255.0.0.0
+            LOGGER.log(Level.FINE, "Address {0} is of class A => netmask is {1}", new Object[]{address, netmask});
+        } else if (address.isClassB()) {
+            netmask = new IP4Address(0xFFFF0000); // 255.255.0.0
+            LOGGER.log(Level.FINE, "Address {0} is of class B => netmask is {1}", new Object[]{address, netmask});
+        } else if (address.isClassC()) {
+            netmask = new IP4Address(0xFFFFFF00); // 255.255.255.0
+            LOGGER.log(Level.FINE, "Address {0} is of class C => netmask is {1}", new Object[]{address, netmask});
+        } 
+
+        return netmask;
     }
     
 }

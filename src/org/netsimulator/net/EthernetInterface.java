@@ -27,8 +27,8 @@ import org.netsimulator.util.IdGenerator;
 public class EthernetInterface 
         implements IP4EnabledInterface, NetworkDevice
 {
-    private static Logger logger = 
-            Logger.getLogger("org.netsimulator.net.EthernetInterface");
+    private static final Logger LOGGER = 
+            Logger.getLogger(EthernetInterface.class.getName());
     private int id;
     private IdGenerator idGenerator;   
     private Router router;
@@ -230,7 +230,7 @@ public class EthernetInterface
                 case UP:
                     if( this.status != UP ) 
                     { 
-                        logger.log(Level.FINE, "Setting {0} UP, address {1}, mask {2}, broadcast {3}", 
+                        LOGGER.log(Level.FINE, "Setting {0} UP, address {1}, mask {2}, broadcast {3}", 
                                 new Object[]{getName(), getInetAddress(), getNetmaskAddress(), getBroadcastAddress()});
                         
                         if( getInetAddress() == null ) 
@@ -240,7 +240,11 @@ public class EthernetInterface
 
                         if( getNetmaskAddress() == null ) 
                         {
-                            setNetmaskAddress( evaluateNetmaskAddress( getInetAddress() ) );
+                            setNetmaskAddress( IP4Address.evaluateNetmaskAddress( getInetAddress() ) );
+                            if( getNetmaskAddress() == null ) 
+                            {
+                                throw new ChangeInterfacePropertyException( "Netmask address not specified." );
+                            }
                         } 
                         else if(!IP4Address.isNetmaskAddressValid(getNetmaskAddress()))
                         {
@@ -254,7 +258,7 @@ public class EthernetInterface
                         
                         if( getBroadcastAddress() == null ) 
                         {
-                            setBroadcastAddress( evaluateBroadcastAddress( getInetAddress(), getNetmaskAddress() ) );
+                            setBroadcastAddress( IP4Address.evaluateBroadcastAddress( getInetAddress(), getNetmaskAddress() ) );
                         }
                         
                         if( getInetAddress().equals(getBroadcastAddress()) ) 
@@ -280,7 +284,7 @@ public class EthernetInterface
                 case DOWN:
                     if( this.status != DOWN ) 
                     { 
-                        logger.log(Level.FINE, "Setting {0} DOWN, address {1}, mask {2}, broadcast {3}", 
+                        LOGGER.log(Level.FINE, "Setting {0} DOWN, address {1}, mask {2}, broadcast {3}", 
                                 new Object[]{getName(), getInetAddress(), getNetmaskAddress(), getBroadcastAddress()});
                     
                         ((IP4Router)router).getRoutingTable().deleteRoute( getNetworkAddress(), 
@@ -520,13 +524,7 @@ public class EthernetInterface
     
     public IP4Address getNetworkAddress()
     {
-        if(inetAddress==null || netmaskAddress==null)
-        {
-            return null;
-        }else
-        {
-            return new IP4Address(inetAddress.toIntValue() & netmaskAddress.toIntValue());
-        }
+        return IP4Address.evaluateNetworkAddress(inetAddress, netmaskAddress);
     }
     
     
@@ -539,7 +537,7 @@ public class EthernetInterface
         
         if(macAddress == null)
         {
-            logger.info(getId()+" Can not resolv MACAddress for: "+destination);
+            LOGGER.info(getId()+" Can not resolv MACAddress for: "+destination);
             return;
         }
         
@@ -582,54 +580,4 @@ public class EthernetInterface
         transferPacketListeners.add(listener);
     }
 
-
-    /**
-     * Trying to evalute netmask for given address.
-     */
-    private IP4Address evaluateNetmaskAddress( IP4Address address ) 
-            throws ChangeInterfacePropertyException
-    {
-        IP4Address netmask = null;
-        
-        try 
-        {
-            if( address.isClassA() )
-            {
-                netmask = new IP4Address("255.0.0.0");
-                logger.fine(hashCode()+": the address "+address+" is of class A, so netmask is "+netmask);
-            }
-
-            if( address.isClassB() )
-            {
-                netmask = new IP4Address("255.255.0.0");
-                logger.fine(hashCode()+": the address "+address+" is of class B, so netmask is "+netmask);
-            }
-
-            if( address.isClassC() )
-            {
-                netmask = new IP4Address("255.255.255.0");
-                logger.fine(hashCode() + ": the address " + address + " is of class C, so netmask is " + netmask);
-            }
-        } catch (AddressException ex) 
-        {
-            throw new IllegalStateException( ex );
-        }
-
-        if( netmask==null )
-        {
-            throw new ChangeInterfacePropertyException( "Can not evaluate netmask address." );
-        }
-
-        return netmask;
-    }
-
-    
-    /**
-     * Trying to evalute broadcast for given address and netmask.
-     */
-    private IP4Address evaluateBroadcastAddress( IP4Address address, IP4Address netmask ) 
-    {
-        int broadcastInt = address.toIntValue() | ~netmask.toIntValue();
-        return new IP4Address( broadcastInt );
-    }
 }

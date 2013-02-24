@@ -251,6 +251,43 @@ public class IfconfigCLICommandTest {
     }    
     
 
+    /**
+     * => ifconfig eth0 12.0.0.10 -netmask 255.255.255.0 -up
+     * => ifconfig eth0 1.2.3.0 -netmask 255.255.255.0
+     */
+    @Test
+    public void testSetAddressEqualsToNetmaskActiveInterface() throws IOException, AddressException {
+        int res = command.Go(new String[]{"eth0", "12.0.0.10", "-netmask", "255.255.255.0", "-up"}, null);
+        printCommandOutput();
+        assertEquals(IfconfigCLICommand.OK_RETCODE, res);
+        assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
+        assertEquals(new IP4Address("12.0.0.10"), ((IP4EnabledInterface)router.getInterface("eth0")).getInetAddress());
+        assertEquals(new IP4Address("255.255.255.0"), ((IP4EnabledInterface)router.getInterface("eth0")).getNetmaskAddress());
+        assertEquals(1, router.getRoutingTable().getRows().size());
+       
+        RoutingTableRow route = router.getRoutingTable().getRows().iterator().next();
+        assertEquals(new IP4Address("12.0.0.0"), route.getTarget());
+        assertEquals(new IP4Address("255.255.255.0"), route.getNetmask());
+        assertEquals("eth0", route.getInterface().getName());
+
+        res = command.Go(new String[]{"eth0", "1.2.3.0", "-netmask", "255.255.255.0"}, null);
+        printCommandOutput();
+        
+        assertEquals(IfconfigCLICommand.ADDRESS_CANNOT_BE_EQUAL_NETWORK_RETCODE, res);
+        assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
+        assertEquals(new IP4Address("12.0.0.10"), ((IP4EnabledInterface)router.getInterface("eth0")).getInetAddress());
+        assertEquals(new IP4Address("255.255.255.0"), ((IP4EnabledInterface)router.getInterface("eth0")).getNetmaskAddress());
+        assertEquals(new IP4Address("12.0.0.0"), ((IP4EnabledInterface)router.getInterface("eth0")).getNetworkAddress());
+        assertEquals(1, router.getRoutingTable().getRows().size());
+       
+        route = router.getRoutingTable().getRows().iterator().next();
+        assertEquals(new IP4Address("12.0.0.0"), route.getTarget());
+        assertEquals(new IP4Address("255.255.255.0"), route.getNetmask());
+        assertEquals(null, route.getGateway());
+        assertEquals("eth0", route.getInterface().getName());
+    }    
+    
+
     
     private void printCommandOutput() {
         writer.flush();
