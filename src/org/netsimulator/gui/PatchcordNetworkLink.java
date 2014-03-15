@@ -20,7 +20,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 package org.netsimulator.gui;
 
 import java.awt.*;
-import java.awt.geom.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
@@ -270,36 +269,39 @@ public class PatchcordNetworkLink
             if(isHilighted == false)
             {
                 isHilighted = true;
-                HilightedEventProcess();
+                hilightedEventProcess();
             }
         }else
         {
             if(isHilighted == true)
             {
                 isHilighted = false;
-                UnhilightedEventProcess();
+                unhilightedEventProcess();
             }
         }
     }
 
     
     
-    protected void  HilightedEventProcess()
+    protected void  hilightedEventProcess()
     {
-        currentColor = HILIGHTED_COLOR;
         if(fader!=null)
         {
             fader.cancel();
             fader=null;
         }
+        currentColor = HILIGHTED_COLOR;
     }
     
 
-    protected void  UnhilightedEventProcess()
+    protected void unhilightedEventProcess()
     {
         currentColor = HILIGHTED_COLOR;
         fader = new Fader(HILIGHTED_COLOR, this);
-        fader.start();
+        Thread thread = new Thread(fader);
+        thread.setDaemon(true);
+        thread.setName("Fader" + Integer.toHexString(hashCode()));
+        thread.start();
     }
     
   

@@ -27,7 +27,7 @@ package org.netsimulator.gui;
 import java.awt.*;
 import java.util.logging.*;
 
-public class Fader extends Thread {
+public class Fader implements Runnable {
 
     private static final Logger logger
             = Logger.getLogger("org.netsimulator.gui.Fader");
@@ -35,6 +35,8 @@ public class Fader extends Thread {
     private Color current;
     private Faderable faderable;
     private boolean stop;
+    private static final int STEP = 8;
+    private static final int DELAY = 50;
 
     /**
      * Creates a new instance of PatchcordFader
@@ -44,7 +46,6 @@ public class Fader extends Thread {
         this.faderable = faderable;
         this.stop = false;
 
-        setDaemon(true);
         logger.fine("Fader was instantiated");
     }
 
@@ -53,10 +54,9 @@ public class Fader extends Thread {
         logger.fine("Fader was started");
         current = from;
         int r = 0, g = 0, b = 0;
-        int STEP = 8;
-        int DELAY = 50;
+
         while (!(current.equals(Color.BLACK) || stop)) {
-            logger.log(Level.FINE, "Fader iteration r={0} g={1} b={2}", new Object[]{current.getRed(), current.getGreen(), current.getBlue()});
+            logger.log(Level.FINEST, "Fader iteration r={0} g={1} b={2}", new Object[]{current.getRed(), current.getGreen(), current.getBlue()});
 
             r = (current.getRed() - STEP) < 0 ? 0 : (current.getRed() - STEP);
             g = (current.getGreen() - STEP) < 0 ? 0 : (current.getGreen() - STEP);
