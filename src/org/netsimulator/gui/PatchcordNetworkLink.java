@@ -276,8 +276,7 @@ public class PatchcordNetworkLink
     }
 
     private void processMouseEventWhenPopupTriggerIsTrue(MouseEvent e) {
-        popup.show(e.getComponent(),
-                e.getX(), e.getY());
+        popup.show(e.getComponent(), e.getX(), e.getY());
         popupShown = true;
     }
 
