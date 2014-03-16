@@ -26,8 +26,8 @@ public abstract class NetworkLink
         extends Line2D
         implements MouseListener, MouseMotionListener {
 
-    protected boolean isSelected;
-    protected boolean isHilighted;
+    protected boolean selected;
+    protected boolean highlighted;
     protected Color SELECTED_COLOR = Color.GREEN;
     protected Color HILIGHTED_COLOR = Color.BLUE;
     protected Color COLOR = Color.BLACK;
@@ -50,19 +50,23 @@ public abstract class NetworkLink
     }
 
     public boolean isHilighted() {
-        return isHilighted;
+        return highlighted;
     }
 
     public boolean isSelected() {
-        return isSelected;
+        return selected;
     }
 
     public void setSelected(boolean flag) {
-        isSelected = flag;
+        selected = flag;
     }
 
-    public void setHilighted(boolean flag) {
-        isHilighted = flag;
+    public void highlight() {
+        highlighted = true;
+    }
+
+    public void lowlight() {
+        highlighted = false;
     }
 
     @Override

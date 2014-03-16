@@ -103,7 +103,7 @@ public class PatchcordNetworkLink
 //                new RenderingHints(RenderingHints.KEY_ANTIALIASING,
 //                                   RenderingHints.VALUE_ANTIALIAS_ON));
 
-        if (isSelected) {
+        if (selected) {
             g2d.setStroke(selectedStroke);
         } else {
             g2d.setStroke(stroke);
@@ -157,7 +157,7 @@ public class PatchcordNetworkLink
             setSelected(true);
             e.consume();
         } else {
-            if (isSelected) {
+            if (selected) {
                 selectedLink = null;
                 setSelected(false);
             }
@@ -189,7 +189,7 @@ public class PatchcordNetworkLink
             return;
         }
 
-        if (isSelected && selectedLink == this) {
+        if (selected && selectedLink == this) {
             setLine(e.getX() - dx1,
                     e.getY() - dy1,
                     e.getX() - dx2,
@@ -204,42 +204,41 @@ public class PatchcordNetworkLink
     @Override
     public void mouseMoved(MouseEvent e) {
         if (contains(e.getX(), e.getY())) {
-            setHilighted(true);
+            highlight();
         } else {
-            setHilighted(false);
+            lowlight();
         }
     }
 
     @Override
-    public void setHilighted(boolean flag) {
-        if (flag) {
-            if (isHilighted == false) {
-                isHilighted = true;
-                hilightedEventProcess();
+    public void highlight() {
+        // Race condition is possible but it does not cause errors so ignore it.
+        if(!highlighted) {
+            highlighted = true;
+            if (fader != null) {
+                fader.cancel();
+                fader = null;
             }
-        } else {
-            if (isHilighted == true) {
-                isHilighted = false;
-                unhilightedEventProcess();
-            }
+            currentColor = HILIGHTED_COLOR;
         }
     }
 
-    protected void hilightedEventProcess() {
-        if (fader != null) {
-            fader.cancel();
-            fader = null;
+    @Override
+    public void lowlight() {
+        // Race condition is possible but it does not cause errors so ignore it.
+        if(highlighted) {
+            highlighted = false;
+            if (fader != null) {
+                fader.cancel();
+                fader = null;
+            }
+            fader = new Fader(currentColor, this);
+            // TODO: introduce thread pool.
+            Thread thread = new Thread(fader);
+            thread.setDaemon(true);
+            thread.setName("Fader" + Integer.toHexString(hashCode()));
+            thread.start();
         }
-        currentColor = HILIGHTED_COLOR;
-    }
-
-    protected void unhilightedEventProcess() {
-        currentColor = HILIGHTED_COLOR;
-        fader = new Fader(HILIGHTED_COLOR, this);
-        Thread thread = new Thread(fader);
-        thread.setDaemon(true);
-        thread.setName("Fader" + Integer.toHexString(hashCode()));
-        thread.start();
     }
 
     @Override
@@ -263,8 +262,8 @@ public class PatchcordNetworkLink
 
     @Override
     public void PacketTransfered(Packet packet) {
-        setHilighted(true);
-        setHilighted(false);
+        highlight();
+        lowlight();
     }
 
     @Override
