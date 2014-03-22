@@ -21,6 +21,10 @@ package org.netsimulator.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 import org.netsimulator.net.Media;
 import org.netsimulator.net.Packet;
@@ -30,6 +34,8 @@ public class PatchcordNetworkLink
         extends NetworkLink
         implements Faderable, TransferPacketListener, ActionListener {
 
+    private static final Executor exec = 
+            new ThreadPoolExecutor(20, 1000, 180L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());   
     private static final ResourceBundle rsc = ResourceBundle.getBundle("netsimulator", Locale.getDefault());
     private static BasicStroke stroke;
     private static BasicStroke selectedStroke;
@@ -222,7 +228,7 @@ public class PatchcordNetworkLink
             currentColor = HILIGHTED_COLOR;
         }
     }
-
+    
     @Override
     public void lowlight() {
         // Race condition is possible but it does not cause errors so ignore it.
@@ -233,11 +239,7 @@ public class PatchcordNetworkLink
                 fader = null;
             }
             fader = new Fader(currentColor, this);
-            // TODO: introduce thread pool.
-            Thread thread = new Thread(fader);
-            thread.setDaemon(true);
-            thread.setName("Fader" + Integer.toHexString(hashCode()));
-            thread.start();
+            exec.execute(fader);
         }
     }
 

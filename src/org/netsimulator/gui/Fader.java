@@ -18,7 +18,7 @@
  */
 
 /*
- * PatchcordFader.java
+ * Fader.java
  *
  * Created on 19 January 2006, 23:59
  */
@@ -40,7 +40,7 @@ public class Fader implements Runnable {
 
     /**
      * Creates a new instance of PatchcordFader
-     */
+     */ 
     public Fader(Color from, Faderable faderable) {
         this.from = from;
         this.faderable = faderable;
