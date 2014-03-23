@@ -34,7 +34,7 @@ public class Fader implements Runnable {
     private final Color from;
     private Color current;
     private Faderable faderable;
-    private boolean stop;
+    private volatile boolean stop;
     private static final int STEP = 8;
     private static final int DELAY = 50;
 
@@ -71,7 +71,9 @@ public class Fader implements Runnable {
             try {
                 Thread.sleep(DELAY);
             } catch (InterruptedException ie) {
-                logger.log(Level.SEVERE, "Unexpected exception.", ie);
+                stop = true;
+                Thread.currentThread().interrupt();
+                logger.log(Level.FINE, "Fader thread was interrupted", ie);
             }
         }
         faderable = null;
