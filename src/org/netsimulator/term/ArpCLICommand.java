@@ -22,9 +22,7 @@ package org.netsimulator.term;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.*;
 import org.apache.commons.cli.*;
-import org.netsimulator.net.ARPCache;
 import org.netsimulator.net.AddressException;
 import org.netsimulator.net.EthernetInterface;
 import org.netsimulator.net.IP4Address;
@@ -157,28 +155,8 @@ public class ArpCLICommand implements CLICommand
             if(interfaces[i] instanceof EthernetInterface)
             {
                 EthernetInterface eth = (EthernetInterface)interfaces[i];
-                ARPCache cache = eth.getArpCache();
-                
-                ////DEBUG////
-            /*    try
-                {
-                    cache.put(new IP4Address("192.168.120.11"), 
-                        new MACAddress("00:00:00:00:00:01"));
-                    cache.put(new IP4Address("192.168.120.12"), 
-                        new MACAddress("00:00:00:00:00:02"));
-                }catch(AddressException ae)
-                {
-                    ae.printStackTrace();
-                }
-             */
-                //////////////
-                
-                Set<IP4Address> keys = cache.getAddresses();
-                for(Iterator<IP4Address> itr = keys.iterator(); itr.hasNext(); )
-                {
-                    IP4Address key = itr.next();
-                    MACAddress value = cache.get(key);
-                    
+                for (IP4Address key : eth.getArpCache().getAddresses()) {
+                    MACAddress value = eth.getArpCache().get(key);
                     writer.write(key+"\t"+value+"\t"+eth.getName()+"\n");
                 }
             }           

@@ -21,6 +21,9 @@ package org.netsimulator.net;
 
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.*;
 import org.netsimulator.util.IdGenerator;
 
@@ -29,6 +32,14 @@ public class EthernetInterface
 {
     private static final Logger LOGGER = 
             Logger.getLogger(EthernetInterface.class.getName());
+
+    public static final int ARP_CACHE_CLEAN_TIMEOUT = 10; // 10 sec.    
+    
+    // 10 threads for all the NetSimulator. 
+    // Probaly it makes sense to have 1 thread per router?
+    private static final ScheduledExecutorService arpCacheCleanExecutorService = 
+                                  Executors.newScheduledThreadPool(10);
+    
     private int id;
     private IdGenerator idGenerator;   
     private Router router;
@@ -80,7 +91,15 @@ public class EthernetInterface
         encap = "Ethernet  HWaddr "+address;
         status = Interface.DOWN;
         
-        arpCache = new ARPCache(10);
+        arpCache = new ARPCache(ARP_CACHE_CLEAN_TIMEOUT);
+        
+        arpCacheCleanExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                arpCache.clean();
+            }
+        }, ARP_CACHE_CLEAN_TIMEOUT, ARP_CACHE_CLEAN_TIMEOUT, TimeUnit.SECONDS);
+        
         transferPacketListeners = new ArrayList<TransferPacketListener>();
     }
     

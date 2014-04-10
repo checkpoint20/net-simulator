@@ -22,39 +22,36 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ARPCache extends TimerTask {
+public class ARPCache {
     
     private static final Logger logger = Logger.getLogger( ARPCache.class.getName() );
-
     private final Map<IP4Address, ResolvedAddress> cache;
-
+    
     private static class ResolvedAddress {
-        MACAddress resolvedAddress;
-        long resolvedTime;
+        final MACAddress resolvedAddress;
+        final long resolvedTime;
+        public ResolvedAddress(MACAddress resolvedAddress, long resolvedTime) {
+            this.resolvedAddress = resolvedAddress;
+            this.resolvedTime = resolvedTime;
+        }
     }
 
     private final int timeout;
-    private final Timer timer;
 
     /**
-     * Creates a new instance of ARPCache
+     * Creates a new instance of ARPCache. It is thread safe.
      *
-     * @param timeout in seconds.
+     * @param timeout in seconds. Within this period of time since putting to the cache
+     * entities will remain in the cache. If this timeout is exceeded for an entity
+     * it become available for purging from the cache during {@link clean()} invocation.
      */
     public ARPCache(int timeout) {
         cache = Collections.synchronizedMap(new HashMap<IP4Address, ResolvedAddress>());
         this.timeout = timeout;
-
-        timer = new Timer(true);
-        timer.schedule(this, timeout * 1000, timeout * 1000);
     }
 
     public void put(IP4Address key, MACAddress value) {
-        ResolvedAddress addr = new ResolvedAddress();
-        addr.resolvedAddress = value;
-        addr.resolvedTime = System.currentTimeMillis();
-
-        cache.put(key, addr);
+        cache.put(key, new ResolvedAddress(value, System.currentTimeMillis()));
     }
 
     public MACAddress get(IP4Address key) {
@@ -67,10 +64,9 @@ public class ARPCache extends TimerTask {
     }
 
     /**
-     * Clean records when timeout expired
+     * Clean records
      */
-    @Override
-    public void run() {
+    public void clean() {
         logger.finest("Clean ARP cache job is running.");
 
         if (cache.isEmpty()) {
@@ -91,7 +87,13 @@ public class ARPCache extends TimerTask {
         }
     }
 
-    public Set<IP4Address> getAddresses() {
-        return cache.keySet();
+    /**
+     * Return a snapshot of resolved addresses in the cache.
+     * @return resolved addresses.
+     */    
+    public List<IP4Address> getAddresses() {
+        synchronized(cache) {
+            return new LinkedList<IP4Address>(cache.keySet());
+        }
     }
 }

@@ -22,10 +22,7 @@ package org.netsimulator.net;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.*;
-import org.netsimulator.gui.MainFrame;
 import org.netsimulator.util.IdGenerator;
-import org.netsimulator.util.LogFormatter;
-import org.netsimulator.util.LoggersConfig;
 
 public class Media
 {
@@ -111,6 +108,13 @@ public class Media
 
     public void transmitPacket(NetworkDevice src_dev, Layer2Packet packet)
     {
+        // TODO 
+//        Exception in thread "Thread-5" java.util.ConcurrentModificationException
+//	at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:819)
+//	at java.util.ArrayList$Itr.next(ArrayList.java:791)
+//	at org.netsimulator.net.Media.transmitPacket(Media.java:118)
+        
+        
         NetworkDevice dev;
 
         for(Iterator<NetworkDevice> i=devs.iterator(); i.hasNext(); )
