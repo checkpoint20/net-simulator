@@ -43,7 +43,7 @@ public class ARPCache {
      *
      * @param timeout in seconds. Within this period of time since putting to the cache
      * entities will remain in the cache. If this timeout is exceeded for an entity
-     * it become available for purging from the cache during {@link clean()} invocation.
+     * it becomes available for purging from the cache during {@link clean()} invocation.
      */
     public ARPCache(int timeout) {
         cache = Collections.synchronizedMap(new HashMap<IP4Address, ResolvedAddress>());
