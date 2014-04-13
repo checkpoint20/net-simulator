@@ -26,14 +26,10 @@ import java.util.StringTokenizer;
 
 public class MACAddress implements Address
 {
+    
+    public  static final MACAddress BROADCAST = new MACAddress(0xFFFFFFFFFFFFl);
+    
     private long address = 0;
-    
-    
-    
-    public MACAddress()
-    {
-    }
-    
     
     
     public MACAddress(byte[] address)
@@ -77,6 +73,7 @@ public class MACAddress implements Address
     
     
     
+    @Override
     public byte[] toBytesArray()
     {
         byte buf[] = new byte[6];
@@ -107,7 +104,8 @@ public class MACAddress implements Address
     
     
     
-    public void fromString( String address ) throws AddressException
+    @Override
+    public final void fromString( String address ) throws AddressException
     {
         StringTokenizer tokenizer = new StringTokenizer( address, ":" );
         int n = tokenizer.countTokens();
@@ -148,7 +146,7 @@ public class MACAddress implements Address
     
     
      
-    public void fromByteArray( byte address[] )
+    public final void fromByteArray( byte address[] )
     {
         if( address!=null && address.length==6 )
         {

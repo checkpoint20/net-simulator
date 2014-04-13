@@ -464,6 +464,7 @@ public class EthernetInterface
             try
             {
                 makeArpRequest(ip4address);
+                // Wait the response here?
                 Thread.sleep(100);
             }catch(AddressException ae)
             {
@@ -486,7 +487,7 @@ public class EthernetInterface
     {
         Layer2Packet arpRequestPacket = 
             new Layer2Packet( macAddress, 
-                              new MACAddress("FF:FF:FF:FF:FF:FF"),
+                              MACAddress.BROADCAST,
                               Protocols.ARP, 
                               new ARPPacket(macAddress, address, ARPPacket.REQUEST) );
         
