@@ -25,19 +25,14 @@ public class IP4Address implements Address {
     private static final Logger LOGGER = 
             Logger.getLogger(IP4Address.class.getName());
     
-    private int address = 0;
-
-    public IP4Address() {
-    }
+    private final int address;
 
     public IP4Address( byte[] address ) {
-        fromByteArray( address );
+        this.address = fromByteArray( address );
     }
 
     public IP4Address( IP4Address address ) {
-        if( address != null ) {
-            this.address = address.toIntValue();
-        }
+        this.address = address.toIntValue();
     }
 
     public IP4Address( int address ) {
@@ -45,13 +40,14 @@ public class IP4Address implements Address {
     }
 
     public IP4Address( String address ) throws AddressException {
-        fromString( address );
+        this.address = fromString( address );
     }
 
     public int toIntValue() {
         return address;
     }
 
+    @Override
     public byte[] toBytesArray() {
         byte buf[] = new byte[4];
         buf[0] = (byte) ( ( address >>> 24 ) & 0x000000FF );
@@ -64,36 +60,16 @@ public class IP4Address implements Address {
     @Override
     public String toString() {
         byte buf[] = toBytesArray();
-        return ( buf[0] & 0xFF ) + "." + ( buf[1] & 0xFF ) + "." + ( buf[2] & 0xFF ) + "." + ( buf[3] & 0xFF );
+        StringBuilder res = new StringBuilder();
+        return res.
+                append(buf[0] & 0xFF).append(".").
+                append(buf[1] & 0xFF).append(".").
+                append(buf[2] & 0xFF).append(".").
+                append(buf[3] & 0xFF).toString();
     }
 
-    public static boolean isStringVilid( String address ) {
-        StringTokenizer tokenizer = new StringTokenizer( address, "." );
-        int n = tokenizer.countTokens();
 
-        if( n != 4 ) {
-            return false;
-        }
-
-        byte buf[] = new byte[4];
-
-        for( int i = 0; i != n; i++ ) {
-            try {
-                short sh = Short.parseShort( tokenizer.nextToken() );
-                if( sh < 0 || sh > 255 ) {
-                    return false;
-                } else {
-                    buf[i] = (byte) sh;
-                }
-            } catch( NumberFormatException nfe ) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public void fromString( String address ) throws AddressException {
+    private int fromString( String address ) throws AddressException {
         StringTokenizer tokenizer = new StringTokenizer( address, "." );
         int n = tokenizer.countTokens();
 
@@ -116,18 +92,21 @@ public class IP4Address implements Address {
             }
         }
 
-        fromByteArray( buf );
+        return fromByteArray( buf );
     }
 
-    public void fromByteArray( byte address[] ) {
+    private int fromByteArray( byte address[] ) {
+        int res = 0;
         if( address != null && address.length == 4 ) {
-            this.address = address[3] & 0x000000FF;
-            this.address |= ( ( address[2] << 8 ) & 0x0000FF00 );
-            this.address |= ( ( address[1] << 16 ) & 0x00FF0000 );
-            this.address |= ( ( address[0] << 24 ) & 0xFF000000 );
+            res = address[3] & 0x000000FF;
+            res |= ( ( address[2] << 8 ) & 0x0000FF00 );
+            res |= ( ( address[1] << 16 ) & 0x00FF0000 );
+            res |= ( ( address[0] << 24 ) & 0xFF000000 );
         }
+        return res;
     }
 
+    
     public boolean isClassA() {
         return address >>> 31 == 0;
     }
@@ -136,7 +115,7 @@ public class IP4Address implements Address {
         return address >>> 30 == 2;
     }
 
-    public boolean isClassC() {
+        public boolean isClassC() {
         return address >>> 29 == 6;
     }
 
@@ -163,42 +142,42 @@ public class IP4Address implements Address {
     
     /**
      * There are limited amount of netmask addresses.
-     * 
-        Netmask         Address Prefix Length	Hosts / Class C's / Class B's / Class A's
-        255.255.255.255	/32	1
-        255.255.255.254	/31	2
-        255.255.255.252	/30	4
-        255.255.255.248	/29	8
-        255.255.255.240	/28	16
-        255.255.255.224	/27	32
-        255.255.255.192	/26	64
-        255.255.255.128	/25	128
-        255.255.255.0	/24 (Class C)	256 / 1
-        255.255.254.0	/23	512 / 2
-        255.255.252.0	/22	1,024 / 4
-        255.255.248.0	/21	2,048 / 8
-        255.255.240.0	/20	4,096 / 16
-        255.255.224.0	/19	8,192 / 32
-        255.255.192.0	/18	16,384 / 64
-        255.255.128.0	/17	32,768 / 128
-        255.255.0.0	/16 (Class B)	65,536 / 256 / 1
-        255.254.0.0	/15	131,072 / 512 / 2
-        255.252.0.0	/14	262,144 / 1024 / 4
-        255.248.0.0	/13	524,288 / 2048 / 8
-        255.240.0.0	/12	1,048,576 / 4096 / 16
-        255.224.0.0	/11	2,097,152 / 8129 / 32
-        255.192.0.0	/10	4,194,304 / 16,384 / 64
-        255.128.0.0	/9	8,388,608 / 32,768 / 128
-        255.0.0.0	/8 (Class A)	16,777,216 / 65,536 / 256 / 1
-        254.0.0.0	/7	33,554,432 / 131,072 / 512 / 2
-        252.0.0.0	/6	67,108,864 / 262,144 / 1,024 / 4
-        248.0.0.0	/5	134,217,728 / 524,288 / 2,048 / 8
-        240.0.0.0	/4	268,435,456 / 1,048,576 / 4,096 / 16
-        224.0.0.0	/3	536,870,912 / 2,097,152 / 8,192 / 32
-        192.0.0.0	/2	1,073,741,824 / 4,194,304 / 16,384 / 64
-        128.0.0.0	/1	2,147,483,648 / 8,388,608 / 32,768 / 128
-        0.0.0.0	/0 (The Internet)	4,294,967,296 / 16,777,216 / 65,536 / 256
-     
+     * <pre>
+     *   Netmask                Address Prefix Length	Hosts / Class C's / Class B's / Class A's
+     *   255.255.255.255	/32	1
+     *   255.255.255.254	/31	2
+     *   255.255.255.252	/30	4
+     *   255.255.255.248	/29	8
+     *   255.255.255.240	/28	16
+     *   255.255.255.224	/27	32
+     *   255.255.255.192	/26	64
+     *   255.255.255.128	/25	128
+     *   255.255.255.0          /24 (Class C)	256 / 1
+     *   255.255.254.0          /23	512 / 2
+     *   255.255.252.0          /22	1,024 / 4
+     *   255.255.248.0          /21	2,048 / 8
+     *   255.255.240.0          /20	4,096 / 16
+     *   255.255.224.0      	/19	8,192 / 32
+     *   255.255.192.0          /18	16,384 / 64
+     *   255.255.128.0          /17	32,768 / 128
+     *   255.255.0.0            /16 (Class B)	65,536 / 256 / 1
+     *   255.254.0.0            /15	131,072 / 512 / 2
+     *   255.252.0.0            /14	262,144 / 1024 / 4
+     *   255.248.0.0            /13	524,288 / 2048 / 8
+     *   255.240.0.0            /12	1,048,576 / 4096 / 16
+     *   255.224.0.0            /11	2,097,152 / 8129 / 32
+     *   255.192.0.0            /10	4,194,304 / 16,384 / 64
+     *   255.128.0.0            /9	8,388,608 / 32,768 / 128
+     *   255.0.0.0              /8 (Class A)	16,777,216 / 65,536 / 256 / 1
+     *   254.0.0.0              /7	33,554,432 / 131,072 / 512 / 2
+     *   252.0.0.0              /6	67,108,864 / 262,144 / 1,024 / 4
+     *   248.0.0.0              /5	134,217,728 / 524,288 / 2,048 / 8
+     *   240.0.0.0              /4	268,435,456 / 1,048,576 / 4,096 / 16
+     *   224.0.0.0              /3	536,870,912 / 2,097,152 / 8,192 / 32
+     *   192.0.0.0              /2	1,073,741,824 / 4,194,304 / 16,384 / 64
+     *   128.0.0.0              /1	2,147,483,648 / 8,388,608 / 32,768 / 128
+     *   0.0.0.0                /0 (The Internet)	4,294,967,296 / 16,777,216 / 65,536 / 256
+     *   </pre>
      * @param netmaskAddress
      * @return 
      */
@@ -228,6 +207,9 @@ public class IP4Address implements Address {
     
     /**
      * Trying to evaluate broadcast for given address and netmask.
+     * @param address
+     * @param netmask
+     * @return 
      */
     public static IP4Address evaluateBroadcastAddress( IP4Address address, IP4Address netmask ) {
         int broadcastInt = address.toIntValue() | ~netmask.toIntValue();
@@ -237,6 +219,8 @@ public class IP4Address implements Address {
     /**
      * Trying to evaluate netmask for given address by its class.
      * Returns null if failed to evaluate netmask address.
+     * @param address
+     * @return 
      */
     public static IP4Address evaluateNetmaskAddress(IP4Address address) {
         

@@ -21,7 +21,7 @@ import org.netsimulator.util.IdGenerator;
 public class NullInterface
         implements IP4EnabledInterface {
 
-    private static Logger logger =
+    private static final Logger logger =
             Logger.getLogger( "org.netsimulator.net.NullInterface" );
     private int id;
     private IdGenerator idGenerator;
@@ -53,15 +53,17 @@ public class NullInterface
         this.name = name;
         encap = "Null interface";
         status = Interface.UP;
-        inetAddress = new NullIP4Address();
-        broadcastAddress = new NullIP4Address();
-        netmaskAddress = new NullIP4Address();
+        inetAddress = NullIP4Address.NULL_IP4_ADDRESS;
+        broadcastAddress = NullIP4Address.NULL_IP4_ADDRESS;
+        netmaskAddress = NullIP4Address.NULL_IP4_ADDRESS;
     }
 
+    @Override
     public void setName( String name ) {
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -75,64 +77,78 @@ public class NullInterface
         this.router = router;
     }
 
+    @Override
     public void setStatus( int status ) throws ChangeInterfacePropertyException {
         // always must be UP
     }
 
+    @Override
     public int getStatus() {
         return status;
     }
 
+    @Override
     public void setBandwidth( int bandwidth ) {
         this.bandwidth = bandwidth;
     }
 
+    @Override
     public int getBandwidth() {
         return bandwidth;
     }
 
+    @Override
     public IP4Address getInetAddress() {
         return inetAddress;
     }
 
+    @Override
     public IP4Address getBroadcastAddress() {
         return broadcastAddress;
     }
 
+    @Override
     public IP4Address getNetmaskAddress() {
         return netmaskAddress;
     }
 
+    @Override
     public void setBroadcastAddress( IP4Address address )
             throws ChangeInterfacePropertyException {
     }
 
+    @Override
     public void setNetmaskAddress( IP4Address address )
             throws ChangeInterfacePropertyException {
     }
 
+    @Override
     public void setInetAddress( IP4Address address )
             throws ChangeInterfacePropertyException {
     }
 
+    @Override
     public String getEncap() {
         return encap;
     }
 
 
+    @Override
     public IP4Address getNetworkAddress() {
-        return new NullIP4Address();
+        return NullIP4Address.NULL_IP4_ADDRESS;
     }
 
+    @Override
     public void transmitPacket( IP4Packet packet, IP4Address destination ) {
         
         //////////////////////////////
         //// Do nothing by design ////
         //////////////////////////////
         
-        logger.fine("The packet is dropped: '"+packet+"'.");
+        logger.log(Level.FINE, "The packet is dropped: ''{0}''.", packet);
     }
 
+    @Override
     public int getId() {
         return id;
     }

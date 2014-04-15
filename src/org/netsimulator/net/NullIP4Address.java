@@ -24,22 +24,16 @@ package org.netsimulator.net;
  * @author max
  */
 public class NullIP4Address extends IP4Address {
- 
-   
-    @Override
-    public boolean equals( Object obj ) {
-        return obj instanceof NullIP4Address;
+
+    public static final IP4Address NULL_IP4_ADDRESS = new NullIP4Address(-1);
+    
+    private NullIP4Address(int address) {
+        super(address);
     }
 
     @Override
     public String toString() {
         return "Null address";
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        return hash;
-    }
-
+    
 }
