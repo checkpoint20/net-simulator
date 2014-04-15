@@ -24,30 +24,24 @@ package org.netsimulator.net;
 import java.util.StringTokenizer;
 
 
-public class MACAddress implements Address
+public final class MACAddress implements Address
 {
     
     public  static final MACAddress BROADCAST = new MACAddress(0xFFFFFFFFFFFFl);
     
-    private long address = 0;
+    private final long address;
     
     
     public MACAddress(byte[] address)
     {
-        fromByteArray(address);
+        this.address = fromByteArray(address);
     }
     
-    
-    
+
     public MACAddress(MACAddress address)
     {
-        if( address != null )
-        {
-            this.address = address.toLongValue();
-        }
+        this.address = address.toLongValue();
     }
-    
-    
     
     
     public MACAddress( long address )
@@ -56,21 +50,16 @@ public class MACAddress implements Address
     }
     
     
-    
-    
     public MACAddress( String address ) throws AddressException
     {
-        fromString( address );
+        this.address = fromString( address );
     }
-    
-    
     
     
     public long toLongValue()
     {
         return address;
     }
-    
     
     
     @Override
@@ -101,11 +90,7 @@ public class MACAddress implements Address
     }
     
     
-    
-    
-    
-    @Override
-    public final void fromString( String address ) throws AddressException
+    private long fromString( String address ) throws AddressException
     {
         StringTokenizer tokenizer = new StringTokenizer( address, ":" );
         int n = tokenizer.countTokens();
@@ -137,26 +122,23 @@ public class MACAddress implements Address
             }
         }
         
-        fromByteArray(buf);
+        return fromByteArray(buf);
     }
     
     
-    
-    
-    
-    
-     
-    public final void fromByteArray( byte address[] )
+    private long fromByteArray( byte address[] )
     {
+        long macAddress = 0;
         if( address!=null && address.length==6 )
         {
-            this.address =   (long)address[5]        & 0x0000000000FFl;
-            this.address |= ((long)address[4] << 8)  & 0x00000000FF00l;
-            this.address |= ((long)address[3] << 16) & 0x000000FF0000l;
-            this.address |= ((long)address[2] << 24) & 0x0000FF000000l;
-            this.address |= ((long)address[1] << 32) & 0x00FF00000000l;
-            this.address |= ((long)address[0] << 40) & 0xFF0000000000l;
+            macAddress =   (long)address[5]        & 0x0000000000FFl;
+            macAddress |= ((long)address[4] << 8)  & 0x00000000FF00l;
+            macAddress |= ((long)address[3] << 16) & 0x000000FF0000l;
+            macAddress |= ((long)address[2] << 24) & 0x0000FF000000l;
+            macAddress |= ((long)address[1] << 32) & 0x00FF00000000l;
+            macAddress |= ((long)address[0] << 40) & 0xFF0000000000l;
         }
+        return macAddress;
     }
     
     
