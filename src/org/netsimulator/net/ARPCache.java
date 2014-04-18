@@ -19,6 +19,8 @@
 package org.netsimulator.net;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +28,8 @@ public class ARPCache {
     
     private static final Logger logger = Logger.getLogger( ARPCache.class.getName() );
     private final Map<IP4Address, ResolvedAddress> cache;
+    
+    private final Lock lock = new ReentrantLock();
     
     private static class ResolvedAddress {
         final MACAddress resolvedAddress;
@@ -46,43 +50,49 @@ public class ARPCache {
      * it becomes available for purging from the cache during {@link clean()} invocation.
      */
     public ARPCache(int timeout) {
-        cache = Collections.synchronizedMap(new HashMap<IP4Address, ResolvedAddress>());
+        cache = new HashMap<IP4Address, ResolvedAddress>();
         this.timeout = timeout;
     }
 
     public void put(IP4Address key, MACAddress value) {
-        cache.put(key, new ResolvedAddress(value, System.currentTimeMillis()));
+        if(lock.tryLock()) {
+            try{
+                cache.put(key, new ResolvedAddress(value, System.currentTimeMillis()));
+            } finally {
+                lock.unlock();
+            }
+        }
     }
 
     public MACAddress get(IP4Address key) {
-        ResolvedAddress resolvedAddress = cache.get(key);
-        if (resolvedAddress != null) {
-            return resolvedAddress.resolvedAddress;
-        } else {
-            return null;
+        MACAddress resolvedAddress = null;
+        if(lock.tryLock()) {
+            try {
+                resolvedAddress = cache.get(key) == null ? null : cache.get(key).resolvedAddress;
+            } finally {
+                lock.unlock();
+            }
         }
+        return resolvedAddress;
     }
 
     /**
      * Clean records
      */
     public void clean() {
-        logger.finest("Clean ARP cache job is running.");
-
-        if (cache.isEmpty()) {
-            return;
-        }
-
-        long curtime = System.currentTimeMillis();
-
-        synchronized(cache) {
-            for (IP4Address ip4Address: cache.keySet()) {               
-                ResolvedAddress addr = cache.get(ip4Address);
-                long offset = (curtime - addr.resolvedTime) / 1000;
-                if (offset > timeout) {
-                    logger.log(Level.FINEST, "{0} -> {1} time sinse has been resolved {2}, going to be removed.", new Object[]{ip4Address, addr.resolvedAddress, offset});
-                    cache.remove(ip4Address);
+        if(lock.tryLock()) {
+            logger.finest("Clean ARP cache job is running.");
+            try {
+                for (IP4Address ip4Address: cache.keySet()) {               
+                    ResolvedAddress addr = cache.get(ip4Address);
+                    long offset = (System.currentTimeMillis() - addr.resolvedTime) / 1000;
+                    if (offset > timeout) {
+                        logger.log(Level.FINEST, "{0} -> {1} time sinse has been resolved {2}, going to be removed.", new Object[]{ip4Address, addr.resolvedAddress, offset});
+                        cache.remove(ip4Address);
+                    }
                 }
+            } finally {
+                lock.unlock();
             }
         }
     }
@@ -92,8 +102,13 @@ public class ARPCache {
      * @return resolved addresses.
      */    
     public List<IP4Address> getAddresses() {
-        synchronized(cache) {
-            return new LinkedList<IP4Address>(cache.keySet());
+        List<IP4Address> res = Collections.EMPTY_LIST;
+        lock.lock();
+        try {
+            res = new LinkedList<IP4Address>(cache.keySet());
+        } finally {
+            lock.unlock();
         }
+        return res;
     }
 }

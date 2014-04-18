@@ -29,10 +29,15 @@ package org.netsimulator.util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.*;
 
 public class LogFormatter extends Formatter
 {
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm:ss.S");
+    
     public LogFormatter()
     {
     }
@@ -40,6 +45,8 @@ public class LogFormatter extends Formatter
     public String format(LogRecord record)
     {
         StringBuilder builder =  new StringBuilder().
+            append(DATE_FORMAT.format(new Date(record.getMillis()))).
+            append(" ").
             append(record.getLevel()).
             append(": ").
             append(record.getThreadID()).
@@ -72,10 +79,10 @@ public class LogFormatter extends Formatter
         
         String res = message;
         
-        if (message.indexOf("{0") >= 0 ||
-            message.indexOf("{1") >= 0 ||
-            message.indexOf("{2") >= 0 || 
-            message.indexOf("{3") >= 0) {
+        if (message.contains("{0") ||
+            message.contains("{1") ||
+            message.contains("{2") || 
+            message.contains("{3")) {
             
             res = java.text.MessageFormat.format(message, parameters);
         }
