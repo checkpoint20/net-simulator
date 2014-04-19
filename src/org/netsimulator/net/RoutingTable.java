@@ -26,8 +26,7 @@ import java.util.logging.*;
 
 public class RoutingTable {
 
-    private final List<RoutingTableRow> table = 
-            Collections.synchronizedList(new ArrayList<RoutingTableRow>());
+    private final List<RoutingTableRow> table = new ArrayList<RoutingTableRow>();
 
 
     private static final Logger logger = Logger.getLogger( RoutingTable.class.getName() );
@@ -53,11 +52,13 @@ public class RoutingTable {
     }
 
     public void addRoute( RoutingTableRow row ) {
-        if( !table.contains(row) && table.add( row ) ) {
-            logger.log( Level.FINEST, "{0}: the row:\n{1}\n was added to the routing table", new Object[]{hashCode() + "", row});
-            Collections.sort(table, RoutingTableRow.COMPARATOR);
-        } else {
-            logger.log( Level.FINEST, "{0}: the row:\n{1}\n wasn't added to the routing table", new Object[]{hashCode() + "", row});
+        synchronized(table) {
+            if( table.add( row ) ) {
+                logger.log( Level.FINEST, "{0}: the row:\n{1}\n was added to the routing table", new Object[]{hashCode() + "", row});
+                    Collections.sort(table, RoutingTableRow.COMPARATOR);
+            } else {
+                logger.log( Level.FINEST, "{0}: the row:\n{1}\n wasn't added to the routing table", new Object[]{hashCode() + "", row});
+            }
         }
     }
 
@@ -115,9 +116,7 @@ public class RoutingTable {
         RoutingTableRow res = null;
 
         synchronized( table ) {
-            for( Iterator<RoutingTableRow> i = table.iterator(); i.hasNext();) {
-                RoutingTableRow r = i.next();
-
+            for (RoutingTableRow r : table) {
                 logger.log( Level.FINE, "Processing row: {0}", r);
 
                 if( r.match( destination ) ) {
@@ -143,9 +142,7 @@ public class RoutingTable {
         RoutingTableRow res = null;
 
         synchronized( table ) {
-            for( Iterator<RoutingTableRow> i = table.iterator(); i.hasNext();) {
-                RoutingTableRow r = i.next();
-
+            for (RoutingTableRow r : table) {
                 if( r.getGateway() != null ) {
                     continue;
                 }
@@ -160,18 +157,21 @@ public class RoutingTable {
     }
 
     /**
-     * It is imperative that the user manually synchronize on the returned sorted set 
-     * when iterating over it or any of its subSet, headSet, or tailSet views.
+     * @return Snapshot of routing table.
      */
     public List<RoutingTableRow> getRows() {
-        return table;
+        synchronized(table) {
+            return new LinkedList<RoutingTableRow>(table);
+        }
     }
 
     @Override
     public String toString() {
         StringBuilder curTable = new StringBuilder("Routing table:\n");
-        for (RoutingTableRow routingTableRow : table) {
-            curTable.append(routingTableRow.toString()).append("\n");
+        synchronized(table) {
+            for (RoutingTableRow routingTableRow : table) {
+                curTable.append(routingTableRow.toString()).append("\n");
+            }
         }
         return curTable.toString();
     }
