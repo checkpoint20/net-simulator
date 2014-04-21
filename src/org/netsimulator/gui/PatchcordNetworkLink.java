@@ -29,13 +29,14 @@ import javax.swing.*;
 import org.netsimulator.net.Media;
 import org.netsimulator.net.Packet;
 import org.netsimulator.net.TransferPacketListener;
+import org.netsimulator.util.ConfigurableThreadFactory;
 
 public class PatchcordNetworkLink
         extends NetworkLink
         implements Faderable, TransferPacketListener, ActionListener {
 
     private static final Executor exec = 
-            new ThreadPoolExecutor(20, 1000, 180L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());   
+            new ThreadPoolExecutor(20, 1000, 180L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ConfigurableThreadFactory("Fader-"));   
     private static final ResourceBundle rsc = ResourceBundle.getBundle("netsimulator", Locale.getDefault());
     private static BasicStroke stroke;
     private static BasicStroke selectedStroke;

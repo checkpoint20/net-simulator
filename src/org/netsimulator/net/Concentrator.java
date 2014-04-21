@@ -32,6 +32,5 @@ public interface Concentrator extends NetworkDeviceHolder
     Port getPortById(int id);
     void transportPacket(Port sourcePort, Layer2Packet packet);
     int getId();
-    void setId(int id);   
     void addPort(Port port);
 }

@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.*;
+import org.netsimulator.util.ConfigurableThreadFactory;
 import org.netsimulator.util.IdGenerator;
 
 public class EthernetInterface 
@@ -38,7 +39,7 @@ public class EthernetInterface
     // 10 threads for all the NetSimulator. 
     // Probaly it makes sense to have 1 thread per router?
     private static final ScheduledExecutorService arpCacheCleanExecutorService = 
-                                  Executors.newScheduledThreadPool(10);
+                                  Executors.newScheduledThreadPool(10, new ConfigurableThreadFactory("ArpCacheCleanup-"));
     
     private int id;
     private IdGenerator idGenerator;   

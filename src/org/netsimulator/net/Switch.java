@@ -21,31 +21,41 @@ package org.netsimulator.net;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import org.netsimulator.util.ConfigurableThreadFactory;
 import org.netsimulator.util.IdGenerator;
 
 public class Switch implements Concentrator
 {
     public static final int MACADDRESS_TABLE_CLEAN_TIMEOUT = 10; // sec
-    private static final Logger logger = 
-            Logger.getLogger("org.netsimulator.net.Switch");
+    private static final Logger logger = Logger.getLogger("org.netsimulator.net.Switch");
         
-    private int id;
-    private IdGenerator idGenerator;
-    private ArrayList<Port> ports;
-    private MACAddressesTable table;
+    // 10 threads for all the NetSimulator. 
+    // Probaly it makes sense to have 1 thread per switch?
+    private static final ScheduledExecutorService macTableCleanExecutorService = 
+                                  Executors.newScheduledThreadPool(10, new ConfigurableThreadFactory("MacTableCleanup-"));
+
+    private final int id;
+    private final IdGenerator idGenerator;
+    private final ArrayList<Port> ports;
+    private final MACAddressesTable macTable;
 
 
     /** Create new switch with 16 ports.
+     * @param idGenerator
     */
-    public Switch(IdGenerator idGenerator)
-    {
+    public Switch(IdGenerator idGenerator) {
         this(idGenerator, 16);
     }
 
 
     
     /** Create new switch with n ports.
+     * @param idGenerator
+     * @param n
     */
     public Switch(IdGenerator idGenerator, int n)
     {
@@ -55,6 +65,7 @@ public class Switch implements Concentrator
     
     
     /** Create new switch with n ports and id.
+     * @param idGenerator
     */
     public Switch(IdGenerator idGenerator, int n, int id)
     {
@@ -65,7 +76,14 @@ public class Switch implements Concentrator
         {
             ports.add(new Port(idGenerator, this));
         }
-        table = new MACAddressesTable(MACADDRESS_TABLE_CLEAN_TIMEOUT);
+        macTable = new MACAddressesTable(MACADDRESS_TABLE_CLEAN_TIMEOUT);
+        macTableCleanExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                macTable.clean();
+            }
+        }, MACADDRESS_TABLE_CLEAN_TIMEOUT, MACADDRESS_TABLE_CLEAN_TIMEOUT, TimeUnit.SECONDS);
+        
     }
 
 
@@ -126,7 +144,7 @@ public class Switch implements Concentrator
     
     public MACAddressesTable getMACAddressesTable()
     {
-        return table;
+        return macTable;
     }
     
     
@@ -140,13 +158,13 @@ public class Switch implements Concentrator
         int dstPortId = -1;
         int srcPortId = ports.indexOf( sourcePort );
         
-        table.put( srcAddress, srcPortId );
+        macTable.put( srcAddress, srcPortId );
         if( dstAddress.isBroadcast() )
         {
             sendToAllPorts( srcPortId, packet );
         }else
         {
-            dstPortId = table.get( dstAddress );
+            dstPortId = macTable.get( dstAddress );
         
             if( dstPortId == srcPortId )
             {
@@ -185,12 +203,6 @@ public class Switch implements Concentrator
         return id;
     }
 
-    
-    public void setId(int id)
-    {
-        this.id = id;
-    }
-        
     
     public IdGenerator getIdGenerator()
     {
