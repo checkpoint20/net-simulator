@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author max
  */
 public class ConfigurableThreadFactory implements ThreadFactory {
-    private static final AtomicInteger poolNumber = new AtomicInteger(1);
     private final ThreadGroup group;
     private final AtomicInteger threadNumber = new AtomicInteger(1);
     private final String namePrefix;
