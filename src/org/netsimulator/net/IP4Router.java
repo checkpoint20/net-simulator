@@ -86,7 +86,7 @@ public class IP4Router implements Router {
             ip4packet = (IP4Packet) packet;
 
             if( ip4packet.getSourceAddress() != null ) {
-                ip4packet.setTTL( ip4packet.getTTL() - 1 );
+                ip4packet.decrimentTTL();
             }
 
             if( ip4packet.getTTL() <= 0 ) {

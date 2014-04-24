@@ -21,19 +21,9 @@ package org.netsimulator.net;
 
 public interface Packet
 {
-    void setDestinationAddress(Address address)
-        throws AddressException;
-
     Address getDestinationAddress();
 
-
-    void setSourceAddress(Address address)
-        throws AddressException;
-
     Address getSourceAddress();
-
-
-    void setData(Content data);
 
     Content getData();
 
