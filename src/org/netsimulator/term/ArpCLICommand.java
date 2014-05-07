@@ -22,6 +22,8 @@ package org.netsimulator.term;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.cli.*;
 import org.netsimulator.net.AddressException;
 import org.netsimulator.net.EthernetInterface;
@@ -32,11 +34,14 @@ import org.netsimulator.net.MACAddress;
 
 
 
-public class ArpCLICommand implements CLICommand
+public class ArpCLICommand extends AbstractCommand
 {
+    private static final Logger logger = 
+            Logger.getLogger(ArpCLICommand.class.getName());    
+    
     private Writer writer;
     private static final Options options = new Options();
-    private IP4Router router;
+    private final IP4Router router;
 
     public ArpCLICommand(IP4Router router)
     {
@@ -58,8 +63,7 @@ public class ArpCLICommand implements CLICommand
     }
 
     
-    public int Go(String argv[], String cl)
-    throws IOException
+    public int go() throws IOException
     {
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = null;
@@ -72,7 +76,7 @@ public class ArpCLICommand implements CLICommand
             return -1;
         }catch(ParseException pe)
         {
-            pe.printStackTrace();
+            logger.log(Level.SEVERE, "Unexpected exception.", pe);
             return -1;
         }
  
@@ -138,12 +142,11 @@ public class ArpCLICommand implements CLICommand
     }
 
     
+    @Override
     public void setOutputWriter(Writer writer)
     {
         this.writer = writer;
     }
-    
-    
     
     
     private void printArpCache() throws IOException
@@ -163,7 +166,19 @@ public class ArpCLICommand implements CLICommand
         }
     }
 
-    public void Stop()
+    @Override
+    public void stop()
     {
     }
+    
+    @Override
+    public void run() {
+        try {
+            go();
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Unexpected exception.", ex);
+        } finally {
+            fireExecutionCompleted(0);
+}
+    }        
 }

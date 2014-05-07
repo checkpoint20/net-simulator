@@ -18,15 +18,23 @@
  */
 package org.netsimulator.term;
 
-import java.util.ArrayList;
-import java.util.TreeMap;
-import java.util.StringTokenizer;
-import java.util.logging.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.*;
+import org.netsimulator.util.ConfigurableThreadFactory;
 
-public class Terminal extends TextScreen implements Runnable {
+public class Terminal extends TextScreen implements CommandExecutionCompletedListener {
 
+    private static final ExecutorService commandExecutor = 
+            new ThreadPoolExecutor(20, 1000, 180L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ConfigurableThreadFactory("CommandExecutor-"));  
+    
     public static final String PS1 = "=>";
     public static final String help
             = "Welcome to console of the NET-Simulator virtual device!\n\n"
@@ -39,8 +47,6 @@ public class Terminal extends TextScreen implements Runnable {
     private int x_end = x_orig, y_end = y_orig; // end of edit line
 
     private CLICommand commandToRun = null;
-    private String argv[] = null;
-    private String cl = null;
     private final ArrayList<String> history = new ArrayList<String>();
     private int historyIndex = 0;
 
@@ -198,23 +204,23 @@ public class Terminal extends TextScreen implements Runnable {
 
         String error = null;
         String command = null;
-        String argvLocal[] = null;
+        String argv[] = null;
 
         if (cl != null && (cl = cl.trim()).length() > 0) {
             StringTokenizer t = new StringTokenizer(cl);
             command = t.nextToken();
 
-            argvLocal = new String[t.countTokens()];
+            argv = new String[t.countTokens()];
 
-            for (int i = 0; i != argvLocal.length; i++) {
-                argvLocal[i] = t.nextToken();
+            for (int i = 0; i != argv.length; i++) {
+                argv[i] = t.nextToken();
             }
 
             if (commands.containsKey(command)) {
                 commandToRun = (CLICommand) (commands.get(command));
-                this.argv = argvLocal;
-                this.cl = cl;
-                new Thread(this).start();
+                commandToRun.setInvocationContext(argv, cl);
+                commandToRun.addExecutionCompleteListener(this);
+                commandExecutor.submit(commandToRun);
             } else {
                 error = "Error: Unknown command. Try help to get list of commands.\n";
             }
@@ -245,7 +251,7 @@ public class Terminal extends TextScreen implements Runnable {
                         break;
                     case KeyEvent.VK_C:
                         if (commandToRun != null) {
-                            commandToRun.Stop();
+                            commandToRun.stop();
                         }
                         break;
                     default:
@@ -324,22 +330,15 @@ public class Terminal extends TextScreen implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
-        try {
-            commandToRun.Go(argv, cl);
-        } catch (IOException ioe) {
-            logger.log(Level.SEVERE, "Unexpected exception.", ioe);
-        }
-
-        commandToRun = null;
-        this.argv = null;
-        this.cl = null;
-        printPS1();
-    }
-
     public TreeMap<String, CLICommand> getCommands() {
         return commands;
+    }
+
+    @Override
+    public void executionCompleted(int resultCode) {
+        commandToRun.removeExecutionCompleteListener(this);
+        commandToRun = null;
+        printPS1();
     }
 
 }

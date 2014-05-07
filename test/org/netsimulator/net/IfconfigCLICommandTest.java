@@ -68,7 +68,8 @@ public class IfconfigCLICommandTest {
      */
     @Test
     public void testStatusOnNewDevice() throws IOException {
-        int res = command.Go(new String[]{}, null);
+        command.setInvocationContext(new String[]{}, null);
+        int res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
     }
@@ -80,7 +81,8 @@ public class IfconfigCLICommandTest {
      */
     @Test
     public void testStatusOfNotActiveInterface() throws IOException {
-        int res = command.Go(new String[]{"eth0", "-a"}, null);
+        command.setInvocationContext(new String[]{"eth0", "-a"}, null);
+        int res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
     }
@@ -90,7 +92,8 @@ public class IfconfigCLICommandTest {
      */
     @Test
     public void testNoSuchInterface() throws IOException {
-        int res = command.Go(new String[]{"invalid_ifs_name"}, null);
+        command.setInvocationContext(new String[]{"invalid_ifs_name"}, null);
+        int res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.NO_SUCH_INTERFACE_RETCODE, res);
     }
@@ -100,7 +103,8 @@ public class IfconfigCLICommandTest {
      */
     @Test
     public void testSetAddress() throws IOException, AddressException {
-        int res = command.Go(new String[]{"eth0", "192.168.1.1"}, null);
+        command.setInvocationContext(new String[]{"eth0", "192.168.1.1"}, null);        
+        int res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.DOWN, router.getInterface("eth0").getStatus());
@@ -116,7 +120,8 @@ public class IfconfigCLICommandTest {
      */
     @Test
     public void testSetAddressAndActivate() throws IOException, AddressException {
-        int res = command.Go(new String[]{"eth0", "192.168.1.1", "-up"}, null);
+        command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-up"}, null);
+        int res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
@@ -139,13 +144,15 @@ public class IfconfigCLICommandTest {
      */
     @Test
     public void testInterfaceGoDown() throws IOException, AddressException {
-        int res = command.Go(new String[]{"eth0", "192.168.1.1", "-up"}, null);
+        command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-up"}, null);
+        int res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
         assertEquals(1, router.getRoutingTable().getRows().size());
-       
-        res = command.Go(new String[]{"eth0", "-down"}, null);
+        
+        command.setInvocationContext(new String[]{"eth0", "-down"}, null);
+        res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.DOWN, router.getInterface("eth0").getStatus());
@@ -157,7 +164,8 @@ public class IfconfigCLICommandTest {
      */
     @Test
     public void testSetAddressNetmaskAndActivate() throws IOException, AddressException {
-        int res = command.Go(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.0.0", "-up"}, null);
+        command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.0.0", "-up"}, null);
+        int res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
@@ -179,7 +187,8 @@ public class IfconfigCLICommandTest {
      */
     @Test
     public void testSetAddressNetmaskBroadcastAndActivate() throws IOException, AddressException {
-        int res = command.Go(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.0.0", "-broadcast", "192.168.1.255", "-up"}, null);
+        command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.0.0", "-broadcast", "192.168.1.255", "-up"}, null);
+        int res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
@@ -201,7 +210,8 @@ public class IfconfigCLICommandTest {
      */
     @Test
     public void testSetWrongNetmaskOnInactiveInterface() throws IOException, AddressException {
-        int res = command.Go(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.255.22"}, null);
+        command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.255.22"}, null);
+        int res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.INVALID_NETMASK_RETCODE, res);
         assertEquals(Interface.DOWN, router.getInterface("eth0").getStatus());
@@ -219,7 +229,8 @@ public class IfconfigCLICommandTest {
      */
     @Test
     public void testSetWrongNetmaskOnActiveInterface() throws IOException, AddressException {
-        int res = command.Go(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.255.0", "-up"}, null);
+        command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.255.0", "-up"}, null);
+        int res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
@@ -232,7 +243,8 @@ public class IfconfigCLICommandTest {
         assertEquals(new IP4Address("255.255.255.0"), route.getNetmask());
         assertEquals("eth0", route.getInterface().getName());
 
-        res = command.Go(new String[]{"eth0", "-netmask", "255.255.255.22"}, null);
+        command.setInvocationContext(new String[]{"eth0", "-netmask", "255.255.255.22"}, null);
+        res = command.go();
         printCommandOutput();
         
         assertEquals(IfconfigCLICommand.INVALID_NETMASK_RETCODE, res);
@@ -257,7 +269,8 @@ public class IfconfigCLICommandTest {
      */
     @Test
     public void testSetAddressEqualsToNetmaskActiveInterface() throws IOException, AddressException {
-        int res = command.Go(new String[]{"eth0", "12.0.0.10", "-netmask", "255.255.255.0", "-up"}, null);
+        command.setInvocationContext(new String[]{"eth0", "12.0.0.10", "-netmask", "255.255.255.0", "-up"}, null);
+        int res = command.go();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
@@ -270,7 +283,8 @@ public class IfconfigCLICommandTest {
         assertEquals(new IP4Address("255.255.255.0"), route.getNetmask());
         assertEquals("eth0", route.getInterface().getName());
 
-        res = command.Go(new String[]{"eth0", "1.2.3.0", "-netmask", "255.255.255.0"}, null);
+        command.setInvocationContext(new String[]{"eth0", "1.2.3.0", "-netmask", "255.255.255.0"}, null);
+        res = command.go();
         printCommandOutput();
         
         assertEquals(IfconfigCLICommand.ADDRESS_CANNOT_BE_EQUAL_NETWORK_RETCODE, res);

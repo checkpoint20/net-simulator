@@ -29,7 +29,7 @@ import org.netsimulator.net.IP4Address;
 import org.netsimulator.net.IP4Router;
 import org.netsimulator.net.Protocols;
 
-public class PingCLICommand implements CLICommand, ICMPEchoReplayListener {
+public class PingCLICommand extends AbstractCommand implements ICMPEchoReplayListener {
 
     private static final Logger logger = Logger.getLogger("org.netsimulator.term.PingCLICommand");
 
@@ -42,6 +42,7 @@ public class PingCLICommand implements CLICommand, ICMPEchoReplayListener {
     private boolean timeoutExpired = false;
     private Timer timer;
     private TimerTaskPing timerTask;
+
 
     public PingCLICommand(IP4Router router) {
         this.router = router;
@@ -70,9 +71,7 @@ public class PingCLICommand implements CLICommand, ICMPEchoReplayListener {
         return "ping";
     }
 
-    @Override
-    public int Go(String argv[], String cl)
-            throws IOException {
+    protected int go() throws IOException {
         int ttl = ICMPEchoPacket.DEFAULT_TTL;
         int interval = 1;
         int timeout = 5;
@@ -201,7 +200,7 @@ public class PingCLICommand implements CLICommand, ICMPEchoReplayListener {
     }
 
     @Override
-    public void Stop() {
+    public void stop() {
         go = false;
     }
 
@@ -239,4 +238,14 @@ public class PingCLICommand implements CLICommand, ICMPEchoReplayListener {
         writer.write("PING " + dest + "\nPress Ctrl+C то abort.\n");
     }
 
+    @Override
+    public void run() {
+        try {
+            go();
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Unexpected exception.", ex);
+        } finally {
+            fireExecutionCompleted(0);
+}
+    } 
 }

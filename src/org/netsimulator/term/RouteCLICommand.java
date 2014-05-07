@@ -33,10 +33,10 @@ import org.netsimulator.net.RoutingTable;
 import org.netsimulator.net.RoutingTableRow;
 
 
-public class RouteCLICommand implements CLICommand
+public class RouteCLICommand extends AbstractCommand
 {
     private PrintWriter writer;
-    private IP4Router router;
+    private final IP4Router router;
     private static final Options options = new Options();
 
     private static final Logger logger = 
@@ -81,13 +81,14 @@ public class RouteCLICommand implements CLICommand
      }
 
 
+    @Override
     public String getName()
     {
         return "route";
     }
 
     
-    public int Go(String argv[], String cl)
+    public int go()
     throws IOException    
     {
         CommandLineParser parser = new GnuParser();
@@ -105,7 +106,7 @@ public class RouteCLICommand implements CLICommand
             return -1;
         }catch(ParseException pe)
         {
-            pe.printStackTrace();
+            logger.log(Level.SEVERE, "Unexpected exception.", pe);
             return -1;
         }
  
@@ -166,7 +167,7 @@ public class RouteCLICommand implements CLICommand
                     target = new IP4Address(args[0]);
                 }catch(AddressException ae)
                 {
-                    ae.printStackTrace();
+                    logger.log(Level.SEVERE, "Unexpected exception.", ae);
                     writer.write("Error: Invalid address\n");
                     return -1;
                 }
@@ -205,7 +206,7 @@ public class RouteCLICommand implements CLICommand
                     gw  = new IP4Address(cmd.getOptionValue("gw"));
                 }catch(AddressException ae)
                 {
-                    ae.printStackTrace();
+                    logger.log(Level.SEVERE, "Unexpected exception.", ae);
                     writer.write("Error: Invalid gateway address\n");
                     return -1;
                 }
@@ -219,7 +220,7 @@ public class RouteCLICommand implements CLICommand
                     metric  = Integer.parseInt(cmd.getOptionValue("metric"));
                 }catch(NumberFormatException nfe)
                 {
-                    nfe.printStackTrace();
+                    logger.log(Level.SEVERE, "Unexpected exception.", nfe);
                     writer.write("Error: Invalid metric\n");
                     return -1;
                 }
@@ -237,13 +238,14 @@ public class RouteCLICommand implements CLICommand
                 }
             }
             
-            logger.fine("\n"+
-                "command:   "+command+"\n"+
-                "target:    "+target+"\n"+
-                "netmask:   "+netmask+"\n"+
-                "gateway:   "+gw+"\n"+
-                "metric:    "+metric+"\n"+
-                "interface: "+curInterface);
+            logger.log(Level.FINE,"\n"+
+                "command:   {0}\n"+
+                "target:    {1}\n"+
+                "netmask:   {2}\n"+
+                "gateway:   {3}\n"+
+                "metric:    {4}\n"+
+                "interface: {5}", 
+            new Object[]{command, target, netmask, gw, metric, curInterface});
 
 
             
@@ -269,14 +271,14 @@ public class RouteCLICommand implements CLICommand
                                      curInterface );
                     }catch(Exception e)
                     {
-                        e.printStackTrace();
+                        logger.log(Level.SEVERE, "Unexpected exception.", e);
                         writer.write("Error: "+e.getMessage()+"\n");
                         return -1;
                     }
                 }else
                 {
                     writer.write("Error: the interface "+curInterface+" is not IP4 enabled\n");
-                    logger.fine(hashCode()+": the interface "+curInterface+" is not IP4 enabled");
+                    logger.log(Level.FINE, "Interface {0} is not IP4 enabled", curInterface);
                     return -1;
                 }
                 
@@ -306,7 +308,7 @@ public class RouteCLICommand implements CLICommand
                     if(curInterface==null)
                     {
                         writer.write("Error: network is unreachable\n");
-                        logger.warning(hashCode()+": Internal error! Something wrong with routing table, the interface in the row is null");
+                        logger.warning("Internal error! Something wrong with routing table, the interface in the row is null");
                         return -1;
                     }
                 }    
@@ -322,14 +324,14 @@ public class RouteCLICommand implements CLICommand
                                      curInterface );
                     }catch(Exception e)
                     {
-                        e.printStackTrace();
+                        logger.log(Level.SEVERE, "Unexpected exception.", e);
                         writer.write("Error: "+e.getMessage()+"\n");
                         return -1;
                     }
                 }else
                 {
                     writer.write("Error: the interface "+curInterface+" is not IP4 enabled\n");
-                    logger.fine(hashCode()+": the interface "+curInterface+" is not IP4 enabled");
+                    logger.log(Level.FINE, "Interface {0} is not IP4 enabled", curInterface);
                     return -1;
                 }
                 
@@ -373,14 +375,14 @@ public class RouteCLICommand implements CLICommand
                         }
                     }catch(Exception e)
                     {
-                        e.printStackTrace();
+                        logger.log(Level.SEVERE, "Unexpected exception.", e);
                         writer.write("Error: "+e.getMessage()+"\n");
                         return -1;
                     }
                 }else
                 {
                     writer.write("Error: the interface "+curInterface+" is not IP4 enabled\n");
-                    logger.warning(hashCode()+": the interface "+curInterface+" is not IP4 enabled");
+                    logger.log(Level.WARNING, "Interface {1} is not IP4 enabled", new Object[]{curInterface});
                     return -1;
                 }
                 
@@ -397,18 +399,11 @@ public class RouteCLICommand implements CLICommand
     }
 
     
-    
-    
-    
-    
-    
+    @Override
     public void setOutputWriter(Writer writer)
     {
         this.writer = new PrintWriter(writer);
     }
-    
-    
-    
     
     
     private void showRoutingTable()
@@ -422,10 +417,7 @@ public class RouteCLICommand implements CLICommand
         Collection<RoutingTableRow> rows = router.getRoutingTable().getRows();
         synchronized( rows ) 
         {
-            for( Iterator<RoutingTableRow> i = rows.iterator(); i.hasNext(); )
-            {
-                RoutingTableRow row = i.next();
-
+            for (RoutingTableRow row : rows) {
                 String status = "U";
                 if(row.getGateway()!=null){ status+="G";}
                 if(row.getNetmask().toString().equals("255.255.255.255")){ status+="H";}
@@ -443,12 +435,24 @@ public class RouteCLICommand implements CLICommand
         }
 
         writer.write(stringWriter.toString());
-        logger.info("router id "+router.getId()+":\n"+stringWriter.toString());
+        logger.log(Level.INFO, "router id {0}:\n{1}", new Object[]{router.getId(), stringWriter.toString()});
     }
 
     
     
-    public void Stop()
+    @Override
+    public void stop()
     {
     }
+    
+    @Override
+    public void run() {
+        try {
+            go();
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Unexpected exception.", ex);
+        } finally {
+            fireExecutionCompleted(0);
+}
+    }     
 }

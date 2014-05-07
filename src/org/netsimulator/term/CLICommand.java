@@ -21,10 +21,11 @@ package org.netsimulator.term;
 
 import java.io.*;
 
-public interface CLICommand
-{
+public interface CLICommand extends Runnable {
     String getName();
-    int Go(String argv[], String cl) throws IOException;
+    void setInvocationContext(String argv[], String cl);
     void setOutputWriter(Writer writer);
-    void Stop();
+    void stop();
+    void addExecutionCompleteListener(CommandExecutionCompletedListener listener);
+    void removeExecutionCompleteListener(CommandExecutionCompletedListener listener);
 }

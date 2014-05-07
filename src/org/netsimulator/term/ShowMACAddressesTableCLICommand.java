@@ -23,6 +23,8 @@ import java.io.Writer;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.cli.*;
 import org.netsimulator.net.MACAddress;
 import org.netsimulator.net.MACAddressesTable;
@@ -30,11 +32,14 @@ import org.netsimulator.net.Switch;
 
 
 
-public class ShowMACAddressesTableCLICommand implements CLICommand
+public class ShowMACAddressesTableCLICommand extends AbstractCommand
 {
+    private static final Logger logger = 
+            Logger.getLogger(ShowMACAddressesTableCLICommand.class.getName());    
+    
     private Writer writer;
     private static final Options options = new Options();
-    private Switch _switch_;
+    private final Switch _switch_;
 
     public ShowMACAddressesTableCLICommand(Switch _switch_)
     {
@@ -45,14 +50,14 @@ public class ShowMACAddressesTableCLICommand implements CLICommand
     }
 
 
+    @Override
     public String getName()
     {
         return "mactable";
     }
 
     
-    public int Go(String argv[], String cl)
-    throws IOException
+    public int go() throws IOException
     {
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = null;
@@ -65,7 +70,7 @@ public class ShowMACAddressesTableCLICommand implements CLICommand
             return -1;
         }catch(ParseException pe)
         {
-            pe.printStackTrace();
+            logger.log(Level.SEVERE, "Unexpected exception.", pe);
             return -1;
         }
  
@@ -92,12 +97,11 @@ public class ShowMACAddressesTableCLICommand implements CLICommand
     }
 
     
+    @Override
     public void setOutputWriter(Writer writer)
     {
         this.writer = writer;
     }
-    
-    
     
     
     private void printTable() throws IOException
@@ -113,7 +117,19 @@ public class ShowMACAddressesTableCLICommand implements CLICommand
         }
     }
 
-    public void Stop()
+    @Override
+    public void stop()
     {
     }
+    
+    @Override
+    public void run() {
+        try {
+            go();
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Unexpected exception.", ex);
+        } finally {
+            fireExecutionCompleted(0);
+}
+    } 
 }

@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.cli.*;
 
-public class HelpCLICommand implements CLICommand {
+public class HelpCLICommand  extends AbstractCommand {
 
     private static final Logger logger
             = Logger.getLogger("org.netsimulator.term.HelpCLICommand");
@@ -47,7 +47,7 @@ public class HelpCLICommand implements CLICommand {
     }
 
     @Override
-    public int Go(String argv[], String cl) {
+    public void run() {
         CommandLineParser parser = new PosixParser();
         try {
             CommandLine cmd = parser.parse(options, argv);
@@ -68,9 +68,10 @@ public class HelpCLICommand implements CLICommand {
             }
         } catch (ParseException pe) {
             logger.log(Level.SEVERE, "Unexpected exception.", pe);
+        } finally {
+            fireExecutionCompleted(0);
         }
 
-        return 0;
     }
 
     @Override
@@ -79,7 +80,7 @@ public class HelpCLICommand implements CLICommand {
     }
 
     @Override
-    public void Stop() {
+    public void stop() {
     }
 
     private void printAllCommands() {

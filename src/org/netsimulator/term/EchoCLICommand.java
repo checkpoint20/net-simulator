@@ -16,57 +16,52 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, 
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA 
 */
-
 package org.netsimulator.term;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.cli.*;
 
-public class EchoCLICommand implements CLICommand
-{
-    Writer writer;
+public class EchoCLICommand extends AbstractCommand {
+
+    private static final Logger logger
+            = Logger.getLogger(EchoCLICommand.class.getName());
+
+    private Writer writer;
 
     private static final Options options = new Options();
 
-    public EchoCLICommand()
-    {
+    public EchoCLICommand() {
         Option help = new Option("h", false, "display this help");
         options.addOption(help);
     }
 
-
-    public String getName()
-    {
+    @Override
+    public String getName() {
         return "echo";
     }
 
-    public int Go(String argv[], String cl)
-    throws IOException
-    {
+    private int go() throws IOException {
         CommandLineParser parser = new GnuParser();
         CommandLine cmd = null;
-        try
-        {
-            cmd = parser.parse( options, argv);
-        }catch(MissingArgumentException mae)
-        {
+        try {
+            cmd = parser.parse(options, argv);
+        } catch (MissingArgumentException mae) {
             writer.write("Error: Missing arguments\n");
             return -1;
-        }catch(UnrecognizedOptionException uoe)
-        {
-            writer.write("Error: "+uoe.getMessage()+"\n");
+        } catch (UnrecognizedOptionException uoe) {
+            writer.write("Error: " + uoe.getMessage() + "\n");
             return -1;
-        }catch(ParseException pe)
-        {
-            pe.printStackTrace();
+        } catch (ParseException pe) {
+            logger.log(Level.SEVERE, "Unexpected exception.", pe);
             return -1;
         }
  
-        if(cmd.hasOption("h"))
-        {
+        if (cmd.hasOption("h")) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp(
                     new PrintWriter(writer),
@@ -84,34 +79,36 @@ public class EchoCLICommand implements CLICommand
         
         StringTokenizer t = new StringTokenizer(cl, " \t\n\r\f", true);
 
-        if(t.countTokens() >= 2)
-        {
+        if (t.countTokens() >= 2) {
             t.nextToken();
             t.nextToken();
 
-            String str = "";
-            while (t.hasMoreTokens())
-            {
-                str += t.nextToken();
+            while (t.hasMoreTokens()) {
+                writer.write(t.nextToken());
             }
 
-            try
-            {
-                writer.write(str+"\n");
-            }catch(IOException ioe)
-            {
-                ioe.printStackTrace();
+            writer.write("\n");
             }
-        }
         return 0;
     }
 
-    public void setOutputWriter(Writer writer)
-    {
+    @Override
+    public void setOutputWriter(Writer writer) {
         this.writer = writer;
     }
 
-    public void Stop()
-    {
+    @Override
+    public void stop() {
+    }
+
+    @Override
+    public void run() {
+        try {
+            go();
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Unexpected exception.", ex);
+        } finally {
+            fireExecutionCompleted(0);
+}
     }
 }

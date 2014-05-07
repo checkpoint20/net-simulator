@@ -34,7 +34,7 @@ import org.netsimulator.net.IP4Router;
 import org.netsimulator.net.Interface;
 
 
-public class IfconfigCLICommand implements CLICommand
+public class IfconfigCLICommand extends AbstractCommand
 {
     public static final int ERROR_RETCODE = -1;
     public static final int MISSING_ARGUMENT_RETCODE = -2;
@@ -53,7 +53,7 @@ public class IfconfigCLICommand implements CLICommand
     public static final int OK_RETCODE = 0;
             
     private Writer writer;
-    private IP4Router router;
+    private final IP4Router router;
     private static final Options options = new Options();
 
     private static final Logger LOGGER = 
@@ -93,14 +93,14 @@ public class IfconfigCLICommand implements CLICommand
      }
 
 
+    @Override
     public String getName()
     {
         return "ifconfig";
     }
 
     
-    public int Go(String argv[], String cl)
-    throws IOException    
+    public int go() throws IOException    
     {
         CommandLineParser parser = new GnuParser();
         CommandLine cmd = null;
@@ -117,7 +117,7 @@ public class IfconfigCLICommand implements CLICommand
             return UNRECOGNIZED_OPTION_RETCODE;
         }catch(ParseException pe)
         {
-            pe.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unexpected exception.", pe);
             return PARSE_EXCEPTION_RETCODE;
         }
  
@@ -167,7 +167,7 @@ public class IfconfigCLICommand implements CLICommand
                 address = new IP4Address(args[1]);
             }catch(AddressException ae)
             {
-                ae.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Unexpected exception.", ae);
                 writer.write("Error: Invalid address\n");
                 return INVALID_ADDRESS_RETCODE;
             }
@@ -219,8 +219,7 @@ public class IfconfigCLICommand implements CLICommand
                 writer.write("Error: Inet address not specified\n");
                 return INET_ADDRESS_NOT_SPECIFIED_RETCODE;
             } 
-            else
-            if( address.equals(IP4Address.evaluateNetworkAddress(address, netmask)) ) 
+            else if( address.equals(IP4Address.evaluateNetworkAddress(address, netmask)) ) 
             {
                 writer.write("Error: Inet address cannot be equal network one.\n");
                 return ADDRESS_CANNOT_BE_EQUAL_NETWORK_RETCODE;
@@ -314,6 +313,7 @@ public class IfconfigCLICommand implements CLICommand
 
     
     
+    @Override
     public void setOutputWriter(Writer writer)
     {
         this.writer = writer;
@@ -364,7 +364,19 @@ public class IfconfigCLICommand implements CLICommand
     
     
 
-    public void Stop()
+    @Override
+    public void stop()
     {
     }
+    
+    @Override
+    public void run() {
+        try {
+            go();
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Unexpected exception.", ex);
+        } finally {
+            fireExecutionCompleted(0);
+        }
+    }    
 }
