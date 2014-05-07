@@ -202,7 +202,6 @@ public class Terminal extends TextScreen implements CommandExecutionCompletedLis
             return;
         }
 
-        String error = null;
         String command = null;
         String argv[] = null;
 
@@ -222,15 +221,11 @@ public class Terminal extends TextScreen implements CommandExecutionCompletedLis
                 commandToRun.addExecutionCompleteListener(this);
                 commandExecutor.submit(commandToRun);
             } else {
-                error = "Error: Unknown command. Try help to get list of commands.\n";
-            }
-        }
-
-        if (error != null) {
-            try {
-                writer.write(error);
-            } catch (IOException ioe) {
-                logger.log(Level.SEVERE, "Unexpected exception.", ioe);
+                try {
+                    writer.write("Error: Unknown command. Try help to get list of commands.\n");
+                } catch (IOException ioe) {
+                    logger.log(Level.SEVERE, "Unexpected exception.", ioe);
+                }
             }
         }
     }
