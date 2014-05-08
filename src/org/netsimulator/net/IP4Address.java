@@ -183,13 +183,17 @@ public class IP4Address implements Address {
      */
      public static boolean isNetmaskAddressValid(IP4Address netmaskAddress) {
         boolean res = false;
-        int maskTemplate = 0x80000000; // 10000000 00000000 00000000 00000000 - 128.0.0.0
-        for(int i = 0; i != 32; i++) {
-            if( maskTemplate == netmaskAddress.toIntValue() ) {
-                res = true;
-                break;
-            } else {
-                maskTemplate >>= 1;
+        if(netmaskAddress.toIntValue() == 0) {
+            res = true;
+        } else {
+            int maskTemplate = 0x80000000; // 10000000 00000000 00000000 00000000 - 128.0.0.0
+            for(int i = 0; i != 32; i++) {
+                if( maskTemplate == netmaskAddress.toIntValue() ) {
+                    res = true;
+                    break;
+                } else {
+                    maskTemplate >>= 1;
+                }
             }
         }
         return res;
