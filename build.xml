@@ -35,8 +35,8 @@
         <javac 
             debug="true" 
             encoding="utf8" 
-            target="1.5" 
-            source="1.5" 
+            target="1.6" 
+            source="1.6" 
             deprecation="true" 
             destdir="${classes.dir}" 
             srcdir="${src.dir}">
@@ -59,8 +59,8 @@
         <javac 
             debug="true" 
             encoding="utf8" 
-            target="1.5" 
-            source="1.5" 
+            target="1.6" 
+            source="1.6" 
             deprecation="true" 
             destdir="${classes.dir}" 
             srcdir="${test.dir}">
