@@ -66,6 +66,7 @@ public class IP4AddressTest {
         IP4Address netmaskAddressValid6 = null;
         IP4Address netmaskAddressValid7 = null;
         IP4Address netmaskAddressValid8 = null;
+        IP4Address netmaskAddressValid9 = null;
 
         IP4Address netmaskAddressInvalid1 = null;
         IP4Address netmaskAddressInvalid2 = null;
@@ -79,6 +80,7 @@ public class IP4AddressTest {
             netmaskAddressValid6 = new IP4Address("255.255.224.0");
             netmaskAddressValid7 = new IP4Address("255.255.192.0");
             netmaskAddressValid8 = new IP4Address("255.255.128.0");
+            netmaskAddressValid9 = new IP4Address("0.0.0.0");
 
             netmaskAddressInvalid1 = new IP4Address("255.255.123.0");
             netmaskAddressInvalid2 = new IP4Address("255.255.56.0");
@@ -94,6 +96,7 @@ public class IP4AddressTest {
         assertTrue(IP4Address.isNetmaskAddressValid(netmaskAddressValid6));
         assertTrue(IP4Address.isNetmaskAddressValid(netmaskAddressValid7));
         assertTrue(IP4Address.isNetmaskAddressValid(netmaskAddressValid8));
+        assertTrue(IP4Address.isNetmaskAddressValid(netmaskAddressValid9));
         
         assertFalse(IP4Address.isNetmaskAddressValid(netmaskAddressInvalid1));
         assertFalse(IP4Address.isNetmaskAddressValid(netmaskAddressInvalid2));
