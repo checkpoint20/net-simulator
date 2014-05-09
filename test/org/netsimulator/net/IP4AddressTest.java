@@ -50,6 +50,16 @@ public class IP4AddressTest {
     public void tearDown() {
     }
 
+    
+    /**
+     * Test string parsing.
+     */
+    @Test
+    public void testStringParsing() throws AddressException {
+        IP4Address address = new IP4Address("255.255.255.255");
+        assertEquals(address.toIntValue(), 0xFFFFFFFF);
+    }
+    
 
     /**
      * Test of isNetmaskAddressValid method, of class IP4Address.
@@ -58,6 +68,7 @@ public class IP4AddressTest {
     public void testIsNetmaskAddressValid() {
         System.out.println("isNetmaskAddressValid");
         
+        IP4Address netmaskAddressValid0 = null;
         IP4Address netmaskAddressValid1 = null;
         IP4Address netmaskAddressValid2 = null;
         IP4Address netmaskAddressValid3 = null;
@@ -70,8 +81,10 @@ public class IP4AddressTest {
 
         IP4Address netmaskAddressInvalid1 = null;
         IP4Address netmaskAddressInvalid2 = null;
+        IP4Address netmaskAddressInvalid3 = null;
         
         try {
+            netmaskAddressValid0 = new IP4Address("255.255.255.255");
             netmaskAddressValid1 = new IP4Address("255.255.255.0");
             netmaskAddressValid2 = new IP4Address("255.255.254.0");
             netmaskAddressValid3 = new IP4Address("255.255.252.0");
@@ -84,10 +97,12 @@ public class IP4AddressTest {
 
             netmaskAddressInvalid1 = new IP4Address("255.255.123.0");
             netmaskAddressInvalid2 = new IP4Address("255.255.56.0");
+            netmaskAddressInvalid3 = new IP4Address("255.254.255.0");
         } catch (AddressException ex) {
             ex.printStackTrace();
         }
         
+        assertTrue(IP4Address.isNetmaskAddressValid(netmaskAddressValid0));
         assertTrue(IP4Address.isNetmaskAddressValid(netmaskAddressValid1));
         assertTrue(IP4Address.isNetmaskAddressValid(netmaskAddressValid2));
         assertTrue(IP4Address.isNetmaskAddressValid(netmaskAddressValid3));
@@ -100,5 +115,6 @@ public class IP4AddressTest {
         
         assertFalse(IP4Address.isNetmaskAddressValid(netmaskAddressInvalid1));
         assertFalse(IP4Address.isNetmaskAddressValid(netmaskAddressInvalid2));
+        assertFalse(IP4Address.isNetmaskAddressValid(netmaskAddressInvalid3));
     }
 }
