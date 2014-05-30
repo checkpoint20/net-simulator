@@ -310,7 +310,7 @@ public class EthernetInterface
                         ((IP4Router)router).getRoutingTable().deleteRoute( getNetworkAddress(), 
                                      getNetmaskAddress(),
                                      null,
-                                     1, 
+                                     0, 
                                      this );
                         this.status = status;                        
                     }
