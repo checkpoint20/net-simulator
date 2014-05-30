@@ -291,7 +291,7 @@ public class EthernetInterface
                             ((IP4Router)router).getRoutingTable().addRoute( getNetworkAddress(), 
                                          getNetmaskAddress(),
                                          null,
-                                         1, 
+                                         0, 
                                          this );
                             this.status = status;                            
                         } catch ( NotAllowedAddressException e ) 
