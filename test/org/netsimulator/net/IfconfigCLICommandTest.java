@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.netsimulator.term.CommandExecutionCompletedListener;
 import org.netsimulator.term.IfconfigCLICommand;
 import org.netsimulator.util.IdGenerator;
 
@@ -38,6 +39,7 @@ public class IfconfigCLICommandTest {
     private IP4Router router;
     private IfconfigCLICommand command;
     private StringWriter writer;
+    private int res = IfconfigCLICommand.ERROR_RETCODE;
     
     public IfconfigCLICommandTest() {
     }
@@ -55,6 +57,11 @@ public class IfconfigCLICommandTest {
         router = new IP4Router(new IdGenerator());
         command = new IfconfigCLICommand(router);
         writer = new StringWriter();
+        command.addExecutionCompleteListener(new CommandExecutionCompletedListener() {
+            public void executionCompleted(int i) {
+                res = i;
+            }
+        });
         command.setOutputWriter(writer);
     }
     
@@ -69,7 +76,7 @@ public class IfconfigCLICommandTest {
     @Test
     public void testStatusOnNewDevice() throws IOException {
         command.setInvocationContext(new String[]{}, null);
-        int res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
     }
@@ -82,7 +89,7 @@ public class IfconfigCLICommandTest {
     @Test
     public void testStatusOfNotActiveInterface() throws IOException {
         command.setInvocationContext(new String[]{"eth0", "-a"}, null);
-        int res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
     }
@@ -93,7 +100,7 @@ public class IfconfigCLICommandTest {
     @Test
     public void testNoSuchInterface() throws IOException {
         command.setInvocationContext(new String[]{"invalid_ifs_name"}, null);
-        int res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.NO_SUCH_INTERFACE_RETCODE, res);
     }
@@ -104,15 +111,15 @@ public class IfconfigCLICommandTest {
     @Test
     public void testSetAddress() throws IOException, AddressException {
         command.setInvocationContext(new String[]{"eth0", "192.168.1.1"}, null);        
-        int res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.DOWN, router.getInterface("eth0").getStatus());
         assertEquals(new IP4Address("192.168.1.1"), ((IP4EnabledInterface)router.getInterface("eth0")).getInetAddress());
-        assertEquals(null, ((IP4EnabledInterface)router.getInterface("eth0")).getBroadcastAddress());
-        assertEquals(null, ((IP4EnabledInterface)router.getInterface("eth0")).getNetmaskAddress());
-        assertEquals(null, ((IP4EnabledInterface)router.getInterface("eth0")).getNetworkAddress());
-        assertEquals(0, router.getRoutingTable().getRows().size());
+        assertEquals(new IP4Address("192.168.1.255"), ((IP4EnabledInterface)router.getInterface("eth0")).getBroadcastAddress());
+        assertEquals(new IP4Address("255.255.255.0"), ((IP4EnabledInterface)router.getInterface("eth0")).getNetmaskAddress());
+        assertEquals(new IP4Address("192.168.1.0"), ((IP4EnabledInterface)router.getInterface("eth0")).getNetworkAddress());
+        assertTrue(router.getRoutingTable().getRows().isEmpty());
     }
 
     /**
@@ -121,7 +128,7 @@ public class IfconfigCLICommandTest {
     @Test
     public void testSetAddressAndActivate() throws IOException, AddressException {
         command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-up"}, null);
-        int res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
@@ -145,14 +152,14 @@ public class IfconfigCLICommandTest {
     @Test
     public void testInterfaceGoDown() throws IOException, AddressException {
         command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-up"}, null);
-        int res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
         assertEquals(1, router.getRoutingTable().getRows().size());
         
         command.setInvocationContext(new String[]{"eth0", "-down"}, null);
-        res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.DOWN, router.getInterface("eth0").getStatus());
@@ -165,7 +172,7 @@ public class IfconfigCLICommandTest {
     @Test
     public void testSetAddressNetmaskAndActivate() throws IOException, AddressException {
         command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.0.0", "-up"}, null);
-        int res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
@@ -182,13 +189,56 @@ public class IfconfigCLICommandTest {
         assertEquals("eth0", route.getInterface().getName());
     }    
     
+    
+    /**
+     * => ifconfig eth0 192.168.1.1 -netmask 255.255.0.0 -up
+     * => ifconfig eth0 -netmask 255.255.255.0
+     */
+    @Test
+    public void testChangeNetmask() throws IOException, AddressException {
+        command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.0.0", "-up"}, null);
+        command.run();
+        printCommandOutput();
+        assertEquals(IfconfigCLICommand.OK_RETCODE, res);
+        assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
+        assertEquals(new IP4Address("192.168.1.1"), ((IP4EnabledInterface)router.getInterface("eth0")).getInetAddress());
+        assertEquals(new IP4Address("192.168.255.255"), ((IP4EnabledInterface)router.getInterface("eth0")).getBroadcastAddress());
+        assertEquals(new IP4Address("255.255.0.0"), ((IP4EnabledInterface)router.getInterface("eth0")).getNetmaskAddress());
+        assertEquals(new IP4Address("192.168.0.0"), ((IP4EnabledInterface)router.getInterface("eth0")).getNetworkAddress());
+        assertEquals(1, router.getRoutingTable().getRows().size());
+       
+        RoutingTableRow route = router.getRoutingTable().getRows().iterator().next();
+        assertEquals(new IP4Address("192.168.0.0"), route.getTarget());
+        assertEquals(new IP4Address("255.255.0.0"), route.getNetmask());
+        assertEquals(null, route.getGateway());
+        assertEquals("eth0", route.getInterface().getName());
+        
+        command.setInvocationContext(new String[]{"eth0", "-netmask", "255.255.255.0"}, null);
+        command.run();
+        printCommandOutput();
+        
+        assertEquals(IfconfigCLICommand.OK_RETCODE, res);
+        assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
+        assertEquals(new IP4Address("192.168.1.1"), ((IP4EnabledInterface)router.getInterface("eth0")).getInetAddress());
+        assertEquals(new IP4Address("192.168.1.255"), ((IP4EnabledInterface)router.getInterface("eth0")).getBroadcastAddress());
+        assertEquals(new IP4Address("255.255.255.0"), ((IP4EnabledInterface)router.getInterface("eth0")).getNetmaskAddress());
+        assertEquals(new IP4Address("192.168.1.0"), ((IP4EnabledInterface)router.getInterface("eth0")).getNetworkAddress());
+        assertEquals(1, router.getRoutingTable().getRows().size());
+       
+        route = router.getRoutingTable().getRows().iterator().next();
+        assertEquals(new IP4Address("192.168.1.0"), route.getTarget());
+        assertEquals(new IP4Address("255.255.255.0"), route.getNetmask());
+        assertEquals(null, route.getGateway());
+        assertEquals("eth0", route.getInterface().getName());
+    }    
+    
     /**
      * => ifconfig eth0 192.168.1.1 -netmask 255.255.0.0 -up
      */
     @Test
     public void testSetAddressNetmaskBroadcastAndActivate() throws IOException, AddressException {
         command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.0.0", "-broadcast", "192.168.1.255", "-up"}, null);
-        int res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
@@ -211,7 +261,7 @@ public class IfconfigCLICommandTest {
     @Test
     public void testSetWrongNetmaskOnInactiveInterface() throws IOException, AddressException {
         command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.255.22"}, null);
-        int res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.INVALID_NETMASK_RETCODE, res);
         assertEquals(Interface.DOWN, router.getInterface("eth0").getStatus());
@@ -230,12 +280,13 @@ public class IfconfigCLICommandTest {
     @Test
     public void testSetWrongNetmaskOnActiveInterface() throws IOException, AddressException {
         command.setInvocationContext(new String[]{"eth0", "192.168.1.1", "-netmask", "255.255.255.0", "-up"}, null);
-        int res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
         assertEquals(new IP4Address("192.168.1.1"), ((IP4EnabledInterface)router.getInterface("eth0")).getInetAddress());
         assertEquals(new IP4Address("255.255.255.0"), ((IP4EnabledInterface)router.getInterface("eth0")).getNetmaskAddress());
+        assertEquals(new IP4Address("192.168.1.255"), ((IP4EnabledInterface)router.getInterface("eth0")).getBroadcastAddress());
         assertEquals(1, router.getRoutingTable().getRows().size());
        
         RoutingTableRow route = router.getRoutingTable().getRows().iterator().next();
@@ -244,7 +295,7 @@ public class IfconfigCLICommandTest {
         assertEquals("eth0", route.getInterface().getName());
 
         command.setInvocationContext(new String[]{"eth0", "-netmask", "255.255.255.22"}, null);
-        res = command.go();
+        command.run();
         printCommandOutput();
         
         assertEquals(IfconfigCLICommand.INVALID_NETMASK_RETCODE, res);
@@ -270,7 +321,7 @@ public class IfconfigCLICommandTest {
     @Test
     public void testSetAddressEqualsToNetmaskActiveInterface() throws IOException, AddressException {
         command.setInvocationContext(new String[]{"eth0", "12.0.0.10", "-netmask", "255.255.255.0", "-up"}, null);
-        int res = command.go();
+        command.run();
         printCommandOutput();
         assertEquals(IfconfigCLICommand.OK_RETCODE, res);
         assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
@@ -284,7 +335,7 @@ public class IfconfigCLICommandTest {
         assertEquals("eth0", route.getInterface().getName());
 
         command.setInvocationContext(new String[]{"eth0", "1.2.3.0", "-netmask", "255.255.255.0"}, null);
-        res = command.go();
+        command.run();
         printCommandOutput();
         
         assertEquals(IfconfigCLICommand.ADDRESS_CANNOT_BE_EQUAL_NETWORK_RETCODE, res);
@@ -297,6 +348,48 @@ public class IfconfigCLICommandTest {
         route = router.getRoutingTable().getRows().iterator().next();
         assertEquals(new IP4Address("12.0.0.0"), route.getTarget());
         assertEquals(new IP4Address("255.255.255.0"), route.getNetmask());
+        assertEquals(null, route.getGateway());
+        assertEquals("eth0", route.getInterface().getName());
+    }    
+    
+    
+    /**
+     * => ifconfig eth0 192.168.1.21 -netmask 255.255.255.0 -up
+     * => ifconfig eth0 -netmask 255.255.0.0
+     */
+    @Test
+    public void testBroadcastRecalculationOnAddressUpdate() throws IOException, AddressException {
+        command.setInvocationContext(new String[]{"eth0", "192.168.1.21", "-netmask", "255.255.255.0", "-up"}, null);
+        command.run();
+        printCommandOutput();
+        assertEquals(IfconfigCLICommand.OK_RETCODE, res);
+        assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
+        assertEquals(new IP4Address("192.168.1.21"),  ((IP4EnabledInterface)router.getInterface("eth0")).getInetAddress());
+        assertEquals(new IP4Address("192.168.1.255"), ((IP4EnabledInterface)router.getInterface("eth0")).getBroadcastAddress());
+        assertEquals(new IP4Address("255.255.255.0"), ((IP4EnabledInterface)router.getInterface("eth0")).getNetmaskAddress());
+        assertEquals(new IP4Address("192.168.1.0"),   ((IP4EnabledInterface)router.getInterface("eth0")).getNetworkAddress());
+        assertEquals(1, router.getRoutingTable().getRows().size());
+       
+        RoutingTableRow route = router.getRoutingTable().getRows().iterator().next();
+        assertEquals(new IP4Address("192.168.1.0"), route.getTarget());
+        assertEquals(new IP4Address("255.255.255.0"), route.getNetmask());
+        assertEquals("eth0", route.getInterface().getName());
+
+        command.setInvocationContext(new String[]{"eth0", "-netmask", "255.255.0.0"}, null);
+        command.run();
+        printCommandOutput();
+        
+        assertEquals(IfconfigCLICommand.OK_RETCODE, res);
+        assertEquals(Interface.UP, router.getInterface("eth0").getStatus());
+        assertEquals(new IP4Address("192.168.1.21"),    ((IP4EnabledInterface)router.getInterface("eth0")).getInetAddress());
+        assertEquals(new IP4Address("192.168.255.255"), ((IP4EnabledInterface)router.getInterface("eth0")).getBroadcastAddress());
+        assertEquals(new IP4Address("255.255.0.0"),     ((IP4EnabledInterface)router.getInterface("eth0")).getNetmaskAddress());
+        assertEquals(new IP4Address("192.168.0.0"),     ((IP4EnabledInterface)router.getInterface("eth0")).getNetworkAddress());
+        assertEquals(1, router.getRoutingTable().getRows().size());
+       
+        route = router.getRoutingTable().getRows().iterator().next();
+        assertEquals(new IP4Address("192.168.0.0"), route.getTarget());
+        assertEquals(new IP4Address("255.255.0.0"), route.getNetmask());
         assertEquals(null, route.getGateway());
         assertEquals("eth0", route.getInterface().getName());
     }    

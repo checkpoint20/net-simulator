@@ -50,6 +50,8 @@ public class IfconfigCLICommand extends AbstractCommand
     public static final int INTERFACE_IS_NOT_IP4_ENABLED_RETCODE = -12;              
     public static final int CHANGE_INTERFACE_PROPERTY_EXCEPTION_RETCODE = -13;                
     public static final int INET_ADDRESS_NOT_SPECIFIED_RETCODE = -14;                
+    public static final int NETMASK_ADDRESS_NOT_SPECIFIED_RETCODE = -15;                
+    public static final int BROADCAST_ADDRESS_NOT_SPECIFIED_RETCODE = -16;                
     public static final int OK_RETCODE = 0;
             
     private Writer writer;
@@ -60,8 +62,7 @@ public class IfconfigCLICommand extends AbstractCommand
             Logger.getLogger(IfconfigCLICommand.class.getName());
 
     
-    public IfconfigCLICommand(IP4Router router)
-    {
+    public IfconfigCLICommand(IP4Router router) {
         this.router = router;
 
         Option help = new Option("h", false, "display this help");
@@ -70,13 +71,6 @@ public class IfconfigCLICommand extends AbstractCommand
         options.addOption(all);
         Option statusUp = new Option("up", false, "this flag causes the interface to be activated");
         Option statusDown = new Option("down", false, "this flag causes the driver for this interface to be shut down");
-
-        /* OptionGroup saved the state of selected option from parsing to parsing.
-           There is not a way to clean the state. */
-//        OptionGroup status = new OptionGroup();
-//        status.addOption(statusUp);
-//        status.addOption(statusDown);
-//        options.addOptionGroup(status);
         options.addOption(statusUp);
         options.addOption(statusDown);
         
@@ -100,215 +94,187 @@ public class IfconfigCLICommand extends AbstractCommand
     }
 
     
-    public int go() throws IOException    
+    protected int go() throws IOException    
     {
-        CommandLineParser parser = new GnuParser();
-        CommandLine cmd = null;
-        try
-        {
-            cmd = parser.parse( options, argv);
-        }catch(MissingArgumentException mae)
-        {
-            writer.write("Error: Missing arguments\n");
-            return MISSING_ARGUMENT_RETCODE;
-        }catch(UnrecognizedOptionException uoe)
-        {
-            writer.write("Error: "+uoe.getMessage()+"\n");
-            return UNRECOGNIZED_OPTION_RETCODE;
-        }catch(ParseException pe)
-        {
-            LOGGER.log(Level.SEVERE, "Unexpected exception.", pe);
-            return PARSE_EXCEPTION_RETCODE;
-        }
- 
-        if(cmd.hasOption("h"))
-        {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp(
-                    new PrintWriter(writer),
-                    80,
-                    "ifconfig [-h] [-a] [<interface>] [<address>] [-broadcast <address>] [-netmask <address>] [-up|-down]",
-                    "Configure a network interface. If no arguments are given, "+
-                    "ifconfig displays the status of the currently active interfaces. "+
-                    "If the only <interface> argument is given, ifconfig displays the status of the interface.",
-                    options,
-                    3,
-                    2,
-                    null,
-                    false);
-            
-            return OK_RETCODE;
-        }
-
-
-        String args[] = cmd.getArgs();
-        
-        Interface curInterface = null;
-        IP4Address address = null;
-        IP4Address broadcast = null;
-        IP4Address netmask = null;
-        int updown = Interface.UNKNOWN;
-
-        if(args.length > 0)
-        {
-            curInterface=router.getInterface(args[0]);
-            
-            if(curInterface == null)
-            {
-                writer.write("Error: No such interface\n");
-                return NO_SUCH_INTERFACE_RETCODE;
-            }
-        }    
-            
-        if(args.length == 2)
-        {
-            try
-            {
-                address = new IP4Address(args[1]);
-            }catch(AddressException ae)
-            {
-                LOGGER.log(Level.SEVERE, "Unexpected exception.", ae);
-                writer.write("Error: Invalid address\n");
-                return INVALID_ADDRESS_RETCODE;
-            }
-        }    
-            
-            
-
-        if(cmd.hasOption("broadcast"))
-        {
-            try
-            {
-                broadcast  = new IP4Address(cmd.getOptionValue("broadcast"));
-            }catch(AddressException ae)
-            {
-                LOGGER.log(Level.FINE, "Invalid broadcast address.", ae);
-                writer.write("Error: Invalid broadcast address\n");
-                return INVALID_BROADCAST_RETCODE;
-            }
-            if( address.equals(broadcast) ) 
-            {
-                writer.write("Error: Inet address can not be equal broadcast one.\n");
-                return ADDRESS_CAN_NOT_BE_EQUAL_BROADCAST_RETCODE;                
-            }
-        }        
-
-
-        
-        if(cmd.hasOption("netmask"))
-        {
-            try
-            {
-                netmask  = new IP4Address(cmd.getOptionValue("netmask"));
-            }catch(AddressException ae)
-            {
-                LOGGER.log(Level.FINE, "Invalid netmask address.", ae);
-                writer.write("Error: Invalid netmask address\n");
-                return INVALID_NETMASK_RETCODE;
+        int retCode = OK_RETCODE;
+        try {
+            CommandLineParser parser = new GnuParser();
+            CommandLine cmd = null;
+            try {
+                cmd = parser.parse( options, argv);
+            }catch(MissingArgumentException mae) {
+                throw new IfconfigException("Error: Missing arguments", MISSING_ARGUMENT_RETCODE);
+            }catch(UnrecognizedOptionException uoe) {
+                throw new IfconfigException("Error: "+uoe.getMessage(), UNRECOGNIZED_OPTION_RETCODE);
+            }catch(ParseException pe) {
+                LOGGER.log(Level.SEVERE, "Unexpected exception", pe);
+                throw new IfconfigException("Unexpected exception", PARSE_EXCEPTION_RETCODE);
             }
 
-            if(!IP4Address.isNetmaskAddressValid(netmask)) {
-                writer.write("Error: Invalid netmask address\n");
-                return INVALID_NETMASK_RETCODE;
-            }
-            
-            IP4Address addressToEvaluateNetmask = 
-                    address != null ? address : ((IP4EnabledInterface)curInterface).getInetAddress();
-            if(addressToEvaluateNetmask == null) 
-            {
-                writer.write("Error: Inet address not specified\n");
-                return INET_ADDRESS_NOT_SPECIFIED_RETCODE;
-            } 
-            else if( address.equals(IP4Address.evaluateNetworkAddress(address, netmask)) ) 
-            {
-                writer.write("Error: Inet address cannot be equal network one.\n");
-                return ADDRESS_CANNOT_BE_EQUAL_NETWORK_RETCODE;
-            }
-        }        
+            if(cmd.hasOption("h")) {
+                // Print help.
+                HelpFormatter formatter = new HelpFormatter();
+                formatter.printHelp(
+                        new PrintWriter(writer),
+                        80,
+                        "ifconfig [-h] [-a] <interface> [<address>] [-broadcast <address>] [-netmask <address>] [-up|-down]",
+                        "Configure a network interface. If no arguments are given, "+
+                        "ifconfig displays the status of the currently active interfaces. "+
+                        "If the only <interface> argument is given, ifconfig displays the status of the interface.",
+                        options,
+                        3,
+                        2,
+                        null,
+                        false);
+            } else {
 
-        
-        
-        if(cmd.hasOption("up") && cmd.hasOption("down"))
-        {
-            writer.write("Error: '-up' and '-down' are mutually exclusive options\n");
-            return UP_AND_DOWN_ARE_MUTUALLY_EXCLUSIVE_RETCODE;
-        }else
-        {
-            if(cmd.hasOption("up"))
-            {
-                updown = Interface.UP;
-            }
-            if(cmd.hasOption("down"))
-            {
-                updown = Interface.DOWN;
-            }
-        }
-        
-
-        
-        
-        
-        if( curInterface != null && ( address != null || netmask != null || 
-                broadcast != null || updown != Interface.UNKNOWN ) ) 
-        {
-            // требуется выполнить какое-то действие с конфигурацией 
-            // заданного интерфейса
-        
-            try
-            {
-                // всегда останавливаем предварительно интерфейс
-                int oldStatusValue = curInterface.getStatus();
-                curInterface.setStatus( Interface.DOWN );
-
-                IP4EnabledInterface iface = null;
-                if(curInterface instanceof IP4EnabledInterface)
-                {
-                    iface = (IP4EnabledInterface)curInterface;
-                }else
-                {
-                    writer.write("Error: the interface '"+curInterface+" is not IP4 enabled\n");
-                    return INTERFACE_IS_NOT_IP4_ENABLED_RETCODE;
-                }
-
-                if( address != null ) { iface.setInetAddress(address); }
-                if( netmask != null ) { iface.setNetmaskAddress(netmask); }
-                if( broadcast != null ) { iface.setBroadcastAddress(broadcast); }
-
-                // всегда востанавливаем состояние интерфейса после изменения конфигурации
-                curInterface.setStatus( oldStatusValue );
-
-                if( updown != Interface.UNKNOWN ) { curInterface.setStatus( updown ); }
+                // Parameters analysis.
                 
-            } catch ( ChangeInterfacePropertyException e )
-            {
-                writer.write("Error: "+e.getMessage()+"\n");
-                return CHANGE_INTERFACE_PROPERTY_EXCEPTION_RETCODE;
-            }
-            
-        } else 
-        {
-            // менять конфигурацию не требуется, печатаем инфо
-        
-            if(curInterface!=null && 
-               address==null && updown==Interface.UNKNOWN)
-            {
-                showStatus(curInterface, cmd.hasOption("a"));
-            }
+                String args[] = cmd.getArgs();
 
-            if(curInterface==null)
-            {
-                Interface interfaces[] = router.getInterfaces();
-                for(int i=0; i!=interfaces.length; i++)
-                {
-                    showStatus(interfaces[i], cmd.hasOption("a"));
+                IP4EnabledInterface curInterface = null;
+                IP4Address address = null;
+                IP4Address broadcast = null;
+                IP4Address netmask = null;
+                int updown = Interface.UNKNOWN;
+                boolean netmaskRecalcNeeded = false;
+                boolean broadcastRecalcNeeded = false;
+
+                if(args.length >= 1) {
+                    Interface ifs = router.getInterface(args[0]);
+                    if(ifs == null) {
+                        throw new IfconfigException("Error: No such interface: " + args[0], NO_SUCH_INTERFACE_RETCODE);
+                    } else if (ifs instanceof IP4EnabledInterface) {
+                        curInterface = (IP4EnabledInterface) ifs;
+                    } else {
+                        throw new IfconfigException("Error: the interface '" + ifs.getName() + " is not IP4 enabled", INTERFACE_IS_NOT_IP4_ENABLED_RETCODE);
+                    }
+                }    
+
+                if (args.length >= 2) {
+                    try {
+                        address = new IP4Address(args[1]);
+                        netmaskRecalcNeeded = true;
+                        broadcastRecalcNeeded = true;
+                    } catch (AddressException ae) {
+                        throw new IfconfigException("Error: Invalid address: " + args[1], INVALID_ADDRESS_RETCODE);
+                    }
+                }
+
+                if (cmd.hasOption("broadcast")) {
+                    try {
+                        broadcast = new IP4Address(cmd.getOptionValue("broadcast"));
+                    } catch (AddressException ae) {
+                        throw new IfconfigException("Error: Invalid broadcast address: " + cmd.getOptionValue("broadcast"), INVALID_BROADCAST_RETCODE);
+                    }
+                }
+
+                if (cmd.hasOption("netmask")) {
+                    try {
+                        netmask = new IP4Address(cmd.getOptionValue("netmask"));
+                        broadcastRecalcNeeded = true;
+                    } catch (AddressException ae) {
+                        throw new IfconfigException("Error: Invalid netmask address: " + cmd.getOptionValue("netmask"), INVALID_NETMASK_RETCODE);
+                    }
+
+                    if (!IP4Address.isNetmaskAddressValid(netmask)) {
+                        throw new IfconfigException("Error: Invalid netmask address: " + cmd.getOptionValue("netmask"), INVALID_NETMASK_RETCODE);
+                    }
+                }
+
+                if (cmd.hasOption("up") && cmd.hasOption("down")) {
+                    throw new IfconfigException("Error: '-up' and '-down' are mutually exclusive options", UP_AND_DOWN_ARE_MUTUALLY_EXCLUSIVE_RETCODE);
+                } else {
+                    if (cmd.hasOption("up")) {
+                        updown = Interface.UP;
+                    } else if (cmd.hasOption("down")) {
+                        updown = Interface.DOWN;
+                    } else {
+                        updown = Interface.UNKNOWN;
+                    }
+                }
+    
+                if (curInterface == null) {
+                    // Print statuses of all interfaces.
+                    for (Interface ifs : router.getInterfaces()) {
+                        showStatus(ifs, cmd.hasOption("a"));
+                    }                    
+                } else if ( 
+                        address == null 
+                     && broadcast == null   
+                     && netmask == null   
+                     && updown == Interface.UNKNOWN) {
+                    // Show interface status.
+                    showStatus(curInterface, cmd.hasOption("a"));
+                } else {
+
+                    if(address == null) {
+                        address = curInterface.getInetAddress();
+                        if(address == null) {
+                            throw new IfconfigException("Error: address not specified", INET_ADDRESS_NOT_SPECIFIED_RETCODE);
+                        }
+                    }
+    
+                    if(netmask == null) {
+                        if(netmaskRecalcNeeded) {
+                            netmask = IP4Address.evaluateNetmaskAddress(address);
+                        } else {
+                            netmask = curInterface.getNetmaskAddress();
+                        }
+                        if(netmask == null) {
+                            // Failed to evaluate netmask
+                            throw new IfconfigException("Error: netmask not specified", NETMASK_ADDRESS_NOT_SPECIFIED_RETCODE);
+                        }
+                    } 
+                    
+                    if(netmask.equals(address) ) {
+                        throw new IfconfigException("Error: Inet address cannot be equal network one.", ADDRESS_CANNOT_BE_EQUAL_NETWORK_RETCODE);
+                    } 
+                    
+                    if(broadcast == null) {
+                        if(broadcastRecalcNeeded) {
+                            broadcast = IP4Address.evaluateBroadcastAddress(address, netmask);
+                        } else {
+                            broadcast = curInterface.getBroadcastAddress();
+                        }
+                        if(broadcast == null) {
+                            // Failed to evaluate broadcast
+                            throw new IfconfigException("Error: broadcast not specified", BROADCAST_ADDRESS_NOT_SPECIFIED_RETCODE);
+                        }
+                    } 
+                    
+                    if (broadcast.equals(address)) {
+                        throw new IfconfigException("Error: Inet address can not be equal broadcast one.", ADDRESS_CAN_NOT_BE_EQUAL_BROADCAST_RETCODE);
+                    }            
+                    
+                    if( address.equals(IP4Address.evaluateNetworkAddress(address, netmask)) ) {
+                        throw new IfconfigException("Error: Inet address cannot be equal network one.", ADDRESS_CANNOT_BE_EQUAL_NETWORK_RETCODE );
+                    }
+                    
+                    // Apply the changes in the configuration.
+                    try {
+                        // Stop the interface
+                        int oldStatusValue = curInterface.getStatus();
+                        curInterface.setStatus( Interface.DOWN );
+
+                        curInterface.setInetAddress(address);
+                        curInterface.setNetmaskAddress(netmask);
+                        curInterface.setBroadcastAddress(broadcast);
+
+                        curInterface.setStatus( updown == Interface.UNKNOWN ? oldStatusValue : updown);
+
+                    } catch ( ChangeInterfacePropertyException e ) {
+                        LOGGER.log(Level.SEVERE, "Unexpected exception.", e);
+                        throw new IfconfigException("Error: " + e.getMessage(), CHANGE_INTERFACE_PROPERTY_EXCEPTION_RETCODE);
+                    }
                 }
             }
+
+        } catch (IfconfigException ifce) {
+            writer.write(ifce.getMessage() + "\n");
+            retCode = ifce.getErrorCode();            
         }
-        
-
-        //System.out.println("*** end of ifconfig");
-
-        return OK_RETCODE;    
+        return retCode;    
     }
 
     
@@ -372,11 +338,36 @@ public class IfconfigCLICommand extends AbstractCommand
     @Override
     public void run() {
         try {
-            go();
+            fireExecutionCompleted(go());
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Unexpected exception.", ex);
-        } finally {
-            fireExecutionCompleted(0);
+            fireExecutionCompleted(ERROR_RETCODE);
         }
-    }    
+    }     
+    
+    
+    public static class IfconfigException extends Exception {
+        private int errorCode = OK_RETCODE;
+
+        public IfconfigException() {
+        }
+
+        public IfconfigException(int errorCode) {
+            this.errorCode = errorCode;
+        }
+
+        public IfconfigException(String message, int errorCode) {
+            super(message);
+            this.errorCode = errorCode;
+        }
+
+        public IfconfigException(String message, Throwable cause, int errorCode) {
+            super(message, cause);
+            this.errorCode = errorCode;
+        }
+
+        public int getErrorCode() {
+            return errorCode;
+        }
+    }
 }

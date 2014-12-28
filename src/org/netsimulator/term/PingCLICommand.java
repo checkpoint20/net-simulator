@@ -246,6 +246,6 @@ public class PingCLICommand extends AbstractCommand implements ICMPEchoReplayLis
             logger.log(Level.SEVERE, "Unexpected exception.", ex);
         } finally {
             fireExecutionCompleted(0);
-}
+        }
     } 
 }
