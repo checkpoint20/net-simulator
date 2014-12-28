@@ -40,7 +40,7 @@ public class PingCLICommand extends AbstractCommand implements ICMPEchoReplayLis
     private ICMPEchoPacket icmpEchoReplayPacket = null;
     private final int identifier;
     private boolean timeoutExpired = false;
-    private Timer timer;
+    private static final Timer TIMER = new Timer(true);;
     private TimerTaskPing timerTask;
 
 
@@ -163,9 +163,8 @@ public class PingCLICommand extends AbstractCommand implements ICMPEchoReplayLis
                 router.routePacket(icmpRequest);
 
                 timeoutExpired = false;
-                timer = new Timer(true);
                 timerTask = new TimerTaskPing(this);
-                timer.schedule(timerTask, timeout * 1000);
+                TIMER.schedule(timerTask, timeout * 1000);
                 waitICMPReplay();
 
                 if (icmpEchoReplayPacket == null) {
