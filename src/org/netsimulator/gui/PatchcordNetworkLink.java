@@ -264,17 +264,17 @@ public class PatchcordNetworkLink
     }
 
     @Override
-    public void PacketTransfered(Packet packet) {
+    public void packetTransfered(Packet packet) {
         highlight();
         lowlight();
     }
 
     @Override
-    public void PacketTransmitted(Packet packet) {
+    public void packetTransmitted(Packet packet) {
     }
 
     @Override
-    public void PacketReceived(Packet packet) {
+    public void packetReceived(Packet packet) {
     }
 
     private void processMouseEventWhenPopupTriggerIsTrue(MouseEvent e) {

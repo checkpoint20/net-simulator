@@ -27,6 +27,6 @@ package org.netsimulator.net;
 
 public interface PhisicalLinkSetUpListener
 {
-    void PhisicalLinkSetUp();
-    void PhisicalLinkBrokenDown();
+    void phisicalLinkSetUp();
+    void phisicalLinkBrokenDown();
 }

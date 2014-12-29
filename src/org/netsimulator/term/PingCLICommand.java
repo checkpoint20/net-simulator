@@ -40,7 +40,7 @@ public class PingCLICommand extends AbstractCommand implements ICMPEchoReplayLis
     private ICMPEchoPacket icmpEchoReplayPacket = null;
     private final int identifier;
     private boolean timeoutExpired = false;
-    private static final Timer TIMER = new Timer(true);;
+    private static final Timer TIMER = new Timer("PingResponceTimeoutThread", true);
     private TimerTaskPing timerTask;
 
 

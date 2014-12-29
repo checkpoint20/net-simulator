@@ -27,7 +27,7 @@ package org.netsimulator.net;
 
 public interface TransferPacketListener
 {
-    void PacketTransfered(Packet packet);
-    void PacketTransmitted(Packet packet);
-    void PacketReceived(Packet packet);
+    void packetTransfered(Packet packet);
+    void packetTransmitted(Packet packet);
+    void packetReceived(Packet packet);
 }

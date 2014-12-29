@@ -209,8 +209,8 @@ public class EthernetInterface
         for(Iterator<TransferPacketListener> i = transferPacketListeners.iterator(); i.hasNext(); )
         {
             TransferPacketListener listener = i.next();
-            listener.PacketTransfered(l2packet);
-            listener.PacketReceived(l2packet);
+            listener.packetTransfered(l2packet);
+            listener.packetReceived(l2packet);
         }        
     }
 
@@ -226,8 +226,8 @@ public class EthernetInterface
             for(Iterator<TransferPacketListener> i = transferPacketListeners.iterator(); i.hasNext(); )
             {
                 TransferPacketListener listener = i.next();
-                listener.PacketTransfered(packet);
-                listener.PacketTransmitted(packet);
+                listener.packetTransfered(packet);
+                listener.packetTransmitted(packet);
             }            
         }else
         {

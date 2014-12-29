@@ -81,7 +81,7 @@ public class Media
         {
             for(Iterator<PhisicalLinkSetUpListener> i = listenerPhLink.iterator(); i.hasNext(); )
             {
-                i.next().PhisicalLinkSetUp();
+                i.next().phisicalLinkSetUp();
             }
         }
         logger.fine(hashCode()+": the media was connected to the device: "+device);
@@ -98,7 +98,7 @@ public class Media
         {
             for(Iterator<PhisicalLinkSetUpListener> i = listenerPhLink.iterator(); i.hasNext(); )
             {
-                i.next().PhisicalLinkBrokenDown();
+                i.next().phisicalLinkBrokenDown();
             }
         }
         logger.fine(hashCode()+": the media was disconnected from the device: "+device);
@@ -128,7 +128,7 @@ public class Media
         
         for(Iterator<TransferPacketListener> i = listenerTrPacket.iterator(); i.hasNext(); )
         {
-            i.next().PacketTransfered(packet);
+            i.next().packetTransfered(packet);
         }
     }
     
