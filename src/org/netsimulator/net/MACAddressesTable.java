@@ -24,7 +24,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 package org.netsimulator.net;
 
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -38,7 +41,7 @@ public class MACAddressesTable {
     private final Lock lock = new ReentrantLock();
 
     
-    private static class MappedPort {
+    private static final class MappedPort {
         final int portId;
         final long mappedTime;
         public MappedPort(int portId, long mappedTime) {
@@ -52,51 +55,31 @@ public class MACAddressesTable {
      * @param timeout seconds
      */
     public MACAddressesTable(int timeout) {
-        table = new HashMap<MACAddress, MappedPort>();
+        table = new ConcurrentHashMap<>();
         this.timeout = timeout;
     }
     
 
     public void put(MACAddress key, int value) {
-        if(lock.tryLock()) {
-            try{
-                table.put(key, new MappedPort(value, System.currentTimeMillis()));
-            } finally {
-                lock.unlock();
-            }
-        }
+        table.put(key, new MappedPort(value, System.currentTimeMillis()));
     }
     
     
     public int get(MACAddress key) {
-        int portId = -1;
-        if(lock.tryLock()) {
-            try {
-                portId = table.get(key) == null ? -1 : table.get(key).portId;
-            } finally {
-                lock.unlock();
-            }
-        }
-        return portId;
+        return table.get(key) == null ? -1 : table.get(key).portId;
     }
 
     
     /** Clean records when timeout expired
      */
     public void clean() {
-        if(lock.tryLock()) {        
-            logger.fine("Clean MACAddress table job is running." );
-            try {
-                for (MACAddress mac: table.keySet()) {               
-                    MappedPort port = table.get(mac);
-                    long offset = (System.currentTimeMillis() - port.mappedTime) / 1000;
-                    if (offset > timeout) {
-                        logger.log(Level.FINEST, "{0} -> {1} time sinse has been mapped {2}, going to be removed.", new Object[]{mac, port.portId, offset});
-                        table.remove(mac);
-                    }
-                }
-            } finally {
-                lock.unlock();
+        logger.fine("Clean MACAddress table job is running." );
+        for (MACAddress mac: table.keySet()) {
+            MappedPort port = table.get(mac);
+            long offset = (System.currentTimeMillis() - port.mappedTime) / 1000;
+            if (offset > timeout) {
+                logger.log(Level.FINEST, "{0} -> {1} time sinse has been mapped {2}, going to be removed.", new Object[]{mac, port.portId, offset});
+                table.remove(mac);
             }
         }
     }
@@ -107,14 +90,7 @@ public class MACAddressesTable {
      * @return resolved addresses.
      */      
     public List<MACAddress> getMappedAddresses() {
-        List<MACAddress> res = Collections.EMPTY_LIST;
-        lock.lock();
-        try {
-            res = new LinkedList<MACAddress>(table.keySet());
-        } finally {
-            lock.unlock();
-        }
-        return res;
+        return new LinkedList<>(table.keySet());
     }
     
     
