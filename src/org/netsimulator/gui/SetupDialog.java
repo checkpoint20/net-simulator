@@ -20,13 +20,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 package org.netsimulator.gui;
 
-import java.awt.*;
-import java.util.*;
-import java.util.logging.*;
-import javax.swing.*;
 import org.netsimulator.util.Config;
 import org.netsimulator.util.LoggersConfig;
+
+import javax.swing.*;
 import javax.swing.event.TableModelEvent;
+import java.awt.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 public class SetupDialog 
         extends javax.swing.JDialog
@@ -364,27 +366,6 @@ public class SetupDialog
     
     private void jTableModelActionPerformed(javax.swing.event.TableModelEvent evt)                                                       
     {                                                           
-        // force new Loglevel
-     /*   if( evt.getType() == TableModelEvent.UPDATE &&
-            ( evt.getColumn() == TableModelEvent.ALL_COLUMNS ||
-              evt.getColumn() == LoggersConfig.LEVEL ) )
-        {
-            LoggersConfig cfg = (LoggersConfig) evt.getSource();
-            String loggerName = null;
-            Level level = null;
-
-            for( int i = evt.getFirstRow(); i <= evt.getLastRow(); i++ )
-            {
-                if( evt.getFirstRow() == TableModelEvent.HEADER_ROW ) { continue; }
-                
-                loggerName = (String) cfg.getValueAt( i, LoggersConfig.MODULE );
-                level = (Level) cfg.getValueAt( i, LoggersConfig.LEVEL );
-                Logger.getLogger( loggerName ).setLevel( level );
-                
-                System.out.println("Forced loglevel '"+level+"' for module '"+loggerName+"'.");
-            }
-        }
-       */ 
         // prepare for saving
         updatedConfig.setDebug( loggersConfig );
     } 
