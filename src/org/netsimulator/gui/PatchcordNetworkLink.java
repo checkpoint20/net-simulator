@@ -18,18 +18,22 @@
  */
 package org.netsimulator.gui;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import javax.swing.*;
 import org.netsimulator.net.Media;
 import org.netsimulator.net.Packet;
 import org.netsimulator.net.TransferPacketListener;
 import org.netsimulator.util.ConfigurableThreadFactory;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.concurrent.Executor;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class PatchcordNetworkLink
         extends NetworkLink
@@ -64,7 +68,7 @@ public class PatchcordNetworkLink
     public PatchcordNetworkLink(NetworkPanel panel) {
         this(panel, panel.getIdGenerator().getNextId());
 
-        setMedia(new Media(panel.getIdGenerator()));
+        setMedia(new Media(panel.getIdGenerator().getNextId()));
 
         setPlug1(new PlugNetworkShape(panel, this, 1, panel.getIdGenerator().getNextId()));
         setPlug2(new PlugNetworkShape(panel, this, 2, panel.getIdGenerator().getNextId()));
@@ -91,7 +95,7 @@ public class PatchcordNetworkLink
 
     public final void setMedia(Media media) {
         this.media = media;
-        this.media.addTrnasmitPacketListener(this);
+        this.media.addTransmitPacketListener(this);
     }
 
     public final void setPlug1(PlugNetworkShape plug) {
@@ -252,12 +256,12 @@ public class PatchcordNetworkLink
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == delete_menu_item && popupShown) {
-            media.disconnectAll();
-            plug1.disconnectSocket();
-            plug2.disconnectSocket();
+            plug1.getConnectedSocket().disconnectPlug();
+            plug2.getConnectedSocket().disconnectPlug();
             panel.deletePlug(plug1);
             panel.deletePlug(plug2);
             panel.deleteMedia(this);
+            media.disconnectAll();
         }
 
         popupShown = false;

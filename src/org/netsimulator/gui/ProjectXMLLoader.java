@@ -26,31 +26,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 package org.netsimulator.gui;
 
 
+import org.netsimulator.net.*;
+import org.netsimulator.util.ProjectDTDReferenceResolver;
+import org.netsimulator.util.XMLHelper;
+import org.xml.sax.*;
+import org.xml.sax.helpers.XMLReaderFactory;
+
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JProgressBar;
-import org.netsimulator.net.AddressException;
-import org.netsimulator.net.ChangeInterfacePropertyException;
-import org.netsimulator.net.Concentrator;
-import org.netsimulator.net.EthernetInterface;
-import org.netsimulator.net.Hub;
-import org.netsimulator.net.IP4Address;
-import org.netsimulator.net.IP4Router;
-import org.netsimulator.net.Interface;
-import org.netsimulator.net.MACAddress;
-import org.netsimulator.net.Media;
-import org.netsimulator.net.NetworkDevice;
-import org.netsimulator.net.Port;
-import org.netsimulator.net.RoutingTable;
-import org.netsimulator.net.Switch;
-import org.netsimulator.net.TooManyInterfacesException;
-import org.netsimulator.util.ProjectDTDReferenceResolver;
-import org.netsimulator.util.XMLHelper;
-import org.xml.sax.*;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 public class ProjectXMLLoader implements ContentHandler, Runnable
 {
@@ -946,7 +933,7 @@ public class ProjectXMLLoader implements ContentHandler, Runnable
             throw new SAXException(nfe);
         }
         
-        Media media = new Media(panel.getIdGenerator(), pointsCount, id);
+        Media media = new Media(id);
         currentPatchcord.setMedia(media);
     }    
         

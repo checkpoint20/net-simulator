@@ -18,14 +18,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 
 /*
- * PhisicalLinkSetUpListener
+ * PhysicalLinkSetUpListener
  *
  * Created on April 9, 2006, 0:35
  */
 
 package org.netsimulator.net;
 
-public interface PhisicalLinkSetUpListener
+public interface PhysicalLinkSetUpListener
 {
     void phisicalLinkSetUp();
     void phisicalLinkBrokenDown();

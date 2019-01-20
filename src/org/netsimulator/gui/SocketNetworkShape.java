@@ -18,19 +18,16 @@
  */
 package org.netsimulator.gui;
 
+import org.netsimulator.net.*;
+
 import java.awt.*;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.netsimulator.net.NetworkDevice;
-import org.netsimulator.net.Packet;
-import org.netsimulator.net.PhisicalLinkSetUpListener;
-import org.netsimulator.net.TooManyConnectionsException;
-import org.netsimulator.net.TransferPacketListener;
 
 public class SocketNetworkShape
         extends NetworkShape
-        implements PhisicalLinkSetUpListener, TransferPacketListener {
+        implements PhysicalLinkSetUpListener, TransferPacketListener {
 
     private static final Logger LOGGER
             = Logger.getLogger(Blinker.class.getName());
@@ -133,12 +130,12 @@ public class SocketNetworkShape
     public synchronized void connectPlug(PlugNetworkShape plug) {
         if (connectedPlug == null) {
             connectedPlug = plug;
-            connectedPlug.getNetworkLink().getMedia().addPhisicalLinkSetUpListener(this);
+            connectedPlug.getNetworkLink().getMedia().addPhysicalLinkSetUpListener(this);
             try {
                 connectedPlug.getNetworkLink().getMedia().connectToDevice(getNetworkDevice());
             } catch (TooManyConnectionsException tmce) {
                 LOGGER.log(Level.SEVERE, "Unexpected exception.", tmce);
-                connectedPlug.getNetworkLink().getMedia().removePhisicalLinkSetUpListener(this);
+                connectedPlug.getNetworkLink().getMedia().removePhysicalLinkSetUpListener(this);
             }
         }
     }
@@ -147,7 +144,7 @@ public class SocketNetworkShape
         rxDark = true;
         txDark = true;
         connectedPlug.getNetworkLink().getMedia().
-                removePhisicalLinkSetUpListener(this);
+                removePhysicalLinkSetUpListener(this);
 
         connectedPlug.getNetworkLink().getMedia().
                 disconnectFromDevice(getNetworkDevice());

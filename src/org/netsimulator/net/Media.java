@@ -19,188 +19,96 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 package org.netsimulator.net;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.*;
-import org.netsimulator.util.IdGenerator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
-public class Media
-{
-    private int id;
-    private IdGenerator idGenerator;
-    
-    private ArrayList<NetworkDevice> devs;
-    private int n;
-    private ArrayList<TransferPacketListener> listenerTrPacket;
-    private ArrayList<PhisicalLinkSetUpListener> listenerPhLink;
+public class Media {
+    private static final int MAX_CONNECTED_DEVICES = 2;
+    private static final Logger logger = Logger.getLogger("org.netsimulator.net.Media");
 
-    private static final Logger logger = 
-            Logger.getLogger("org.netsimulator.net.Media");
+    private final int id;
+    private final List<NetworkDevice> devs;
+    private final List<TransferPacketListener> listenerTrPacket;
+    private final List<PhysicalLinkSetUpListener> listenerPhLink;
 
-    
-    public Media(IdGenerator idGenerator)
-    {
-        this(idGenerator, 2, idGenerator.getNextId());
-    }
-
-
-    public Media(IdGenerator idGenerator, int n)
-    {
-        this(idGenerator, n, idGenerator.getNextId());
-    }
-    
-
-    public Media(IdGenerator idGenerator, int n, int id)
-    {
-        this.idGenerator = idGenerator;
+    public Media(int id) {
         this.id = id;
-        devs = new ArrayList<NetworkDevice>();
-        listenerTrPacket = new ArrayList<TransferPacketListener>();
-        listenerPhLink = new ArrayList<PhisicalLinkSetUpListener>();
-        this.n = n;
+        devs = new CopyOnWriteArrayList<>();
+        listenerTrPacket = new CopyOnWriteArrayList<>();
+        listenerPhLink = new CopyOnWriteArrayList<>();
     }
 
-
-
-    public int getPointsCount()
-    {
-        return n;
+    public int getPointsCount() {
+        return MAX_CONNECTED_DEVICES;
     }
-    
-    
+
+    /**
+     * It's not thread safe. That's OK provided that it's invoked from UI only.
+     * @param device a device to connect.
+     * @throws TooManyConnectionsException
+     */
     public void connectToDevice(NetworkDevice device)
-        throws TooManyConnectionsException
-    {
-        if(devs.size() >= n)
+        throws TooManyConnectionsException {
+
+        if(devs.size() >= MAX_CONNECTED_DEVICES)
             throw new TooManyConnectionsException();
 
         device.connectMedia(this);
         devs.add(device);
 
-        if(devs.size() > 1)
-        {
-            for(Iterator<PhisicalLinkSetUpListener> i = listenerPhLink.iterator(); i.hasNext(); )
-            {
-                i.next().phisicalLinkSetUp();
-            }
+        if(devs.size() > 1) {
+            listenerPhLink.forEach(PhysicalLinkSetUpListener::phisicalLinkSetUp);
         }
         logger.fine(hashCode()+": the media was connected to the device: "+device);
     }
 
-
-    
-    public void disconnectFromDevice(NetworkDevice device)
-    {
+    public void disconnectFromDevice(NetworkDevice device) {
         device.disconnectMedia();
         devs.remove(device);
 
-        if(devs.size() == 1)
-        {
-            for(Iterator<PhisicalLinkSetUpListener> i = listenerPhLink.iterator(); i.hasNext(); )
-            {
-                i.next().phisicalLinkBrokenDown();
-            }
+        if(devs.size() == 1) {
+            listenerPhLink.forEach(PhysicalLinkSetUpListener::phisicalLinkBrokenDown);
         }
-        logger.fine(hashCode()+": the media was disconnected from the device: "+device);
+        logger.fine(hashCode()+": the media was disconnected from the device: " + device);
+    }
+
+    public void transmitPacket(NetworkDevice srcDev, Layer2Packet packet) {
+        devs.stream().filter(dev -> dev != srcDev).forEach(dev -> dev.recivePacket(packet));
+        listenerTrPacket.forEach(l -> l.packetTransfered(packet));
     }
     
-    
-
-    public void transmitPacket(NetworkDevice src_dev, Layer2Packet packet)
-    {
-        // TODO 
-//        Exception in thread "Thread-5" java.util.ConcurrentModificationException
-//	at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:819)
-//	at java.util.ArrayList$Itr.next(ArrayList.java:791)
-//	at org.netsimulator.net.Media.transmitPacket(Media.java:118)
-        
-        
-        NetworkDevice dev;
-
-        for(Iterator<NetworkDevice> i=devs.iterator(); i.hasNext(); )
-        {
-            dev = i.next();
-            if(dev != src_dev)
-            {
-                dev.recivePacket(packet);
-            }
-        }
-        
-        for(Iterator<TransferPacketListener> i = listenerTrPacket.iterator(); i.hasNext(); )
-        {
-            i.next().packetTransfered(packet);
-        }
-    }
-    
-    
-    public void addTrnasmitPacketListener(TransferPacketListener listener)
-    {
+    public void addTransmitPacketListener(TransferPacketListener listener) {
         listenerTrPacket.add(listener);
         logger.fine(hashCode()+": TransmitPacketListener added");
     }
-    
 
-    public void removeTrnasmitPacketListener(TransferPacketListener listener)
-    {
+    public void removeTransmitPacketListener(TransferPacketListener listener) {
         listenerTrPacket.remove(listener);
         logger.fine(hashCode()+": TransmitPacketListener removed");
     }
     
-    
-    
-    public void addPhisicalLinkSetUpListener(PhisicalLinkSetUpListener listener)
-    {
+    public void addPhysicalLinkSetUpListener(PhysicalLinkSetUpListener listener) {
         listenerPhLink.add(listener);
-        logger.fine(hashCode()+": PhisicalLinkSetUpListener added");
+        logger.fine(hashCode()+": PhysicalLinkSetUpListener added");
     }
 
-    public void removePhisicalLinkSetUpListener(PhisicalLinkSetUpListener listener)
-    {
+    public void removePhysicalLinkSetUpListener(PhysicalLinkSetUpListener listener) {
         listenerPhLink.remove(listener);
-        logger.fine(hashCode()+": PhisicalLinkSetUpListener removed");
+        logger.fine(hashCode()+": PhysicalLinkSetUpListener removed");
     }
 
-    
-    public Iterator<NetworkDevice> getConnectedDevices()
-    {
-        return devs.iterator();
-    }
-
-
-    public int getCountConnectedDevices()
-    {
-        return devs.size();
-    }
-
-    
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
-    
-    
-    public void setId(int id)
-    {
-        this.id = id;
-    }
-    
-    
-    public IdGenerator getIdGenerator()
-    {
-        return idGenerator;
-    }
-    
-    
-    
-    
-    public void disconnectAll()
-    {
-        for(Iterator<NetworkDevice> i=devs.iterator(); i.hasNext(); )
-        {
-            NetworkDevice dev = i.next();
+
+    public void disconnectAll() {
+        listenerPhLink.clear();
+        listenerTrPacket.clear();
+        devs.forEach(dev -> {
+            logger.fine(hashCode()+": the media was disconnected from the device: " + dev);
             dev.disconnectMedia();
-            i.remove();
-            logger.fine(hashCode()+": the media was disconnected from the device: "+dev);
-        }
+        });
+        devs.clear();
     }
 }
