@@ -20,35 +20,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 package org.netsimulator.util;
 
-public class IdGenerator
-{
-    private int id = 0;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class IdGenerator {
+    private AtomicInteger id = new AtomicInteger(0);
     
-    public IdGenerator()
-    {
+    public IdGenerator() {
     }
 
-    public IdGenerator(int initValue)
-    {
-        id = initValue;
-    }
-    
-    
-    public int getNextId()
-    {
-        return id++;
-    }
-    
-
-    public int getCurrentId()
-    {
-        return id;
+    public IdGenerator(int initValue) {
+        id.set(initValue);
     }
 
+    public int getNextId() {
+        return id.incrementAndGet();
+    }
+
+    public int getCurrentId() {
+        return id.get();
+    }
     
-    
-    public void setInitValue(int initValue)
-    {
-        this.id = initValue;
+    public void setInitValue(int initValue) {
+        id.set(initValue);
     }
 }
