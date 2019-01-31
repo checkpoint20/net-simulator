@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE project SYSTEM "dtd/netsimulator.dtd">
+<!DOCTYPE project PUBLIC "NET-Simulator/dtd/netsimulator.dtd" "http://www.net-simulator.org/dtd/1.0/netsimulator.dtd">
 <project author="" description="" createDate="" currentId="812">
 	<routerShape id="0" name="R0" description="Центральный маршрутизатор организации" x="671" y="307">
 		<IP4Router id="1">
