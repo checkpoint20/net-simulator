@@ -65,6 +65,15 @@
                 </executions>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/about*.html</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
 </project>
