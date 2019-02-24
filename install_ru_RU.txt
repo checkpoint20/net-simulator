@@ -1,0 +1,135 @@
+Системные требования
+
+NET-Simulator написан на Java. Для того что бы просто 
+запустить NET-Simulator вам необходимо установить 
+на свой компьютер Java Runtime Environment (JRE) 8.0. 
+Если вы хотите собрать NET-Simulator из исходников 
+вам понадобиться Java SE Development Kit (JDK) 8.0, 
+а также Apache Maven.
+
+Пример
+
+Что бы запустить NET-Simulator используйте скрипты из 
+домашнего каталога программы run.sh или run.bat для 
+UNIX и Windows соответственно. Для запуска необходимо, 
+что бы JRE была правильно установлена и путь к java 
+находился в переменной окружения PATH.
+
+При первом запуске NET-Simulator по умолчанию открывает 
+проект test.xml из каталога xml в домашнем каталоге 
+программы. Данный проект содержит модельную сеть 
+состоящую из четырех настольных компьютеров, 
+маршрутизатора и свича.
+
+Устройства в сети имеют следующую конфигурацию:
+
+Компьютер 1
+
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:CF:0
+            inet addr:10.0.0.10  Bcast:10.255.255.255  Mask:255.0.0.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+    =>
+    =>route
+    IP routing table
+    Destination     Gateway         Netmask         Flags Metric Iface
+    10.0.0.0        *               255.0.0.0       U     1      eth0
+    11.0.0.0        10.0.0.11       255.0.0.0       UG    0      eth0
+    12.0.0.0        10.0.0.11       255.255.255.0   UG    0      eth0
+
+
+Компьютер 2
+
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:D4:0
+            inet addr:11.0.0.10  Bcast:11.255.255.255  Mask:255.0.0.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+    =>
+    =>route
+    IP routing table
+    Destination     Gateway         Netmask         Flags Metric Iface
+    12.0.0.0        11.0.0.11       255.0.0.0       UG    0      eth0
+    11.0.0.0        *               255.0.0.0       U     1      eth0
+    10.0.0.0        11.0.0.11       255.0.0.0       UG    0      eth0
+
+
+Компьютер 4
+
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:F9:0
+            inet addr:12.0.0.10  Bcast:12.0.0.255  Mask:255.255.255.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+    =>
+    =>route
+    IP routing table
+    Destination     Gateway         Netmask         Flags Metric Iface
+    10.0.0.0        12.0.0.1        255.0.0.0       UG    0      eth0
+    11.0.0.0        12.0.0.1        255.0.0.0       UG    0      eth0
+    12.0.0.0        *               255.255.255.0   U     1      eth0
+
+
+
+Компьютер 5
+
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:FE:0
+            inet addr:12.0.0.11  Bcast:12.0.0.255  Mask:255.255.255.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+    =>
+    =>route
+    IP routing table
+    Destination     Gateway         Netmask         Flags Metric Iface
+    0.0.0.0         12.0.0.1        0.0.0.0         UG    0      eth0
+    12.0.0.0        *               255.255.255.0   U     1      eth0
+
+
+Router 0
+
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:BC:0
+            inet addr:10.0.0.11  Bcast:10.255.255.255  Mask:255.0.0.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+   
+    eth4    Link encap:Ethernet  HWaddr 0:0:0:0:BC:4
+            inet addr:12.0.0.1  Bcast:12.0.0.255  Mask:255.255.255.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+
+     eth7   Link encap:Ethernet  HWaddr 0:0:0:0:BC:7
+            inet addr:11.0.0.11  Bcast:11.255.255.255  Mask:255.0.0.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+
+    =>
+    =>route
+    IP routing table
+    Destination     Gateway         Netmask         Flags Metric Iface
+    10.0.0.0        *               255.0.0.0       U     1      eth0
+    11.0.0.0        *               255.0.0.0       U     1      eth7
+    12.0.0.0        *               255.255.255.0   U     1      eth4
+
+
+Далее, откройте терминал на Компьютере 1 (двойной клик по 
+пиктограмме). "Попингуем" Компьютер 5:
+
+    =>ping 12.0.0.11
+
