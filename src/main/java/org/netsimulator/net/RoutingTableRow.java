@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 
 public class RoutingTableRow
 {
-    public static final Comparator COMPARATOR = new RowComparator();
+    public static final Comparator<RoutingTableRow> COMPARATOR = new RowComparator();
     
     private IP4Address target  = null; 
     private IP4Address netmask = null; 
@@ -138,9 +138,8 @@ public class RoutingTableRow
             this.target = target;
         }
     }
-    
 
-    
+
     static void CheckAddressNetmaskCorrespondence(
             IP4Address address, 
             IP4Address netmask)
@@ -202,10 +201,14 @@ public class RoutingTableRow
             this.iface = iface;
         }
     }
-    
 
-    public boolean match(IP4Address address)
-    {
+    /**
+     * Checks if an address exists in the subnet specified
+     * by this routing table row.
+     * @param address to check against the subnet.
+     * @return true if the address is in the subnet.
+     */
+    public boolean match(IP4Address address) {
         return (address.toIntValue() & netmask.toIntValue()) == target.toIntValue(); 
     }
     
@@ -286,29 +289,8 @@ public class RoutingTableRow
             return res;
         }
 
-        private int countNetmaskLength(IP4Address netmask)
-        {
+        private int countNetmaskLength(IP4Address netmask) {
             return Integer.bitCount(netmask.toIntValue());
-
-            /*
-            int count = 0;
-            int addr = netmask.toIntValue();
-
-            for(count=0; count!=32; count++)
-            {
-               // System.out.println("buf digit : "+Integer.toBinaryString(addr));
-
-                if( (addr | 0) == 0 )
-                {
-                    break;
-                }else
-                {
-                    addr <<= 1;
-                }
-            }
-
-            return count;
-             */
         }
 
     }

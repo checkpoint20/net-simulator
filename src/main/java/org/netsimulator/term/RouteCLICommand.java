@@ -293,7 +293,7 @@ public class RouteCLICommand extends AbstractCommand
                 {
                     // searching throughout straight connected networks here
                     RoutingTableRow rtr = router.getRoutingTable().
-                            routeThroghoutStraightConnectedNetworks(gw);
+                            routeThroughoutStraightConnectedNetworks(gw);
                     
                     if(rtr==null)
                     {

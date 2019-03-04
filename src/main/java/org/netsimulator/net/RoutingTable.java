@@ -27,14 +27,8 @@ import java.util.logging.Logger;
 
 public class RoutingTable {
 
-    private final List<RoutingTableRow> table = new ArrayList<RoutingTableRow>();
-
-
     private static final Logger logger = Logger.getLogger( RoutingTable.class.getName() );
-
-    /** Creates a new instance of RoutingTable */
-    public RoutingTable() {
-    }
+    private List<RoutingTableRow> table = Collections.unmodifiableList(new LinkedList<>());
 
     public void addRoute(
             IP4Address target,
@@ -52,14 +46,14 @@ public class RoutingTable {
         addRoute( row );
     }
 
-    public void addRoute( RoutingTableRow row ) {
-        synchronized(table) {
-            if( table.add( row ) ) {
-                logger.log( Level.FINEST, "{0}: the row:\n{1}\n was added to the routing table", new Object[]{hashCode() + "", row});
-                    Collections.sort(table, RoutingTableRow.COMPARATOR);
-            } else {
-                logger.log( Level.FINEST, "{0}: the row:\n{1}\n wasn't added to the routing table", new Object[]{hashCode() + "", row});
-            }
+    // Visible for testing
+    void addRoute( RoutingTableRow row ) {
+        Set<RoutingTableRow> newTable = new HashSet<>(table);
+        if(newTable.add(row)) {
+            logger.log( Level.FINEST, "{0}: the row:\n{1}\n was added to the routing table", new Object[]{hashCode() + "", row});
+            List<RoutingTableRow> l = new LinkedList<>(newTable);
+            l.sort(RoutingTableRow.COMPARATOR);
+            this.table = Collections.unmodifiableList(l);
         }
     }
 
@@ -70,22 +64,20 @@ public class RoutingTable {
             int metric,
             Interface iface ) {
         int deleted = 0;
-
-        synchronized( table ) {
-            for( Iterator<RoutingTableRow> i = table.iterator(); i.hasNext();) {
-                RoutingTableRow row = i.next();
-
-                if( row.getTarget().equals( target ) &&
-                        row.getNetmask().equals( netmask ) &&
-                        row.getInterface().getName().equals( iface.getName() ) &&
-                        row.getMetric() == metric &&
-                        ( ( row.getGateway() != null && row.getGateway().equals( gateway ) ) ||
-                        ( row.getGateway() == null && gateway == null ) ) ) {
-                    i.remove();
-                    deleted++;
-                }
+        List<RoutingTableRow> newTable = new LinkedList<>(table);
+        for( Iterator<RoutingTableRow> i = newTable.iterator(); i.hasNext();) {
+            RoutingTableRow row = i.next();
+            if( row.getTarget().equals( target ) &&
+                    row.getNetmask().equals( netmask ) &&
+                    row.getInterface().getName().equals( iface.getName() ) &&
+                    row.getMetric() == metric &&
+                    ( ( row.getGateway() != null && row.getGateway().equals( gateway ) ) ||
+                    ( row.getGateway() == null && gateway == null ) ) ) {
+                i.remove();
+                deleted++;
             }
         }
+        this.table = Collections.unmodifiableList(newTable);
         return deleted;
     }
 
@@ -95,38 +87,33 @@ public class RoutingTable {
             IP4Address gateway,
             Interface iface ) {
         int deleted = 0;
-
-        synchronized( table ) {
-            for( Iterator<RoutingTableRow> i = table.iterator(); i.hasNext();) {
-                RoutingTableRow row = i.next();
-
-                if( row.getTarget().equals( target ) &&
-                        row.getNetmask().equals( netmask ) &&
-                        row.getInterface().getName().equals( iface.getName() ) &&
-                        ( ( row.getGateway() != null && row.getGateway().equals( gateway ) ) ||
-                        ( row.getGateway() == null && gateway == null ) ) ) {
-                    i.remove();
-                    deleted++;
-                }
+        List<RoutingTableRow> newTable = new LinkedList<>(table);
+        for(Iterator<RoutingTableRow> i = newTable.iterator(); i.hasNext();) {
+            RoutingTableRow row = i.next();
+            if(row.getTarget().equals(target) &&
+                    row.getNetmask().equals( netmask ) &&
+                    row.getInterface().getName().equals( iface.getName() ) &&
+                    ( ( row.getGateway() != null && row.getGateway().equals( gateway ) ) ||
+                    ( row.getGateway() == null && gateway == null ) ) ) {
+                i.remove();
+                deleted++;
             }
         }
+        this.table = Collections.unmodifiableList(newTable);
         return deleted;
     }
 
-    public RoutingTableRow route( IP4Address destination ) {
+    RoutingTableRow route(IP4Address destination) {
         RoutingTableRow res = null;
+        for (RoutingTableRow r : table) {
+            logger.log( Level.FINE, "Processing row: {0}", r);
 
-        synchronized( table ) {
-            for (RoutingTableRow r : table) {
-                logger.log( Level.FINE, "Processing row: {0}", r);
-
-                if( r.match( destination ) ) {
-                    logger.log( Level.FINE, "the destination {0} matchs the row", destination);
-                    res = r;
-                    break;
-                } else {
-                    logger.log( Level.FINE, "the destination {0} doesn''t match the row", destination);
-                }
+            if( r.match( destination ) ) {
+                logger.log( Level.FINE, "the destination {0} matchs the row", destination);
+                res = r;
+                break;
+            } else {
+                logger.log( Level.FINE, "the destination {0} doesn''t match the row", destination);
             }
         }
         return res;
@@ -139,40 +126,30 @@ public class RoutingTable {
      * @return found route.
      * @see RouteCLICommand
      */
-    public RoutingTableRow routeThroghoutStraightConnectedNetworks( IP4Address destination ) {
+    public RoutingTableRow routeThroughoutStraightConnectedNetworks(IP4Address destination ) {
         RoutingTableRow res = null;
+        for (RoutingTableRow r : table) {
+            if( r.getGateway() != null ) {
+                continue;
+            }
 
-        synchronized( table ) {
-            for (RoutingTableRow r : table) {
-                if( r.getGateway() != null ) {
-                    continue;
-                }
-
-                if( r.match( destination ) ) {
-                    res = r;
-                    break;
-                }
+            if( r.match( destination ) ) {
+                res = r;
+                break;
             }
         }
         return res;
     }
 
-    /**
-     * @return Snapshot of routing table.
-     */
     public List<RoutingTableRow> getRows() {
-        synchronized(table) {
-            return new LinkedList<RoutingTableRow>(table);
-        }
+        return table;
     }
 
     @Override
     public String toString() {
         StringBuilder curTable = new StringBuilder("Routing table:\n");
-        synchronized(table) {
-            for (RoutingTableRow routingTableRow : table) {
-                curTable.append(routingTableRow.toString()).append("\n");
-            }
+        for (RoutingTableRow routingTableRow : table) {
+            curTable.append(routingTableRow.toString()).append("\n");
         }
         return curTable.toString();
     }
