@@ -1,0 +1,410 @@
+<!--#include file="header.shtml" -->
+
+<!--#set var="DOC_LAST_MODIFIED" value="$LAST_MODIFIED" -->
+
+<div style="font-size: 80%; text-align: right;"><a href="/en/cli.shtml">Eng</a> | Rus</div>
+
+<h3>Виртуальные терминалы и&nbsp;интерфейс командной строки.</h3>
+
+<p>
+    Виртуальные устройства в&nbsp;NET-Simulator управляются при помощи интерфейса 
+    командной строки из&nbsp;виртуальных терминалов. Терминал устройства 
+    можно открыть двойным кликом на&nbsp;значке устройства или через контекстное 
+    меню. Поддерживается история команд, клавиши вверх/вниз позволяют 
+    просматривать историю команд.
+</p>
+
+<p>
+    Список команд доступных на&nbsp;данном устройстве можно посмотреть командой <span class="command">help</span>.
+    Сочетание клавиш <span class="command">Ctrl+L</span> очищает терминал. Краткая справка по&nbsp;любой команде
+    выводится при вызове команды с&nbsp;опцией <span class="command">-h</span>.
+</p>
+
+<h4>Справочник команд:</h4>
+
+<a href="#help">help</a><br>
+<a href="#route">route</a><br>
+<a href="#ifconfig">ifconfig</a><br>
+<a href="#ping">ping</a><br>
+<a href="#arp">arp</a><br>
+<a href="#mactable">mactable</a><br>
+<br>
+
+<strong id="help">help</strong>&nbsp;&#8212; выводит список доступных команд.
+<p><span class="command">help [-h]</span></p>
+
+<table border="1" cellspacing="0" cellpadding="2" width="100%">
+    <tr>
+        <th>Опции</th><th>Описание</th>
+    </tr>
+    <tr>
+        <td width="5%" class="command">-h</td><td>Краткая справка.</td>
+    </tr>
+</table>
+<br><br><br>
+
+
+
+<strong id="route">route</strong>&nbsp;&#8212; позволяет управлять таблицей
+ маршрутизации устройств поддерживающих протокол IP4.
+ 
+<p><span class="command">route [-h] [{-add|-del} &lt;target&gt; [-netmask &lt;address&gt;] [-gw &lt;address&gt;] 
+[-metric &lt;M&gt;] [-dev &lt;If&gt;]]</span></p>
+
+<table border="1" cellspacing="0" cellpadding="2" width="100%">
+     <tr>
+        <th>Опции</th><th>Описание</th>
+    </tr>
+    <tr>
+        <td width="5%" class="command">-h</td><td>Краткая справка.</td>
+    </tr>
+    <tr>
+        <td class="command">target</td>
+        <td>
+            Адрес назначения. Назначением может быть подсеть или отдельный узел
+            в&nbsp;зависимости от&nbsp;значения маски подсети. Если маска равна 
+            <span class="command">255.255.255.255</span> или отсутствует совсем
+            назначением будет узел, иначе назначением будет сеть.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-add</td>
+        <td>Добавляет новый маршрут в&nbsp;таблицу маршрутизации.</td>
+    </tr>
+    <tr>
+        <td class="command">-del</td><td>Удаляет маршрут из&nbsp;таблицы маршрутизации.</td>
+    </tr>
+    <tr>
+        <td class="command">-dev&nbsp;&lt;If&gt;</td>
+        <td>
+            Принудительно присоединяет маршрут к&nbsp;определенному интерфейсу.
+            <span class="command">If</span>&nbsp;&#8212;
+            имя интерфейса.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-gw&nbsp;&lt;address&gt;</td>
+        <td>
+            Направляет пакеты по&nbsp;этому маршруту через заданный шлюз. 
+            <span class="command">address</span>&nbsp;&#8212; адрес шлюза.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-netmask&nbsp;&lt;address&gt;</td>
+        <td>
+            Маска подсети используемая совместно с&nbsp;адресом назначения при добавлении маршрута. 
+            <span class="command">address</span>&nbsp;&#8212; маска. Если маска не&nbsp;задана явно
+            подразумевается <span class="command">255.255.255.255</span>.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-metric&nbsp;&lt;M&gt;</td>
+        <td>
+            Метрика используемая в&nbsp;данном маршруте. 
+            <span class="command">M</span>&nbsp;&#8212; целое число большее или равное нулю.
+        </td>
+    </tr>
+</table>
+
+ <p>
+    Если <span class="command">route</span> вызывается без&nbsp;параметров, 
+    то&nbsp;команда выводит на&nbsp;экран таблицу маршрутизации:
+ </p>
+ <pre>
+     =>route
+     IP routing table
+     Destination       Gateway       Netmask          Flags   Metric  Iface
+     10.0.0.0          *             255.0.0.0        U       1       eth0
+     11.0.0.0          10.0.0.10     255.0.0.0        UG      1       eth0
+     192.168.120.1     10.0.0.10     255.255.255.255  UGH     1       eth0
+ </pre>
+ <p>
+    Если маршрут не&nbsp;использует шлюз, вместо адреса шлюза выводиться 
+    <span class="command">*</span>. <span class="command">Flags</span>
+    может содержать значение: <span class="command">U</span>&nbsp;&#8212; 
+    маршрут активен, <span class="command">G</span>&nbsp;&#8212; 
+    маршрут использует шлюз, <span class="command">H</span>&nbsp;&#8212; 
+    назначением является узел.
+ </p>
+ 
+ <p>
+    Примеры:
+ </p>
+<pre>
+     =>route -add 192.168.120.0 -netmask 255.255.255.0 -dev eth0
+     =>route
+     IP routing table
+     Destination       Gateway          Netmask          Flags   Metric  Iface
+     192.168.120.0     *                255.255.255.0    U       1       eth0
+     =>
+     =>route -add 192.168.121.10 -gw 192.168.120.10 
+     =>route
+     IP routing table
+     Destination       Gateway          Netmask          Flags   Metric  Iface
+     192.168.120.0     *                255.255.255.0    U       1       eth0
+     192.168.121.10    192.168.120.1    255.255.255.255  UGH     1       eth0
+     =>
+     
+ </pre> 
+<br><br>
+
+
+<strong id="ifconfig">ifconfig</strong>&nbsp;&#8212; конфигурирует сетевые интерфейсы.
+
+<p>
+    <span class="command">ifconfig [-h] [-a] [&lt;interface&gt;] [&lt;address&gt;] 
+    [-broadcast &lt;address&gt;] [-netmask &lt;address&gt;] [-up|-down]</span>
+</p>
+
+<table border="1" cellspacing="0" cellpadding="2" width="100%">
+     <tr>
+        <th>Опции</th><th>Описание</th>
+    </tr>
+    <tr>
+        <td width="5%" class="command">-h</td><td>Краткая справка.</td>
+    </tr>
+    <tr>
+        <td class="command">-a</td>
+        <td>
+            Показывать информацию о&nbsp;всех интерфейсах. Если данная опция
+            отсутствует выводится информация только об&nbsp;активных интерфейсах.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">interface</td>
+        <td>Конфигурировать или показать информацию только о&nbsp;заданном интерфейсе.</td>
+    </tr>
+    <tr>
+        <td class="command">address</td><td>IP-адрес присваиваемый интерфейсу.</td>
+    </tr>
+    <tr>
+        <td class="command">-broadcast&nbsp;&lt;address&gt;</td>
+        <td>
+            Широковещательный адрес присваиваемый интерфейсу.
+            <span class="command">address</span>&nbsp;&#8212; широковещательный адрес.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-netmask&nbsp;&lt;address&gt;</td>
+        <td>
+            Маска подсети используемая совместно с&nbsp;адресом. 
+            <span class="command">address</span>&nbsp;&#8212; маска. Если маска не&nbsp;задана явно,
+            маска принимается равной стандартным значения для стандартных классов подсетей A, B и C.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-up</td>
+        <td>
+            Активирует интерфейс. При активизации интерфейса для него 
+            автоматически добавляется соответствующий маршрут в&nbsp;таблице 
+            маршрутизации.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-down</td>
+        <td>
+            Деактивирует интерфейс. При деактивации интерфейса соответствующий 
+            маршрут автоматически удаляется из&nbsp;таблицы маршрутизации.
+        </td>
+    </tr>
+</table>
+
+ <p>
+    Если <span class="command">ifconfig</span> вызывается без параметров, 
+    то&nbsp;команда выводит на&nbsp;экран данные о&nbsp;состоянии всех активных интерфейсов:
+ </p>
+ <pre>
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:CF:0
+            inet addr:192.168.120.1  Bcast:192.168.120.255  Mask:255.255.255.0
+            UP
+            RX packets:23 errors:0 dropped:0
+            TX packets:23 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+ </pre>
+ <p>
+ <span class="command">HWaddr</span>&nbsp;&#8212; уникальный 6-ти байтовый адрес
+ интерфейса, аналогичный MAC-адресу в&nbsp;Ethernet сетях. Назначается автоматически.
+ </p>
+ 
+ <p>
+    Примеры:
+ </p>
+<pre>
+    =>ifconfig eth0 192.168.120.1 -up
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:CF:0
+            inet addr:192.168.120.1  Bcast:192.168.120.255  Mask:255.255.255.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0    
+ </pre> 
+<br><br>
+
+
+
+<strong id="ping">ping</strong>&nbsp;&#8212; использует ICMP протокол что&nbsp;бы проверить
+достижимость интерфейса удаленного узла. <span class="command">ping</span>
+посылает удаленному узлу ICMP ECHO_REQUEST и&nbsp;ожидает в&nbsp;течении определенного 
+промежутка времени ICMP ECHO_RESPONSE. В&nbsp;случае получения ответа выводит
+данные о&nbsp;прохождении ICMP-пакета по&nbsp;сети.
+
+<p>
+    <span class="command">ping [-h] [-i &lt;interval&gt;] [-t &lt;ttl&gt;] &lt;destination&gt;</span>
+</p>
+
+<table border="1" cellspacing="0" cellpadding="2" width="100%">
+     <tr>
+        <th>Опции</th><th>Описание</th>
+    </tr>
+    <tr>
+        <td width="5%" class="command">-h</td><td>Краткая справка.</td>
+    </tr>
+    <tr>
+        <td class="command">-i&nbsp;&lt;interval&gt;</td>
+        <td>
+            Задает частоту ICMP-запросов. 
+            <span class="command">interval</span>&nbsp;&#8212; интервал между 
+            запросами в&nbsp;секундах.
+            По&nbsp;умолчанию отсылается один пакет 
+            в&nbsp;секунду.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-t&nbsp;&lt;ttl&gt;</td>
+        <td>
+            Задает значение атрибута Time&nbsp;to&nbsp;Live в&nbsp;генерируемых IP-пакетах. 
+            <span class="command">ttl</span>&nbsp;&#8212; целое число 0-255.
+            По&nbsp;умолчанию TTL равно 64.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">destination</td>
+        <td>IP-адрес исследуемого узла</td>
+    </tr>
+</table>
+
+  <p>
+    Примеры:
+ </p>
+<pre>
+    =>ping 192.168.120.1
+    PING 192.168.120.1
+    64 bytes from 192.168.120.1: icmp_seq=0 ttl=62 time=477 ms
+    64 bytes from 192.168.120.1: icmp_seq=1 ttl=62 time=435 ms
+    64 bytes from 192.168.120.1: icmp_seq=2 ttl=62 time=234 ms
+    64 bytes from 192.168.120.1: icmp_seq=3 ttl=62 time=48 ms
+    64 bytes from 192.168.120.1: icmp_seq=4 ttl=62 time=87 ms
+    64 bytes from 192.168.120.1: icmp_seq=5 ttl=62 time=56 ms
+ </pre> 
+ 
+ <p>
+    <span class="command">ping</span> выводит результат исследования удаленного узла в 
+    следующем формате:
+    <span class="command">64 bytes from 192.168.120.1</span>&nbsp;&#8212;
+    размер полученного ответа и&nbsp;адрес источника ответа. В&nbsp;NET-Simulator размер
+    пакета имеет условное значение и всегда равен 64B. 
+    <span class="command">icmp_seq=0</span>&nbsp;&#8212; номер пакета. Каждый 
+    запрос содержит свой номер, как правило формируется инкрементно. 
+    <span class="command">ping</span> выводит номер пакета из&nbsp;каждого 
+    полученного ответа. <span class="command">ttl=62</span>&nbsp;&#8212; 
+    значение TTL из&nbsp;полученного ответа. 
+    <span class="command">time=48 ms</span>&nbsp;&#8212; время прохождения
+    пакетом полного маршрута (туда и&nbsp;обратно, round-trip time) в&nbsp;миллисекундах.
+ </p>
+
+ <p>
+    Будучи запущеной команда выполняется до тех пор, пока не будет прервана
+    комбинацией клавиш Ctrl-C.
+ </p>
+<br><br>
+
+
+
+<strong id="arp">arp</strong>&nbsp;&#8212; показывает ARP-таблицу устройства. 
+Кроме того опция <span class="command">-r</span> позволяет сформировать запрос 
+для определения
+MAC-адреса по&nbsp;явно заданному IP-адресу. Эта функция обычно отсутствует
+в реальных устройствах, в&nbsp;NET-Simulator она добавлена для наглядности при изучении
+протоколов канального и&nbsp;сетевого уровня.
+ 
+<p><span class="command">arp [-h] [-r &lt;IP-address&gt; &lt;interface&gt;]</span></p>
+
+<table border="1" cellspacing="0" cellpadding="2" width="100%">
+     <tr>
+        <th>Опции</th><th>Описание</th>
+    </tr>
+    <tr>
+        <td width="5%" class="command">-h</td><td>Краткая справка.</td>
+    </tr>
+    <tr>
+        <td class="command">-r&nbsp;&lt;IP-address&gt;&nbsp;&lt;interface&gt;</td>
+        <td>
+            Прежде чем вывести ARP-таблицу предпринимает попытку найти MAC-адрес 
+            по&nbsp;явно заданному IP-адресу. 
+            <span class="command">IP-address</span> IP-адрес для которого
+            определяется MAC-адрес. <span class="command">interface</span> 
+            имя интерфейса в&nbsp;сети подсоединенной к которому будет происходить 
+            поиск.
+        </td>
+    </tr>
+</table>
+
+ <p>
+    Если <span class="command">arp</span> вызывается без параметров, 
+    то&nbsp;команда выводит на&nbsp;экран ARP-таблицу:
+ </p>
+ <pre>
+     =>arp
+     Address          HWaddress       iface
+     10.0.0.10        0:0:0:0:BC:0    eth0
+     10.0.0.11        0:0:0:0:1F:2    eth0
+ </pre>
+ <p>
+    Примеры:
+ </p>
+<pre>
+      =>arp -r 192.168.120.12 eth1
+     Address          HWaddress       iface
+     10.0.0.10        0:0:0:0:BC:0    eth0
+     10.0.0.11        0:0:0:0:1F:2    eth0
+     192.168.120.12   0:0:0:0:12:1    eth1
+ </pre> 
+<br><br>
+
+
+
+
+<strong id="mactable">mactable</strong>&nbsp;&#8212; показывает таблицу MAC-адресов
+коммутаторов второго уровня. 
+ 
+<p><span class="command">mactable [-h]</span></p>
+
+<table border="1" cellspacing="0" cellpadding="2" width="100%">
+     <tr>
+        <th>Опции</th><th>Описание</th>
+    </tr>
+    <tr>
+        <td width="5%" class="command">-h</td><td>Краткая справка.</td>
+    </tr>
+</table>
+ <p>
+    Примеры:
+ </p>
+<pre>
+     =>mactable
+     MACAddress      port
+     0:0:0:0:B3:0    0
+     0:0:0:0:2F:2    0
+     0:0:0:0:03:0    3
+ </pre> 
+ <p>
+    Где <span class="command">port</span>&nbsp;&#8212; номер порта 
+    на&nbsp;коммутаторе. Нумерация портов идет по&nbsp;порядку 
+    начиная с&nbsp;нуля. 
+ </p>
+<br><br>
+
+
+<!--#include file="footer.shtml" -->

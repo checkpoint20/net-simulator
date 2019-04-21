@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : config.dtd
+    Created on : 8 July, 2006
+    Author     : maks
+    Version    : 1.0
+-->
+
+<!ELEMENT config 
+( whatOpenAfterStart? | background? | debug? | lastProject? | skins? | currentSkin?)*>
+
+
+<!ELEMENT whatOpenAfterStart EMPTY>
+<!ATTLIST whatOpenAfterStart
+    value (lastProject | emptyProject | nothing) #REQUIRED>
+    
+    
+<!ELEMENT lastProject EMPTY>
+<!ATTLIST lastProject
+    value CDATA #REQUIRED>
+    
+        
+<!ELEMENT background EMPTY>
+<!ATTLIST background
+    value CDATA #REQUIRED>
+    
+
+<!ELEMENT debug (logger*)>
+
+
+<!ELEMENT logger EMPTY>
+<!ATTLIST logger
+    name        CDATA #REQUIRED
+    logLevel    (OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST|ALL) #REQUIRED>
+        
+
+<!ELEMENT skins (skin*)>
+    
+       
+<!ELEMENT skin (shape*)>
+<!ATTLIST skin
+    name CDATA #REQUIRED>
+
+    
+<!ELEMENT shape EMPTY>
+<!ATTLIST shape
+    name (router|desktop|hub|switch) #REQUIRED
+    socketsX CDATA #REQUIRED
+    socketsY CDATA #REQUIRED
+    socketsStep CDATA #REQUIRED>
+
+    
+<!ELEMENT currentSkin EMPTY>
+<!ATTLIST currentSkin
+    name CDATA #REQUIRED>
+    

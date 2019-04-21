@@ -1,0 +1,130 @@
+<!--#include file="header.shtml" -->
+
+<!--#set var="DOC_LAST_MODIFIED" value="$LAST_MODIFIED" -->
+
+<div style="font-size: 80%; text-align: right;">Eng | <a href="/ru/example.shtml">Rus</a></div>
+
+<h3>Example&nbsp;projects</h3>
+
+<p>
+    At&nbsp;the&nbsp;first run NET-Simulator opens test.xml project. The&nbsp;project is&nbsp;located in&nbsp;the&nbsp;xml folder. 
+</p>
+
+<img src="/screenshots/net.png" alt="">
+
+<p>Компьютер&nbsp;1</p>
+<pre>
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:CF:0
+            inet addr:10.0.0.10  Bcast:10.255.255.255  Mask:255.0.0.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+    =>
+    =>route
+    IP routing table
+    Destination     Gateway         Netmask         Flags Metric Iface
+    10.0.0.0        *               255.0.0.0       U     1      eth0
+    11.0.0.0        10.0.0.11       255.0.0.0       UG    0      eth0
+    12.0.0.0        10.0.0.11       255.255.255.0   UG    0      eth0
+</pre>
+
+
+<p>Компьютер&nbsp;2</p>
+<pre>
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:D4:0
+            inet addr:11.0.0.10  Bcast:11.255.255.255  Mask:255.0.0.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+    =>
+    =>route
+    IP routing table
+    Destination     Gateway         Netmask         Flags Metric Iface
+    12.0.0.0        11.0.0.11       255.0.0.0       UG    0      eth0
+    11.0.0.0        *               255.0.0.0       U     1      eth0
+    10.0.0.0        11.0.0.11       255.0.0.0       UG    0      eth0
+</pre>
+
+
+
+<p>Компьютер&nbsp;4</p>
+<pre>
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:F9:0
+            inet addr:12.0.0.10  Bcast:12.0.0.255  Mask:255.255.255.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+    =>
+    =>route
+    IP routing table
+    Destination     Gateway         Netmask         Flags Metric Iface
+    10.0.0.0        12.0.0.1        255.0.0.0       UG    0      eth0
+    11.0.0.0        12.0.0.1        255.0.0.0       UG    0      eth0
+    12.0.0.0        *               255.255.255.0   U     1      eth0
+</pre>
+
+
+
+<p>Компьютер&nbsp;5</p>
+<pre>
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:FE:0
+            inet addr:12.0.0.11  Bcast:12.0.0.255  Mask:255.255.255.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+    =>
+    =>route
+    IP routing table
+    Destination     Gateway         Netmask         Flags Metric Iface
+    0.0.0.0         12.0.0.1        0.0.0.0         UG    0      eth0
+    12.0.0.0        *               255.255.255.0   U     1      eth0
+</pre>
+
+
+
+
+<p>Router&nbsp;0</p>
+<pre>
+    =>ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:BC:0
+            inet addr:10.0.0.11  Bcast:10.255.255.255  Mask:255.0.0.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+   
+    eth4    Link encap:Ethernet  HWaddr 0:0:0:0:BC:4
+            inet addr:12.0.0.1  Bcast:12.0.0.255  Mask:255.255.255.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+
+     eth7   Link encap:Ethernet  HWaddr 0:0:0:0:BC:7
+            inet addr:11.0.0.11  Bcast:11.255.255.255  Mask:255.0.0.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+
+    =>
+    =>route
+    IP routing table
+    Destination     Gateway         Netmask         Flags Metric Iface
+    10.0.0.0        *               255.0.0.0       U     1      eth0
+    11.0.0.0        *               255.0.0.0       U     1      eth7
+    12.0.0.0        *               255.255.255.0   U     1      eth4
+</pre>
+
+
+
+
+<!--#include file="footer.shtml" -->

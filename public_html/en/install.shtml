@@ -1,0 +1,49 @@
+<!--#include file="header.shtml" -->
+
+<!--#set var="DOC_LAST_MODIFIED" value="$LAST_MODIFIED" -->
+
+<div style="font-size: 80%; text-align: right;">Eng | <a href="/ru/install.shtml">Rus</a></div>
+
+<h3>Installation&nbsp;guide</h3>
+
+<a href="#sys_req">System&nbsp;requirements</a><br>
+<a href="#installation">Installation</a><br>
+<a href="#issues">Know&nbsp;issues</a><br>
+
+
+<h4 id="sys_req">System&nbsp;requirements</h4>
+
+<p>
+    To&nbsp;run NET-Simulator you need to&nbsp;have a Java Virtual Machine (JVM) version 8+ installed on&nbsp;your system.
+</p>
+<p>
+    On&nbsp;<a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">the&nbsp;download page</a> you will
+    find two kinds of&nbsp;JVM: Java Runtime Environment (JRE) and&nbsp;Java Development Kit (JDK). If you are not&nbsp;sure,
+    download and&nbsp;install JRE.
+</p>
+
+<p>
+    To&nbsp;check if&nbsp;you have Java installed on&nbsp;your system, type: <span class="command">java&nbsp;-version</span>
+    in&nbsp;a&nbsp;command prompt (Windows) 
+    or&nbsp;console (Mac/Unix/Linux). If&nbsp;JVM is&nbsp;installed properly you will see an&nbsp;output as shown below.
+</p>
+<img src="/images/java_win_en.png" alt="/images/java_win_en.png">
+
+
+<h4 id="installation">Installation</h4>
+
+<p>
+    Just unzip downloaded archive. Open NET-Simulator folder and&nbsp;run run.bat on&nbsp;Windows or&nbsp;run.sh on&nbsp;Linux.
+</p>
+
+
+<h4 id="issues">Know&nbsp;issues</h4>
+
+<p>
+    Please avoid installing NET-Simulator into a&nbsp;folder that contains non&nbsp;ASCII characters in&nbsp;its name. 
+    Otherwise you can get the&nbsp;error:  
+</p>
+<img src="/images/config_error_en.png" alt="/images/config_error_en.png">
+
+
+<!--#include file="footer.shtml" -->

@@ -1,0 +1,376 @@
+<!--#include file="header.shtml" -->
+
+<!--#set var="DOC_LAST_MODIFIED" value="$LAST_MODIFIED" -->
+
+<div style="font-size: 80%; text-align: right;">Eng | <a href="/ru/cli.shtml">Rus</a></div>
+
+<h3>Virtual terminal and comand line interface.</h3>
+
+<p>
+NET-Simulator allows users to control virtual devices by means of virtual terminals 
+and a command line interface. 'Double click' on a device to open the terminal window.
+Use up/down keys to navigate through the commands history. 
+</p>
+
+<p>
+Type <span class="command">help</span> and press Enter to see a list of all available commands.
+Use <span class="command">-h</span> option with any of the commands to get a reference guide. 
+Use <span class="command">Ctrl+L</span> to refresh the screen.
+</p>
+
+<h4>Command reference:</h4>
+
+<a href="#help">help</a><br>
+<a href="#route">route</a><br>
+<a href="#ifconfig">ifconfig</a><br>
+<a href="#ping">ping</a><br>
+<a href="#arp">arp</a><br>
+<a href="#mactable">mactable</a><br>
+<br>
+
+<strong id="help">help</strong>&nbsp;- display reference guide and exit.
+<p><span class="command">help [-h]</span></p>
+
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+    <tbody><tr>
+        <th>Option</th><th>Description</th>
+    </tr>
+    <tr>
+        <td class="command" width="5%">-h</td><td>Display reference guide and exit.</td>
+    </tr>
+</tbody></table>
+<br><br><br>
+
+
+
+<strong id="route">route</strong>&nbsp;manipulates the IP4 routing tables. Its primary use 
+is to set up static routes to specific hosts or networks via an interface after 
+it has been configured using the <a href="#ifconfig">ifconfig</a> program.
+ 
+<p><span class="command">route [-h] [{-add|-del} &lt;target&gt; [-netmask &lt;address&gt;] [-gw &lt;address&gt;] 
+[-metric &lt;M&gt;] [-dev &lt;If&gt;]]</span></p>
+
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+     <tbody><tr>
+        <th>Option</th><th>Description</th>
+    </tr>
+    <tr>
+        <td class="command" width="5%">-h</td><td>Display reference guide and exit.</td>
+    </tr>
+    <tr>
+        <td class="command">target</td>
+        <td>
+	    Destination address. It can be a network or a host depending on the netmask option.
+	    If netmask is not specified of equals to <span class="command">255.255.255.255</span> then 
+	    the destination is a host, otherwise it is a network.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-add</td>
+        <td>Add a new route.</td>
+    </tr>
+    <tr>
+        <td class="command">-del</td><td>Delete a route.</td>
+    </tr>
+    <tr>
+        <td class="command">-dev&nbsp;&lt;If&gt;</td>
+        <td>
+            Force the route to be associated with the specified device. In most normal networks you won't need this.
+            <span class="command">If</span>&nbsp;- the interface name.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-gw&nbsp;&lt;address&gt;</td>
+        <td>
+	    Route packets via a gateway. The specified gateway must be reachable first. This usually means that you
+            have to set up a static route to the gateway beforehand.
+            <span class="command">address</span>&nbsp;- the gateway address.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-netmask&nbsp;&lt;address&gt;</td>
+        <td>
+	    When adding a network route, the netmask to be used.
+            <span class="command">address</span>&nbsp;- the netmask value. If the netmask is not specified 
+		<span class="command">255.255.255.255</span> is used.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-metric&nbsp;&lt;M&gt;</td>
+        <td>
+	    Set the metric field in the routing table to M.
+            <span class="command">M</span>&nbsp;- an integer greater or equal to to 0.
+        </td>
+    </tr>
+</tbody></table>
+
+ <p>
+    When the <span class="command">add</span> or <span class="command">del</span> options are used, 
+    route modifies the routing tables. 
+    Without these options, route displays the current contents of the routing tables:
+ </p>
+ <pre>     =&gt;route
+     IP routing table
+     Destination       Gateway       Netmask          Flags   Metric  Iface
+     10.0.0.0          *             255.0.0.0        U       1       eth0
+     11.0.0.0          10.0.0.10     255.0.0.0        UG      1       eth0
+     192.168.120.1     10.0.0.10     255.255.255.255  UGH     1       eth0
+ </pre>
+ <p>
+    If the gateway is not set <span class="command">*</span> is pitnted.
+   <span class="command">Flags</span> possible values include: 
+   <span class="command">U</span>&nbsp;- route is up, 
+   <span class="command">G</span>&nbsp;- use gateway, 
+   <span class="command">H</span>&nbsp;- target is a host.
+ </p>
+ 
+ <p>
+    Examples:
+ </p>
+<pre>     =&gt;route -add 192.168.120.0 -netmask 255.255.255.0 -dev eth0
+     =&gt;route
+     IP routing table
+     Destination       Gateway          Netmask          Flags   Metric  Iface
+     192.168.120.0     *                255.255.255.0    U       1       eth0
+     =&gt;
+     =&gt;route -add 192.168.121.10 -gw 192.168.120.10 
+     =&gt;route
+     IP routing table
+     Destination       Gateway          Netmask          Flags   Metric  Iface
+     192.168.120.0     *                255.255.255.0    U       1       eth0
+     192.168.121.10    192.168.120.1    255.255.255.255  UGH     1       eth0
+     =&gt;
+     
+ </pre> 
+<br><br>
+
+
+<strong id="ifconfig">ifconfig</strong>&nbsp;- configure a network interface.
+
+<p>
+    <span class="command">ifconfig [-h] [-a] [&lt;interface&gt;] [&lt;address&gt;] 
+    [-broadcast &lt;address&gt;] [-netmask &lt;address&gt;] [-up|-down]</span>
+</p>
+
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+     <tbody><tr>
+        <th>Option</th><th>Description</th>
+    </tr>
+    <tr>
+        <td class="command" width="5%">-h</td><td>Display reference guide and exit.</td>
+    </tr>
+    <tr>
+        <td class="command">-a</td>
+        <td>
+       	    Display all interfaces which are currently available, even if they are down.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">interface</td>
+        <td>The name of the interface. Use this option to configure the interface 
+or see the information about it.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">address</td><td>The IP address to be assigned to this interface.</td>
+    </tr>
+    <tr>
+        <td class="command">-broadcast&nbsp;&lt;address&gt;</td>
+        <td>
+	    If the address argument is given, set the protocol broadcast address for this interface.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-netmask&nbsp;&lt;address&gt;</td>
+        <td>
+              Set the IP network mask for this interface. This value defaults to the usual class A, 
+              B or C network mask (as derived from the interface IP address), but it can be set to any value.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-up</td>
+        <td>
+	    This flag causes the interface to be activated. It is implicitly specified 
+            if an address is assigned to the interface. 
+            The appropriate row is added to the routing table implicitly.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-down</td>
+        <td>
+            This flag deactivates the interface. The appropriate row is deleted from the routing table implicitly.
+        </td>
+    </tr>
+</tbody></table>
+
+ <p>
+    Without options <span class="command">ifconfig</span> displays all active interfaces:
+ </p>
+ <pre>    =&gt;ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:CF:0
+            inet addr:192.168.120.1  Bcast:192.168.120.255  Mask:255.255.255.0
+            UP
+            RX packets:23 errors:0 dropped:0
+            TX packets:23 errors:0 dropped:0
+            RX bytes:0 TX bytes:0
+ </pre>
+ <p>
+ <span class="command">HWaddr</span>&nbsp;- 6 bytes unique address of the interface by analogy to MAC address in Ethernet. It is generated automatically.
+ </p>
+ 
+ <p>
+    Examples:
+ </p>
+<pre>    =&gt;ifconfig eth0 192.168.120.1 -up
+    =&gt;ifconfig
+    eth0    Link encap:Ethernet  HWaddr 0:0:0:0:CF:0
+            inet addr:192.168.120.1  Bcast:192.168.120.255  Mask:255.255.255.0
+            UP
+            RX packets:0 errors:0 dropped:0
+            TX packets:0 errors:0 dropped:0
+            RX bytes:0 TX bytes:0    
+ </pre> 
+<br><br>
+
+
+
+<strong id="ping">ping</strong>&nbsp; uses ICMP protocol in order to check the accessibility 
+of the target interface. <span class="command">ping</span> sends ICMP ECHO_REQUEST to the target 
+interface and waits during some period of time (one second by default) for ICMP ECHO_RESPONSE. 
+In case if the response is received displays gathered data.
+
+<p>
+    <span class="command">ping [-h] [-i &lt;interval&gt;] [-t &lt;ttl&gt;] &lt;destination&gt;</span>
+</p>
+
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+     <tbody><tr>
+        <th>Option</th><th>Description</th>
+    </tr>
+    <tr>
+        <td class="command" width="5%">-h</td><td>Display reference guide and exit.</td>
+    </tr>
+    <tr>
+        <td class="command">-i&nbsp;&lt;interval&gt;</td>
+        <td>
+            Wait <span class="command">interval</span> seconds between sending each packet. 
+	    The default is to wait for one second between each packet.
+        </td>
+    </tr>
+    <tr>
+        <td class="command">-t&nbsp;&lt;ttl&gt;</td>
+        <td>
+            Set the IP Time to Live attribute value. 
+            <span class="command">ttl</span>&nbsp;is an integer 0-255 (64 by default).
+        </td>
+    </tr>
+    <tr>
+        <td class="command">destination</td>
+        <td>IP-address of the target interface.</td>
+    </tr>
+</tbody></table>
+
+  <p>
+    Examples:
+ </p>
+<pre>    =&gt;ping 192.168.120.1
+    PING 192.168.120.1
+    64 bytes from 192.168.120.1: icmp_seq=0 ttl=62 time=477 ms
+    64 bytes from 192.168.120.1: icmp_seq=1 ttl=62 time=435 ms
+    64 bytes from 192.168.120.1: icmp_seq=2 ttl=62 time=234 ms
+    64 bytes from 192.168.120.1: icmp_seq=3 ttl=62 time=48 ms
+    64 bytes from 192.168.120.1: icmp_seq=4 ttl=62 time=87 ms
+    64 bytes from 192.168.120.1: icmp_seq=5 ttl=62 time=56 ms
+ </pre> 
+ 
+ <p>
+    <span class="command">ping</span> displays the output in the following format:
+    <span class="command">64 bytes from 192.168.120.1</span>&nbsp;- the size of 
+data received in the response and the address of the target host. The size is always 64B.
+    <span class="command">icmp_seq=0</span>&nbsp;- the number of the packet in the sequence. 
+    <span class="command">ttl=62</span>&nbsp;- TTL value from the received packet. 
+    <span class="command">time=48 ms</span>&nbsp;- round-trip time in milliseconds.
+ </p>
+
+ <p>
+    The Ctrl-C key combination aborts command execution.
+ </p>
+<br><br>
+
+
+
+<strong id="arp">arp</strong>&nbsp;- displays the ARP-table. In addition there is 
+NET-Simulator specific option&nbsp;<span class="command">-r</span>&nbsp;that allows 
+sending the special request in order to resolve the MAC-address for the specified IP-address. 
+This option does not make sense in the real world but in the simulator can be useful
+for the ARP-protocol understanding.
+ 
+<p><span class="command">arp [-h] [-r &lt;IP-address&gt; &lt;interface&gt;]</span></p>
+
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+     <tbody><tr>
+        <th>Option</th><th>Description</th>
+    </tr>
+    <tr>
+        <td class="command" width="5%">-h</td><td>Display reference guide and exit.</td>
+    </tr>
+    <tr>
+        <td class="command">-r&nbsp;&lt;IP-address&gt;&nbsp;&lt;interface&gt;</td>
+        <td>
+            Forces NET-Simulator to resolve MAC-address for the specified IP-address.
+            <span class="command">IP-address</span> target IP-address. 
+	    <span class="command">interface</span> the name of a device to send the request.
+        </td>
+    </tr>
+</tbody></table>
+
+ <p>
+    Without options displays ARP-table:
+ </p>
+ <pre>     =&gt;arp
+     Address          HWaddress       iface
+     10.0.0.10        0:0:0:0:BC:0    eth0
+     10.0.0.11        0:0:0:0:1F:2    eth0
+ </pre>
+ <p>
+    Examples:
+ </p>
+<pre>      =&gt;arp -r 192.168.120.12 eth1
+     Address          HWaddress       iface
+     10.0.0.10        0:0:0:0:BC:0    eth0
+     10.0.0.11        0:0:0:0:1F:2    eth0
+     192.168.120.12   0:0:0:0:12:1    eth1
+ </pre> 
+<br><br>
+
+
+
+
+<strong id="mactable">mactable</strong>&nbsp;- displays the MAC-address table.
+This is NET-Simulator specific option.
+ 
+<p><span class="command">mactable [-h]</span></p>
+
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+     <tbody><tr>
+        <th>Option</th><th>Description</th>
+    </tr>
+    <tr>
+        <td class="command" width="5%">-h</td><td>Display reference guide and exit.</td>
+    </tr>
+</tbody></table>
+ <p>
+    Examples:
+ </p>
+<pre>     =&gt;mactable
+     MACAddress      port
+     0:0:0:0:B3:0    0
+     0:0:0:0:2F:2    0
+     0:0:0:0:03:0    3
+ </pre> 
+ <p>
+    <span class="command">port</span>&nbsp;- the number of the port. 
+ </p>
+<br><br>
+
+<!--#include file="footer.shtml" -->

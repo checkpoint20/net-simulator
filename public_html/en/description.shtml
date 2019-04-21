@@ -1,0 +1,118 @@
+<!--#include file="header.shtml" -->
+
+<!--#set var="DOC_LAST_MODIFIED" value="$LAST_MODIFIED" -->
+
+<div style="font-size: 80%; text-align: right;">Eng | <a href="/ru/description.shtml">Rus</a></div>
+
+<h3>Description</h3>
+
+<a href="#network">Network</a><br>
+<a href="#gui">User interface</a><br>
+<a href="#saving">Projects</a><br>
+<a href="#export">Export to html-reports</a><br>
+
+<h4 id="network">Network</h4>
+<p>
+    NET-Simulator implements three layers of&nbsp;<a href="http://en.wikipedia.org/wiki/Iso_osi">ISO&nbsp;OSI</a>: 
+1st&nbsp;-&nbsp;Physical, 2nd&nbsp;-&nbsp;Data Link, and 3rd&nbsp;-&nbsp;Network in application to IP technology. Physical Layer is not emulated, it means that electrical and 
+physical specifications are not taken into account. It&nbsp;is&nbsp;supposed that&nbsp;2nd&nbsp;layer packets 
+are transmitted through an&nbsp;Ethernet-like environment. Thus&nbsp;NET-Simulator allows users 
+to&nbsp;achieve the&nbsp;following goals:
+</p>
+    <ul>
+    <li>Study the&nbsp;principles of&nbsp;operation for 2nd and 3rd&nbsp;layer devices such as passive hubs, switches and routers.
+    <li>Get practical skills in&nbsp;the&nbsp;static IP4&nbsp;routing configuration.
+    <li>Study communication protocols: ARP, IP4, ICMP.
+    <li>Get skills in&nbsp;troubleshooting of&nbsp;IP networks.
+    </ul>
+    
+<p>
+NET-Simulator uses a&nbsp;simple Ethernet-like protocol on&nbsp;the&nbsp;2nd&nbsp;layer. 
+This&nbsp;protocol uses addressing by&nbsp;6&nbsp;byte MAC-address.
+The&nbsp;uniqueness of&nbsp;the&nbsp;every MAC-address is&nbsp;provided by the&nbsp;NET-Simulator kernel. 
+Actually, a&nbsp;packet of&nbsp;the&nbsp;2nd&nbsp;layer is&nbsp;a&nbsp;Java object and it does not have 
+any equivalent in&nbsp;real computer networks.
+</p>
+<p>
+On the&nbsp;3rd&nbsp;layer there&nbsp;is a&nbsp;restricted implementation of&nbsp;IP4&nbsp;protocol according to&nbsp;RFC791.
+In&nbsp;order to&nbsp;resolve IP to&nbsp;MAC-addresses there&nbsp;is an&nbsp;ARP service based on&nbsp;broadcast requests.
+</p>
+<p>
+There is a&nbsp;restricted implementation of&nbsp;ICMP according to&nbsp;RFC792 that&nbsp;allows working services
+like ping and traceroute.
+</p>
+
+
+<h4 id="gui">User interface</h4>
+    <p>
+The&nbsp;main window of&nbsp;NET-Simulator is a&nbsp;desk where users can put different devices. 
+Currently the&nbsp;following devices are&nbsp;available:
+    </p>
+    <ol>
+    <li>
+	Router. This is a&nbsp;layer 3 commutator that contains 8&nbsp;IPv4&nbsp;interfaces
+        and propagate received IP packets according to a statically configured routing table.
+    </li>
+    <li>
+        Desktop. Actually, this is a&nbsp;router that contains only one interface.
+    </li>
+
+    <li>
+    Switch. This is a&nbsp;layer 2 commutator that contains 8 ports and propagate
+    layer 2 packets according to&nbsp;MAC-address tables. It&nbsp;uses MAC-learning
+    algorithms similar to&nbsp;the&nbsp;ones commonly used in&nbsp;Ethernet-switches.
+    </li>
+
+    <li>
+    Hub. This is a&nbsp;simple device that contains 8 ports and always
+    propagate received layer 2 packets to&nbsp;all of it's ports.  The user
+    has not any control over the hub.
+    </li>
+
+<li>
+All the&nbsp;devices may be connected by universal links
+- virtual patchcords.  As&nbsp;it&nbsp;was mentioned above these patchcords
+do&nbsp;not have any physical characteristics. It is supposed that
+the&nbsp;bandwidth of the&nbsp;links is infinite. Patchcords
+are blinking when a packet is transmitted through them.
+</li>
+
+</ol>
+
+<p>
+Newly created devices appear in the&nbsp;upper-left corner of the&nbsp;desk. Devices can be 
+drag-and-dropped to&nbsp;appropriate places. Plugs of the&nbsp;patchcords "glue" to&nbsp;the&nbsp;nearest sockets.
+There is a&nbsp;drop-down context-menu associated with every device. 'Double click' on&nbsp;any device opens 
+the&nbsp;virtual console associated with this device.
+</p>
+
+
+<h4 id="saving">Projects</h4>
+<p>
+NET-Simulator uses xml to store project files. DTD for the&nbsp;project files is located 
+in {netsim_home}/dtd/net_simulator.dtd file.
+</p>
+
+
+<h4 id="export">Export to html-reports</h4>
+<p>
+Projects can&nbsp;be exported to&nbsp;html-reports. The&nbsp;report consists of&nbsp;the&nbsp;project 
+details in&nbsp;html and a&nbsp;PNG image with 
+the&nbsp;drawing of&nbsp;the&nbsp;network.
+NET-Simulator converts project files to&nbsp;html reports using an&nbsp;xsl-template. 
+The&nbsp;default template is in {netsim_home}/cfg/tohtml.xsl file. 
+You can modify the template to&nbsp;achieve the&nbsp;desired view of&nbsp;the&nbsp;report. 
+</p>
+<p>
+You can use any external XSLT converter to&nbsp;generate reports.
+</p>
+
+<p>
+Report example:
+</p>
+
+<object data="/reports/test.html" width="650" height="250" title="Report examole">
+    Warning: /reports/test.html could not be embedded.
+</object>
+
+<!--#include file="footer.shtml" -->
