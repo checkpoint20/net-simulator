@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : net-simulator.dtd
+    Created on : 14 May, 2006
+    Author     : maks
+-->
+
+<!ELEMENT project ((routerShape* | desktopShape* | hubShape* | switchShape*)*, patchcord*)>
+<!ATTLIST project 
+    author      CDATA #IMPLIED
+    description CDATA #IMPLIED
+    createDate  CDATA #IMPLIED
+    currentId   CDATA #REQUIRED>
+    
+    
+<!ELEMENT routerShape (IP4Router?, socketShape+)>    
+<!ATTLIST routerShape 
+    id          CDATA #REQUIRED
+    name        CDATA #REQUIRED
+    description CDATA #IMPLIED
+    x           CDATA #REQUIRED
+    y           CDATA #REQUIRED>
+
+
+<!ELEMENT desktopShape (IP4Router?, socketShape+)>    
+<!ATTLIST desktopShape 
+    id          CDATA #REQUIRED
+    name        CDATA #REQUIRED
+    description CDATA #IMPLIED
+    x           CDATA #REQUIRED
+    y           CDATA #REQUIRED>
+
+
+<!ELEMENT hubShape (hub?, socketShape+)>    
+<!ATTLIST hubShape 
+    id          CDATA #REQUIRED
+    name        CDATA #REQUIRED
+    description CDATA #IMPLIED
+    x           CDATA #REQUIRED
+    y           CDATA #REQUIRED>
+
+    
+<!ELEMENT hub (port+)>
+<!ATTLIST hub
+    id          CDATA #REQUIRED>
+
+    
+<!ELEMENT switchShape (switch?, socketShape+)>    
+<!ATTLIST switchShape 
+    id          CDATA #REQUIRED
+    name        CDATA #REQUIRED
+    description CDATA #IMPLIED
+    x           CDATA #REQUIRED
+    y           CDATA #REQUIRED>
+
+    
+<!ELEMENT switch (port+)>
+<!ATTLIST switch
+    id          CDATA #REQUIRED>    
+    
+
+<!ELEMENT port EMPTY>
+<!ATTLIST port
+    id          CDATA #REQUIRED>
+    
+                        
+<!ELEMENT IP4Router (eth+, routingTable?)>
+<!ATTLIST IP4Router 
+    id          CDATA #REQUIRED>
+    
+
+<!ELEMENT eth EMPTY>
+<!ATTLIST eth 
+    id          CDATA #REQUIRED
+    name        CDATA #REQUIRED
+    status      (0|1) #REQUIRED
+    mac         CDATA #REQUIRED
+    ip4         CDATA #IMPLIED
+    ip4bcast    CDATA #IMPLIED
+    ip4mask     CDATA #IMPLIED
+    bandwidth   CDATA #IMPLIED>
+    
+<!ELEMENT routingTable (row*)>
+    
+<!ELEMENT row EMPTY>
+<!ATTLIST row 
+    target      CDATA #REQUIRED
+    netmask     CDATA #REQUIRED
+    gateway     CDATA #IMPLIED
+    metric      CDATA #REQUIRED
+    iface       CDATA #REQUIRED>
+
+<!ELEMENT socketShape EMPTY>
+<!ATTLIST socketShape
+    id          CDATA #REQUIRED
+    x           CDATA #REQUIRED
+    y           CDATA #REQUIRED
+    devId       CDATA #REQUIRED>
+    
+    
+<!ELEMENT patchcord (media+, plug*)>    
+<!ATTLIST patchcord
+    id          CDATA #REQUIRED>
+    
+<!ELEMENT plug EMPTY>
+<!ATTLIST plug
+    id          CDATA #REQUIRED
+    point       CDATA #REQUIRED
+    x           CDATA #REQUIRED
+    y           CDATA #REQUIRED
+    socket      CDATA #IMPLIED>
+
+<!ELEMENT media EMPTY>
+<!ATTLIST media
+    id          CDATA #REQUIRED
+    pointsCount CDATA #REQUIRED>
+    
+    

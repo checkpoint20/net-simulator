@@ -1,0 +1,228 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>NET-Simulator Project Report</title>
+</head>
+<body>
+<h1>NET-Simulator Project Report</h1>
+<strong>Project file:</strong> xml/test.xml<br>
+<strong>Author:</strong> Maxim Tereshin<br>
+<strong>Description:</strong> An example of the NET-Simulator virtual network<br>
+<strong>Project created at:</strong> 
+<br>
+<strong>Report generated at:</strong> 2006-9-26 17:33:18<br>
+<img alt="" src="test.png"><br>
+<h2>Router</h2>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th width="20%" align="left">Name:</th><td>Router 0</td>
+</tr>
+<tr>
+<th width="20%" align="left">Description:</th><td>&nbsp;</td>
+</tr>
+</table>
+<h3>Interfaces:</h3>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th>Name</th><th>Status</th><th>IP Address</th><th>Netmask</th><th>Broadcast</th>
+</tr>
+<tr>
+<td>eth0</td><td>UP</td><td>10.0.0.11</td><td>255.0.0.0</td><td>10.255.255.255</td>
+</tr>
+<tr>
+<td>eth1</td><td>DOWN</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+</tr>
+<tr>
+<td>eth2</td><td>DOWN</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+</tr>
+<tr>
+<td>eth3</td><td>DOWN</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+</tr>
+<tr>
+<td>eth4</td><td>UP</td><td>12.0.0.1</td><td>255.255.255.0</td><td>12.0.0.255</td>
+</tr>
+<tr>
+<td>eth5</td><td>DOWN</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+</tr>
+<tr>
+<td>eth6</td><td>DOWN</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+</tr>
+<tr>
+<td>eth7</td><td>UP</td><td>11.0.0.11</td><td>255.0.0.0</td><td>11.255.255.255</td>
+</tr>
+</table>
+<h3>Routing table:</h3>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th>Target</th><th>Netmask</th><th>Gateway</th><th>Metric</th><th>Interface</th>
+</tr>
+<tr>
+<td>10.0.0.0</td><td>255.0.0.0</td><td>*</td><td align="right">1</td><td>eth0</td>
+</tr>
+<tr>
+<td>11.0.0.0</td><td>255.0.0.0</td><td>*</td><td align="right">1</td><td>eth7</td>
+</tr>
+<tr>
+<td>12.0.0.0</td><td>255.255.255.0</td><td>*</td><td align="right">1</td><td>eth4</td>
+</tr>
+</table>
+<h2>Desktop</h2>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th width="20%" align="left">Name:</th><td>Компьютер 1</td>
+</tr>
+<tr>
+<th width="20%" align="left">Description:</th><td>&nbsp;</td>
+</tr>
+</table>
+<h3>Interfaces:</h3>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th>Name</th><th>Status</th><th>IP Address</th><th>Netmask</th><th>Broadcast</th>
+</tr>
+<tr>
+<td>eth0</td><td>UP</td><td>10.0.0.10</td><td>255.0.0.0</td><td>10.255.255.255</td>
+</tr>
+</table>
+<h3>Routing table:</h3>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th>Target</th><th>Netmask</th><th>Gateway</th><th>Metric</th><th>Interface</th>
+</tr>
+<tr>
+<td>10.0.0.0</td><td>255.0.0.0</td><td>*</td><td align="right">1</td><td>eth0</td>
+</tr>
+<tr>
+<td>11.0.0.0</td><td>255.0.0.0</td><td>10.0.0.11</td><td align="right">0</td><td>eth0</td>
+</tr>
+<tr>
+<td>12.0.0.0</td><td>255.255.255.0</td><td>10.0.0.11</td><td align="right">0</td><td>eth0</td>
+</tr>
+</table>
+<h2>Desktop</h2>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th width="20%" align="left">Name:</th><td>Компьютер 2</td>
+</tr>
+<tr>
+<th width="20%" align="left">Description:</th><td>&nbsp;</td>
+</tr>
+</table>
+<h3>Interfaces:</h3>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th>Name</th><th>Status</th><th>IP Address</th><th>Netmask</th><th>Broadcast</th>
+</tr>
+<tr>
+<td>eth0</td><td>UP</td><td>11.0.0.10</td><td>255.0.0.0</td><td>11.255.255.255</td>
+</tr>
+</table>
+<h3>Routing table:</h3>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th>Target</th><th>Netmask</th><th>Gateway</th><th>Metric</th><th>Interface</th>
+</tr>
+<tr>
+<td>12.0.0.0</td><td>255.0.0.0</td><td>11.0.0.11</td><td align="right">0</td><td>eth0</td>
+</tr>
+<tr>
+<td>11.0.0.0</td><td>255.0.0.0</td><td>*</td><td align="right">1</td><td>eth0</td>
+</tr>
+<tr>
+<td>10.0.0.0</td><td>255.0.0.0</td><td>11.0.0.11</td><td align="right">0</td><td>eth0</td>
+</tr>
+</table>
+<h2>Switch</h2>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th width="20%" align="left">Name:</th><td>Switch 3</td>
+</tr>
+<tr>
+<th width="20%" align="left">Description:</th><td>&nbsp;</td>
+</tr>
+</table>
+<h2>Desktop</h2>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th width="20%" align="left">Name:</th><td>Компьютер 4</td>
+</tr>
+<tr>
+<th width="20%" align="left">Description:</th><td>&nbsp;</td>
+</tr>
+</table>
+<h3>Interfaces:</h3>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th>Name</th><th>Status</th><th>IP Address</th><th>Netmask</th><th>Broadcast</th>
+</tr>
+<tr>
+<td>eth0</td><td>UP</td><td>12.0.0.10</td><td>255.255.255.0</td><td>12.0.0.255</td>
+</tr>
+</table>
+<h3>Routing table:</h3>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th>Target</th><th>Netmask</th><th>Gateway</th><th>Metric</th><th>Interface</th>
+</tr>
+<tr>
+<td>10.0.0.0</td><td>255.0.0.0</td><td>12.0.0.1</td><td align="right">0</td><td>eth0</td>
+</tr>
+<tr>
+<td>11.0.0.0</td><td>255.0.0.0</td><td>12.0.0.1</td><td align="right">0</td><td>eth0</td>
+</tr>
+<tr>
+<td>12.0.0.0</td><td>255.255.255.0</td><td>*</td><td align="right">1</td><td>eth0</td>
+</tr>
+</table>
+<h2>Desktop</h2>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th width="20%" align="left">Name:</th><td>Компьютер 5</td>
+</tr>
+<tr>
+<th width="20%" align="left">Description:</th><td>&nbsp;</td>
+</tr>
+</table>
+<h3>Interfaces:</h3>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th>Name</th><th>Status</th><th>IP Address</th><th>Netmask</th><th>Broadcast</th>
+</tr>
+<tr>
+<td>eth0</td><td>UP</td><td>12.0.0.11</td><td>255.255.255.0</td><td>12.0.0.255</td>
+</tr>
+</table>
+<h3>Routing table:</h3>
+<table cellpadding="1" cellspacing="0" border="1" width="600">
+<tr>
+<th>Target</th><th>Netmask</th><th>Gateway</th><th>Metric</th><th>Interface</th>
+</tr>
+<tr>
+<td>0.0.0.0</td><td>0.0.0.0</td><td>12.0.0.1</td><td align="right">0</td><td>eth0</td>
+</tr>
+<tr>
+<td>12.0.0.0</td><td>255.255.255.0</td><td>*</td><td align="right">1</td><td>eth0</td>
+</tr>
+</table>
+		
+		
+		
+	
+		
+		
+		
+	
+		
+		
+		
+	
+		
+		
+		
+	
+		
+		
+		
+	
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!--#include file="header.shtml" -->
+
+<!--#set var="DOC_LAST_MODIFIED" value="$LAST_MODIFIED" -->
+
+<div style="font-size: 80%; text-align: right;"><a href="/en/index.shtml">Eng</a> | Rus</div>
+
+<div style="background: lightgray; width: 60%; margin: 0em 0em 0em 0em; padding: 1em 1em 1em 1em; font-size: 80%;">
+<p>
+04/19/2019
+</p>
+<p>Исходный код переехал на <a href="https://github.com/checkpoint20/net-simulator">GitHub</a>.</p>
+<p>Выпущен новый релиз <a href="https://github.com/checkpoint20/net-simulator/releases">1.1b</a></p>
+<ul>
+<li>Apache Maven теперь используется для сборки проекта.</li>
+<li>Исправлен баг вызывавший дублирование некоторых строк в таблице маршрутизации после окрытия ранее сохраненного проекта.</li>
+</ul>
+</div>
+
+<h3>О&nbsp;проекте</h3>
+
+<p>
+NET-Simulator задумывался как образовательная программа. NET-Simulator
+позволяет строить виртуальные вычислительные сети из&nbsp;виртуальных
+сетевых устройств: маршрутизаторов, настольных компьютеров, концентраторов
+и&nbsp;т.п.  Устройствами можно управлять при&nbsp;помощи интерфейса
+командной строки из&nbsp;виртуальных терминалов.  В&nbsp;виртуальных сетях
+реализованы физический, канальный и&nbsp;сетевой уровни в&nbsp;соответствии с&nbsp;ISO
+OSI, что&nbsp;достаточно для обучения студентов конфигурированию
+и&nbsp;поиску неисправностей в&nbsp;вычислительных сетях в&nbsp;рамках
+дисциплин типа &laquo;Основы вычислительных сетей&raquo;.
+</p>
+
+<p>
+Проект является открытым и&nbsp;распространяется в&nbsp;соответствии с&nbsp;положениями GNU GPL.
+</p>
+
+
+<h3>Загрузка</h3>
+<ul>
+   <li>Готовые сборки:
+    <ul>
+       <li><a href="https://github.com/checkpoint20/net-simulator/releases">Новые релизы на GitHub</a>.</li>
+       <li><a href="http://sourceforge.net/projects/net-simulator/files/">Архив на Sourceforge</a>.</li>
+    </ul>
+   </li>
+        <li>Исходный код на <a href="https://github.com/checkpoint20/net-simulator">GitHub</a>.</li>
+</ul>
+
+<h3>Скриншоты</h3>
+
+    <a href="/screenshots/Screenshot1.png"><img src="/screenshots/Screenshot1_200x160.png" alt="/screenshots/Screenshot1_200x160.png"></a>
+
+<h3>Документация</h3>
+
+<ol>
+    <li><a href="install.shtml">Руководство по установке</a>.
+    <li><a href="description.shtml">Общее&nbsp;описание</a>.
+    <li><a href="cli.shtml">Виртуальные терминалы и&nbsp;интерфейс командной строки</a>.
+    <li><a href="example.shtml">Пример</a>.
+</ol>
+
+<h3>Обратная&nbsp;связь</h3>
+
+Нашли ошибку? Помогите её исправить - создайте багрепорт <a href="https://github.com/checkpoint20/net-simulator/issues">здесь</a> или свяжитесь с разработчиками по электронной почте. 
+    
+
+<h3>Об&nbsp;авторах</h3>
+
+<ul>
+ <li>Первоначальная идея этой программы принадлежит Александру Кельнеру <a href='mailto:a.a.kelner@gmail.com'>a.a.kelner@gmail.com</a>
+ <li>Проектирование и&nbsp;кодирование Максим Терёшин <a href='mailto:maxtereshin@gmail.com'>maxtereshin@gmail.com</a>
+</ul>
+
+<!--#include file="footer.shtml" -->

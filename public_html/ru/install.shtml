@@ -1,0 +1,57 @@
+<!--#include file="header.shtml" -->
+
+<!--#set var="DOC_LAST_MODIFIED" value="$LAST_MODIFIED" -->
+
+<div style="font-size: 80%; text-align: right;"><a href="/en/install.shtml">Eng</a> | Rus</div>
+
+<h3>Руководство&nbsp;по&nbsp;установке</h3>
+
+<a href="#sys_req">Системные&nbsp;требования</a><br>
+<a href="#installation">Установка</a><br>
+<a href="#issues">Известные&nbsp;проблемы</a><br>
+
+
+<h4 id="sys_req">Системные&nbsp;требования</h4>
+
+<p>
+    Для&nbsp;работы NET-Simulator необходимо, что&nbsp;бы на&nbsp;вашем компьютере была установлена виртуальная машина Java (JVM).
+    JVM обычно установливается вместе с&nbsp;дистрибутивом Linux. Пользователям Windows 
+    необходимо <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">скачать</a> 
+    и&nbsp;установить JVM отдельно. 
+</p>
+<p>
+    Существуют два варианта JVM: Java Runtime Environment (JRE) и&nbsp;Java Development Kit (JDK). 
+    Если не&nbsp;знаете какой вариант выбрать, 
+    <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">скачивайте</a> JRE. 
+</p>
+
+<p>
+    Вы&nbsp;можете проверить, установлена&nbsp;ли JVM на&nbsp;вашем компьютере следующим образом. 
+    Введите команду <span class="command">java&nbsp;-version</span> в&nbsp;коммандной строке (Windows)
+    или терминале (Mac/Unix/Linux). Если JVM установлена, то&nbsp;в&nbsp;результате вы&nbsp;увидете вывод похожий
+    на&nbsp;изображенный на&nbsp;картинке ниже.
+</p>
+<img src="/images/java_win_en.png" alt="/images/java_win_en.png">
+
+
+<h4 id="installation">Установка</h4>
+
+<p>
+    Просто разархивируйте скачанный архив.
+    Откройте папку NET-Simulator и&nbsp;запустите run.bat 
+    на&nbsp;Windows или&nbsp;run.sh на&nbsp;Linux.
+</p>
+
+
+<h4 id="issues">Известные&nbsp;проблемы</h4>
+
+<p>
+    Не&nbsp;устанавливайте NET-Simulator в&nbsp;папку, в&nbsp;имени которой содержатся не&nbsp;ASCII символы.
+    Например, не&nbsp;стоит использовать папку <span class="command">'C:\программы'</span> 
+    или&nbsp;<span class="command">'C:\Documents and Settings\user\Рабочий стол'</span>.
+    Иначе вы&nbsp;можете получить ошибку при&nbsp;старте программы:
+</p>
+<img src="/images/config_error_ru.png" alt="/images/config_error_en.png">
+
+
+<!--#include file="footer.shtml" -->

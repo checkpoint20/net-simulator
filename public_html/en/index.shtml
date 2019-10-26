@@ -1,0 +1,75 @@
+<!--#include file="header.shtml" -->
+
+<!--#set var="DOC_LAST_MODIFIED" value="$LAST_MODIFIED" -->
+
+<div style="font-size: 80%; text-align: right;">Eng | <a href="/ru/index.shtml">Rus</a></div>
+
+<div style="background: lightgray; width: 60%; margin: 0em 0em 0em 0em; padding: 1em 1em 1em 1em; font-size: 80%;">
+<p>
+04/19/2019
+</p>
+<p>The source code moved to <a href="https://github.com/checkpoint20/net-simulator">GitHub</a>.</p>
+<p><a href="https://github.com/checkpoint20/net-simulator/releases">1.1b</a> release issued:</p>
+
+<ul>
+<li>Apache Maven is now the project management system.</li>
+<li>Fixed an annoying bug that causes duplication of some routes in a routing table after opening of an existing project.</li>
+</ul>
+
+</div>
+
+<h3>About</h3>
+
+<p>
+NET-Simulator was created to&nbsp;help lecturers and&nbsp;students in&nbsp;learning and teaching
+of&nbsp;basics of computer networks. Students can build virtural networks in&nbsp;the&nbsp;virtual environment provided 
+by&nbsp;NET-Simulator. It&nbsp;supports different types of&nbsp;virtual devises: router, desktop computer, switch and&nbsp;hub.
+These devices are controlled by a command line interface that is close to real devices. NET-Simulator implements 1st, 2nd and 3rd layers of ISO OSI. Please check <a href="description.shtml">documentation</a> for further details.
+</p>
+
+<p>
+NET-Simulator is an&nbsp;open source project. It is released under the GNU GPL license.
+</p>
+
+
+<h3>Downloads</h3>
+<ul>
+    <li>Binary distributions:
+    <ul>
+       <li><a href="https://github.com/checkpoint20/net-simulator/releases">The latest releases on GitHub</a>.</li>
+       <li><a href="http://sourceforge.net/projects/net-simulator/files/">Archive on Sourceforge</a>.</li>
+    </ul>
+    </li>
+    <li>Source code on <a href="https://github.com/checkpoint20/net-simulator">GitHub</a>.</li>
+</ul>
+
+
+<h3>Screenshots</h3>
+
+    <a href="/screenshots/Screenshot1.png"><img src="/screenshots/Screenshot1_200x160.png" alt="/screenshots/Screenshot1_200x160.png"></a>
+
+
+<h3>Documentation</h3>
+
+<ol>
+    <li><a href="install.shtml">Installation guide</a>.
+    <li><a href="description.shtml">General overview</a>.
+    <li><a href="cli.shtml">Command line interface</a>.
+    <li><a href="example.shtml">Example projects</a>.
+</ol>
+
+
+<h3>Feedback</h3>
+
+Please feel free to report bugs or request features in <a href="https://github.com/checkpoint20/net-simulator/issues">the tracker</a> or you can reach out to the authors by emails below.
+
+    
+
+<h3>Authors</h3>
+
+<ul>
+ <li>The&nbsp;idea of&nbsp;this application was inspired by&nbsp;Alexander Kelner <a href='mailto:a.a.kelner@gmail.com'>a.a.kelner@gmail.com</a>
+ <li>System design and&nbsp;coding&nbsp;by&nbsp;Maksim Tereshin <a href='mailto:maxtereshin@gmail.com'>maxtereshin@gmail.com</a>
+</ul>
+
+<!--#include file="footer.shtml" -->

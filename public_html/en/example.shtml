@@ -1,30 +1,19 @@
-Системные требования
+<!--#include file="header.shtml" -->
 
-NET-Simulator написан на Java. Для того что бы просто 
-запустить NET-Simulator вам необходимо установить 
-на свой компьютер Java Runtime Environment (JRE) 8.0. 
-Если вы хотите собрать NET-Simulator из исходников 
-вам понадобиться Java SE Development Kit (JDK) 8.0, 
-а также Apache Maven.
+<!--#set var="DOC_LAST_MODIFIED" value="$LAST_MODIFIED" -->
 
-Пример
+<div style="font-size: 80%; text-align: right;">Eng | <a href="/ru/example.shtml">Rus</a></div>
 
-Что бы запустить NET-Simulator используйте скрипты из 
-домашнего каталога программы run.sh или run.bat для 
-UNIX и Windows соответственно. Для запуска необходимо, 
-что бы JRE была правильно установлена и путь к java 
-находился в переменной окружения PATH.
+<h3>Example&nbsp;projects</h3>
 
-При первом запуске NET-Simulator по умолчанию открывает 
-проект test.xml из каталога xml в домашнем каталоге 
-программы. Данный проект содержит модельную сеть 
-состоящую из четырех настольных компьютеров, 
-маршрутизатора и свича.
+<p>
+    At&nbsp;the&nbsp;first run NET-Simulator opens test.xml project. The&nbsp;project is&nbsp;located in&nbsp;the&nbsp;xml folder. 
+</p>
 
-Устройства в сети имеют следующую конфигурацию:
+<img src="/screenshots/net.png" alt="">
 
-Компьютер 1
-
+<p>Компьютер&nbsp;1</p>
+<pre>
     =>ifconfig
     eth0    Link encap:Ethernet  HWaddr 0:0:0:0:CF:0
             inet addr:10.0.0.10  Bcast:10.255.255.255  Mask:255.0.0.0
@@ -39,10 +28,11 @@ UNIX и Windows соответственно. Для запуска необхо
     10.0.0.0        *               255.0.0.0       U     1      eth0
     11.0.0.0        10.0.0.11       255.0.0.0       UG    0      eth0
     12.0.0.0        10.0.0.11       255.255.255.0   UG    0      eth0
+</pre>
 
 
-Компьютер 2
-
+<p>Компьютер&nbsp;2</p>
+<pre>
     =>ifconfig
     eth0    Link encap:Ethernet  HWaddr 0:0:0:0:D4:0
             inet addr:11.0.0.10  Bcast:11.255.255.255  Mask:255.0.0.0
@@ -57,10 +47,12 @@ UNIX и Windows соответственно. Для запуска необхо
     12.0.0.0        11.0.0.11       255.0.0.0       UG    0      eth0
     11.0.0.0        *               255.0.0.0       U     1      eth0
     10.0.0.0        11.0.0.11       255.0.0.0       UG    0      eth0
+</pre>
 
 
-Компьютер 4
 
+<p>Компьютер&nbsp;4</p>
+<pre>
     =>ifconfig
     eth0    Link encap:Ethernet  HWaddr 0:0:0:0:F9:0
             inet addr:12.0.0.10  Bcast:12.0.0.255  Mask:255.255.255.0
@@ -75,11 +67,12 @@ UNIX и Windows соответственно. Для запуска необхо
     10.0.0.0        12.0.0.1        255.0.0.0       UG    0      eth0
     11.0.0.0        12.0.0.1        255.0.0.0       UG    0      eth0
     12.0.0.0        *               255.255.255.0   U     1      eth0
+</pre>
 
 
 
-Компьютер 5
-
+<p>Компьютер&nbsp;5</p>
+<pre>
     =>ifconfig
     eth0    Link encap:Ethernet  HWaddr 0:0:0:0:FE:0
             inet addr:12.0.0.11  Bcast:12.0.0.255  Mask:255.255.255.0
@@ -93,10 +86,13 @@ UNIX и Windows соответственно. Для запуска необхо
     Destination     Gateway         Netmask         Flags Metric Iface
     0.0.0.0         12.0.0.1        0.0.0.0         UG    0      eth0
     12.0.0.0        *               255.255.255.0   U     1      eth0
+</pre>
 
 
-Router 0
 
+
+<p>Router&nbsp;0</p>
+<pre>
     =>ifconfig
     eth0    Link encap:Ethernet  HWaddr 0:0:0:0:BC:0
             inet addr:10.0.0.11  Bcast:10.255.255.255  Mask:255.0.0.0
@@ -126,10 +122,9 @@ Router 0
     10.0.0.0        *               255.0.0.0       U     1      eth0
     11.0.0.0        *               255.0.0.0       U     1      eth7
     12.0.0.0        *               255.255.255.0   U     1      eth4
+</pre>
 
 
-Далее, откройте терминал на Компьютере 1 (двойной клик по 
-пиктограмме). "Попингуем" Компьютер 5:
 
-    =>ping 12.0.0.11
 
+<!--#include file="footer.shtml" -->

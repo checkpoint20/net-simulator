@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+
+<head>
+    <meta name="keywords" content="network, simulator, java, education">
+    <meta name="description" content="The Network Simulator">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="author" content="Maxim Tereshin">
+    <META name="verify-v1" content="ovhfqVOLLNccoGYo+Ze1j5IVsYuYyGXRnMaoGno8S3g=" />    
+    <title>NET-Simulator -- симулятор вычислительных сетей</title>
+    <link rel="stylesheet" type="text/css" href="/main.css">
+    <link rel="shortcut icon" href="/images/icon.ico">
+
+<style type="text/css">
+   div.attention {
+      position: relative;
+      margin: 0em 0em 1em 4em;
+      width: 30%;
+      float: right;
+      font-style: italic;
+      font-size: 100%;
+      color: gray;
+   }
+</style>
+
+</head>
+
+<body bgcolor="white">
+
+<!--#config timefmt="%d.%m.%Y %H:%M" -->
+
+<table align="center" cellspacing="2" cellpadding="2" border="0" width="650">
+<tr>
+<td>
+<a href="/ru/index.shtml"><img class="logo" src="/images/logo.png" alt=""></a>
+</td>
+</tr>
+<tr>
+<td>
+
+
+<!-- end of header -->

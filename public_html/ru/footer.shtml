@@ -1,0 +1,16 @@
+<!-- begin of footer -->
+
+    </td>
+</tr>
+
+<tr>
+    <td align="center">
+    <hr>
+    Последнее обновление <!--#echo var="DOC_LAST_MODIFIED" -->. Электропочта: <a href="mailto:maxtereshin@gmail.com">maxtereshin@gmail.com</a>
+    </td>
+</tr>
+
+</table>
+
+</body>
+</html>
