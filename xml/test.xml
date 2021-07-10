@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project PUBLIC "NET-Simulator/dtd/netsimulator.dtd" "http://www.net-simulator.org/dtd/1.0/netsimulator.dtd">
-<project author="Maxim Tereshin" description="An example of the NET-Simulator virtual network" createDate="" currentId="711">
+<project author="Maxim Tereshin" description="An example of the NET-Simulator virtual network" createDate="" currentId="721">
 	<routerShape id="187" name="Router 0" description="" x="278" y="182">
 		<IP4Router id="188">
 			<eth id="190" name="eth0" status="1" mac="0:0:0:0:BC:0" ip4="10.0.0.11" ip4bcast="10.255.255.255" ip4mask="255.0.0.0" bandwidth="0" />
@@ -12,8 +12,9 @@
 			<eth id="196" name="eth6" status="0" mac="0:0:0:0:BC:6" ip4="" ip4bcast="" ip4mask="" bandwidth="0" />
 			<eth id="197" name="eth7" status="1" mac="0:0:0:0:BC:7" ip4="11.0.0.11" ip4bcast="11.255.255.255" ip4mask="255.0.0.0" bandwidth="0" />
 			<routingTable>
-				<row target="12.0.0.0" netmask="255.255.255.0" gateway="" metric="1" iface="eth4" />
-				<row target="10.0.0.0" netmask="255.0.0.0" gateway="" metric="1" iface="eth0" />
+				<row target="12.0.0.0" netmask="255.255.255.0" gateway="" metric="0" iface="eth4" />
+				<row target="10.0.0.0" netmask="255.0.0.0" gateway="" metric="0" iface="eth0" />
+				<row target="11.0.0.0" netmask="255.0.0.0" gateway="" metric="0" iface="eth7" />
 			</routingTable>
 		</IP4Router>
 		<socketShape id="198" x="308" y="200" devId="190" />
@@ -25,26 +26,27 @@
 		<socketShape id="204" x="356" y="200" devId="196" />
 		<socketShape id="205" x="364" y="200" devId="197" />
 	</routerShape>
-	<desktopShape id="206" name="Компьютер 1" description="" x="132" y="241">
+	<desktopShape id="206" name="Desktop 1" description="" x="218" y="254">
 		<IP4Router id="207">
 			<eth id="209" name="eth0" status="1" mac="0:0:0:0:CF:0" ip4="10.0.0.10" ip4bcast="10.255.255.255" ip4mask="255.0.0.0" bandwidth="0" />
 			<routingTable>
 				<row target="12.0.0.0" netmask="255.255.255.0" gateway="10.0.0.11" metric="0" iface="eth0" />
-				<row target="10.0.0.0" netmask="255.0.0.0" gateway="" metric="0" iface="eth0" />
 				<row target="11.0.0.0" netmask="255.0.0.0" gateway="10.0.0.11" metric="0" iface="eth0" />
+				<row target="10.0.0.0" netmask="255.0.0.0" gateway="" metric="0" iface="eth0" />
 			</routingTable>
 		</IP4Router>
-		<socketShape id="210" x="170" y="276" devId="209" />
+		<socketShape id="210" x="256" y="289" devId="209" />
 	</desktopShape>
-	<desktopShape id="211" name="Компьютер 2" description="" x="498" y="283">
+	<desktopShape id="211" name="Desktop 2" description="" x="391" y="254">
 		<IP4Router id="212">
 			<eth id="214" name="eth0" status="1" mac="0:0:0:0:D4:0" ip4="11.0.0.10" ip4bcast="11.255.255.255" ip4mask="255.0.0.0" bandwidth="0" />
 			<routingTable>
-				<row target="11.0.0.0" netmask="255.0.0.0" gateway="" metric="1" iface="eth0" />
+				<row target="11.0.0.0" netmask="255.0.0.0" gateway="" metric="0" iface="eth0" />
 				<row target="12.0.0.0" netmask="255.0.0.0" gateway="11.0.0.11" metric="0" iface="eth0" />
+				<row target="11.0.0.0" netmask="255.0.0.0" gateway="" metric="1" iface="eth0" />
 			</routingTable>
 		</IP4Router>
-		<socketShape id="215" x="536" y="318" devId="214" />
+		<socketShape id="215" x="429" y="289" devId="214" />
 	</desktopShape>
 	<switchShape id="230" name="Switch 3" description="" x="327" y="106">
 		<switch id="231">
@@ -66,27 +68,29 @@
 		<socketShape id="246" x="405" y="124" devId="238" />
 		<socketShape id="247" x="413" y="124" devId="239" />
 	</switchShape>
-	<desktopShape id="248" name="Компьютер 4" description="" x="229" y="30">
+	<desktopShape id="248" name="Desktop 4" description="" x="251" y="27">
 		<IP4Router id="249">
 			<eth id="251" name="eth0" status="1" mac="0:0:0:0:F9:0" ip4="12.0.0.10" ip4bcast="12.0.0.255" ip4mask="255.255.255.0" bandwidth="0" />
 			<routingTable>
+				<row target="12.0.0.0" netmask="255.255.255.0" gateway="" metric="0" iface="eth0" />
 				<row target="12.0.0.0" netmask="255.255.255.0" gateway="" metric="1" iface="eth0" />
 				<row target="10.0.0.0" netmask="255.0.0.0" gateway="12.0.0.1" metric="0" iface="eth0" />
 			</routingTable>
 		</IP4Router>
-		<socketShape id="252" x="267" y="65" devId="251" />
+		<socketShape id="252" x="289" y="62" devId="251" />
 	</desktopShape>
-	<desktopShape id="253" name="Компьютер 5" description="" x="680" y="0">
+	<desktopShape id="253" name="Desktop 5" description="" x="714" y="33">
 		<IP4Router id="254">
 			<eth id="256" name="eth0" status="1" mac="0:0:0:0:FE:0" ip4="12.0.0.11" ip4bcast="12.0.0.255" ip4mask="255.255.255.0" bandwidth="0" />
 			<routingTable>
+				<row target="12.0.0.0" netmask="255.255.255.0" gateway="" metric="0" iface="eth0" />
 				<row target="12.0.0.0" netmask="255.255.255.0" gateway="" metric="1" iface="eth0" />
 				<row target="0.0.0.0" netmask="0.0.0.0" gateway="12.0.0.1" metric="0" iface="eth0" />
 			</routingTable>
 		</IP4Router>
-		<socketShape id="257" x="718" y="35" devId="256" />
+		<socketShape id="257" x="752" y="68" devId="256" />
 	</desktopShape>
-	<switchShape id="625" name="Switch 6" description="" x="512" y="96">
+	<switchShape id="625" name="Switch 6" description="" x="572" y="104">
 		<switch id="626">
 			<port id="627" />
 			<port id="628" />
@@ -97,16 +101,16 @@
 			<port id="633" />
 			<port id="634" />
 		</switch>
-		<socketShape id="635" x="542" y="114" devId="627" />
-		<socketShape id="636" x="550" y="114" devId="628" />
-		<socketShape id="637" x="558" y="114" devId="629" />
-		<socketShape id="638" x="566" y="114" devId="630" />
-		<socketShape id="639" x="574" y="114" devId="631" />
-		<socketShape id="640" x="582" y="114" devId="632" />
-		<socketShape id="641" x="590" y="114" devId="633" />
-		<socketShape id="642" x="598" y="114" devId="634" />
+		<socketShape id="635" x="602" y="122" devId="627" />
+		<socketShape id="636" x="610" y="122" devId="628" />
+		<socketShape id="637" x="618" y="122" devId="629" />
+		<socketShape id="638" x="626" y="122" devId="630" />
+		<socketShape id="639" x="634" y="122" devId="631" />
+		<socketShape id="640" x="642" y="122" devId="632" />
+		<socketShape id="641" x="650" y="122" devId="633" />
+		<socketShape id="642" x="658" y="122" devId="634" />
 	</switchShape>
-	<switchShape id="647" name="Switch 7" description="" x="662" y="188">
+	<switchShape id="647" name="Switch 7" description="" x="692" y="182">
 		<switch id="648">
 			<port id="649" />
 			<port id="650" />
@@ -117,16 +121,16 @@
 			<port id="655" />
 			<port id="656" />
 		</switch>
-		<socketShape id="657" x="692" y="206" devId="649" />
-		<socketShape id="658" x="700" y="206" devId="650" />
-		<socketShape id="659" x="708" y="206" devId="651" />
-		<socketShape id="660" x="716" y="206" devId="652" />
-		<socketShape id="661" x="724" y="206" devId="653" />
-		<socketShape id="662" x="732" y="206" devId="654" />
-		<socketShape id="663" x="740" y="206" devId="655" />
-		<socketShape id="664" x="748" y="206" devId="656" />
+		<socketShape id="657" x="722" y="200" devId="649" />
+		<socketShape id="658" x="730" y="200" devId="650" />
+		<socketShape id="659" x="738" y="200" devId="651" />
+		<socketShape id="660" x="746" y="200" devId="652" />
+		<socketShape id="661" x="754" y="200" devId="653" />
+		<socketShape id="662" x="762" y="200" devId="654" />
+		<socketShape id="663" x="770" y="200" devId="655" />
+		<socketShape id="664" x="778" y="200" devId="656" />
 	</switchShape>
-	<switchShape id="674" name="Switch 8" description="" x="616" y="307">
+	<switchShape id="674" name="Switch 8" description="" x="692" y="252">
 		<switch id="675">
 			<port id="676" />
 			<port id="677" />
@@ -137,34 +141,34 @@
 			<port id="682" />
 			<port id="683" />
 		</switch>
-		<socketShape id="684" x="646" y="325" devId="676" />
-		<socketShape id="685" x="654" y="325" devId="677" />
-		<socketShape id="686" x="662" y="325" devId="678" />
-		<socketShape id="687" x="670" y="325" devId="679" />
-		<socketShape id="688" x="678" y="325" devId="680" />
-		<socketShape id="689" x="686" y="325" devId="681" />
-		<socketShape id="690" x="694" y="325" devId="682" />
-		<socketShape id="691" x="702" y="325" devId="683" />
+		<socketShape id="684" x="722" y="270" devId="676" />
+		<socketShape id="685" x="730" y="270" devId="677" />
+		<socketShape id="686" x="738" y="270" devId="678" />
+		<socketShape id="687" x="746" y="270" devId="679" />
+		<socketShape id="688" x="754" y="270" devId="680" />
+		<socketShape id="689" x="762" y="270" devId="681" />
+		<socketShape id="690" x="770" y="270" devId="682" />
+		<socketShape id="691" x="778" y="270" devId="683" />
 	</switchShape>
 	<patchcord id="216">
 		<media id="217" pointsCount="2" />
-		<plug id="218" point="1" x="170" y="276" socket="210" />
+		<plug id="218" point="1" x="256" y="289" socket="210" />
 		<plug id="219" point="2" x="308" y="200" socket="198" />
 	</patchcord>
 	<patchcord id="220">
 		<media id="221" pointsCount="2" />
 		<plug id="222" point="1" x="364" y="200" socket="205" />
-		<plug id="223" point="2" x="536" y="318" socket="215" />
+		<plug id="223" point="2" x="429" y="289" socket="215" />
 	</patchcord>
 	<patchcord id="258">
 		<media id="259" pointsCount="2" />
-		<plug id="260" point="1" x="267" y="65" socket="252" />
+		<plug id="260" point="1" x="289" y="62" socket="252" />
 		<plug id="261" point="2" x="357" y="124" socket="240" />
 	</patchcord>
 	<patchcord id="262">
 		<media id="263" pointsCount="2" />
-		<plug id="264" point="1" x="598" y="114" socket="642" />
-		<plug id="265" point="2" x="718" y="35" socket="257" />
+		<plug id="264" point="1" x="658" y="122" socket="642" />
+		<plug id="265" point="2" x="752" y="68" socket="257" />
 	</patchcord>
 	<patchcord id="266">
 		<media id="267" pointsCount="2" />
@@ -173,17 +177,17 @@
 	</patchcord>
 	<patchcord id="643">
 		<media id="644" pointsCount="2" />
-		<plug id="645" point="1" x="542" y="114" socket="635" />
+		<plug id="645" point="1" x="602" y="122" socket="635" />
 		<plug id="646" point="2" x="413" y="124" socket="247" />
 	</patchcord>
 	<patchcord id="665">
 		<media id="666" pointsCount="2" />
-		<plug id="667" point="1" x="566" y="114" socket="638" />
-		<plug id="668" point="2" x="716" y="206" socket="660" />
+		<plug id="667" point="1" x="626" y="122" socket="638" />
+		<plug id="668" point="2" x="746" y="200" socket="660" />
 	</patchcord>
 	<patchcord id="692">
 		<media id="693" pointsCount="2" />
-		<plug id="694" point="1" x="558" y="114" socket="637" />
-		<plug id="695" point="2" x="654" y="325" socket="685" />
+		<plug id="694" point="1" x="618" y="122" socket="637" />
+		<plug id="695" point="2" x="730" y="270" socket="685" />
 	</patchcord>
 </project>

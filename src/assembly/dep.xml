@@ -7,21 +7,22 @@
         <format>tar.bz2</format>
         <format>zip</format>
     </formats>
+    <files>
+        <file>
+            <source>${project.build.directory}/netsimulator-${project.version}.jar</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>netsimulator.jar</destName>
+        </file>
+    </files>
     <fileSets>
         <fileSet>
             <directory>${project.basedir}</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>COPYING</include>
+                <include>README.md</include>
                 <include>install*</include>
                 <include>run*</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.build.directory}</directory>
-            <outputDirectory>/</outputDirectory>
-            <includes>
-                <include>netsimulator*.jar</include>
             </includes>
         </fileSet>
         <fileSet>

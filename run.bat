@@ -1,1 +1,1 @@
-java -Djava.util.logging.config.file=cfg\logging.properties -jar netsimulator-1.1-SNAPSHOT.jar
+java -Djava.util.logging.config.file=cfg\logging.properties -jar netsimulator.jar
