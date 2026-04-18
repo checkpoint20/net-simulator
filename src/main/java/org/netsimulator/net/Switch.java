@@ -23,7 +23,6 @@ import org.netsimulator.util.ConfigurableThreadFactory;
 import org.netsimulator.util.IdGenerator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -78,12 +77,9 @@ public class Switch implements Concentrator
             ports.add(new Port(idGenerator, this));
         }
         macTable = new MACAddressesTable(MACADDRESS_TABLE_CLEAN_TIMEOUT);
-        macTableCleanExecutorService.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                macTable.clean();
-            }
-        }, MACADDRESS_TABLE_CLEAN_TIMEOUT, MACADDRESS_TABLE_CLEAN_TIMEOUT, TimeUnit.SECONDS);
+        macTableCleanExecutorService.scheduleAtFixedRate(
+                () -> macTable.clean(),
+                MACADDRESS_TABLE_CLEAN_TIMEOUT, MACADDRESS_TABLE_CLEAN_TIMEOUT, TimeUnit.SECONDS);
         
     }
 
@@ -92,16 +88,14 @@ public class Switch implements Concentrator
     
     public Port getPortById(int id)
     {
-        Port port = null;
-        for(Iterator<Port> i = ports.iterator(); i.hasNext(); )
+        for (Port port : ports)
         {
-            port = i.next();
-            if(port.getId() == id)
+            if (port.getId() == id)
             {
                 return port;
             }
         }
-        return null;        
+        return null;
     }
     
     
@@ -186,7 +180,7 @@ public class Switch implements Concentrator
 
     private void sendToAllPorts(int srcPortId, final Layer2Packet packet)
     {
-        Port portsArray[] = new Port[ ports.size() ];
+        Port[] portsArray = new Port[ ports.size() ];
         ports.toArray( portsArray );
         for( int i = 0; i != portsArray.length; i++ )
         {

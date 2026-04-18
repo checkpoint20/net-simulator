@@ -25,8 +25,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 package org.netsimulator.net;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Comparator;
 import java.util.logging.Logger;
@@ -193,11 +193,11 @@ public class RoutingTableRow
 
     private void setInterface(Interface iface)
     {
-        if(target == null)
+        if(iface == null)
         {
             throw new IllegalArgumentException("The interface can't be null");
         }else
-        {        
+        {
             this.iface = iface;
         }
     }
@@ -261,15 +261,20 @@ public class RoutingTableRow
                 res = EQ;
             } else
             {
-                if( r1.getNetmask().equals(r2.getNetmask()) ) 
+                if( r1.getNetmask().equals(r2.getNetmask()) )
                 {
-                    if(r1.getMetric() <= r2.getMetric())
+                    if(r1.getMetric() < r2.getMetric())
                     {
                         res = LT; // r1 has higher priority than r2
-                    }else
+                    } else if(r1.getMetric() > r2.getMetric())
                     {
                         res = GT; // r1 has lower priority than r2
-                    }    
+                    } else
+                    {
+                        // metrics equal — use interface name as stable tie-breaker
+                        int nameCmp = r1.getInterface().getName().compareTo(r2.getInterface().getName());
+                        res = nameCmp < 0 ? LT : GT;
+                    }
                 }
                 else if( countNetmaskLength(r1.getNetmask()) >
                          countNetmaskLength(r2.getNetmask()) )

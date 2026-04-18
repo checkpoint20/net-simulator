@@ -34,31 +34,34 @@ public class PingCLICommand extends AbstractCommand implements ICMPEchoReplayLis
 
     private PrintWriter writer;
     private final IP4Router router;
-    private static final Options options = new Options();
-    private boolean go = false;
+    private final Options options;
+    private volatile boolean go = false;
     private ICMPEchoPacket icmpEchoReplayPacket = null;
     private final int identifier;
-    private boolean timeoutExpired = false;
+    private volatile boolean timeoutExpired = false;
     private static final Timer TIMER = new Timer("PingResponceTimeoutThread", true);
     private TimerTaskPing timerTask;
 
 
     public PingCLICommand(IP4Router router) {
         this.router = router;
+        this.options = new Options();
 
         Option help = new Option("h", false, "display this help");
         options.addOption(help);
 
-        Option ttl = OptionBuilder.withArgName("ttl")
+        Option ttl = Option.builder("t")
+                .argName("ttl")
                 .hasArg()
-                .withDescription("set the IP Time to Live")
-                .create("t");
+                .desc("set the IP Time to Live")
+                .build();
         options.addOption(ttl);
 
-        Option interval = OptionBuilder.withArgName("interval")
+        Option interval = Option.builder("i")
+                .argName("interval")
                 .hasArg()
-                .withDescription("wait interval seconds between sending each packet, the default is to wait for one second")
-                .create("i");
+                .desc("wait interval seconds between sending each packet, the default is to wait for one second")
+                .build();
         options.addOption(interval);
         router.addICMPEchoReplayListener(this);
 
@@ -77,7 +80,7 @@ public class PingCLICommand extends AbstractCommand implements ICMPEchoReplayLis
 
         go = true;
 
-        CommandLineParser parser = new GnuParser();
+        CommandLineParser parser = new DefaultParser();
         CommandLine cmd = null;
         try {
             cmd = parser.parse(options, argv);

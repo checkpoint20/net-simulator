@@ -22,7 +22,6 @@ package org.netsimulator.net;
 import org.netsimulator.util.IdGenerator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class Hub implements Concentrator
 {
@@ -81,15 +80,14 @@ public class Hub implements Concentrator
     public Port getPortById(int id)
     {
         Port port = null;
-        for(Iterator<Port> i = ports.iterator(); i.hasNext(); )
+        for (Port p : ports)
         {
-            port = i.next();
-            if(port.getId() == id)
+            if (p.getId() == id)
             {
-                return port;
+                return p;
             }
         }
-        return null;        
+        return null;
     }
     
     
@@ -119,10 +117,9 @@ public class Hub implements Concentrator
 
     public void transportPacket(Port sourcePort, Layer2Packet packet)
     {
-        for(Iterator<Port> i=ports.iterator(); i.hasNext();)
+        for (Port port : ports)
         {
-            Port port = i.next();
-            if(port != sourcePort)
+            if (port != sourcePort)
             {
                 port.transmitPacket(packet);
             }

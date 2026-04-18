@@ -23,7 +23,6 @@ package org.netsimulator.net;
 import org.netsimulator.util.IdGenerator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.logging.Logger;
 
 public class IP4Router implements Router {
@@ -55,8 +54,8 @@ public class IP4Router implements Router {
             throw new TooManyInterfacesException( "You can not create more than 256 interfaces!" );
         }
 
-        this.id = idGenerator.getNextId();
         this.id = id;
+        this.idGenerator = idGenerator;
 
         long address_v = this.id;
         address_v = address_v << 8;
@@ -192,14 +191,13 @@ public class IP4Router implements Router {
     }
 
     private void processICMPEchoReplay( ICMPEchoPacket packet ) {
-        for( Iterator<ICMPEchoReplayListener> i = icmpReplayListeners.iterator(); i.hasNext();) {
-            ICMPEchoReplayListener listener = i.next();
+        for ( ICMPEchoReplayListener listener : icmpReplayListeners ) {
             listener.processICMPEchoReplay( packet );
         }
     }
 
     private void processIP4Packet( IP4Packet packet ) {
-
+        logger.warning( getId() + ": UDP packet addressed to this host — not implemented, discarding: " + packet );
     }
 
     private void goThroughRoutingTable( IP4Packet packet ) {
@@ -241,6 +239,10 @@ public class IP4Router implements Router {
                                 } catch( AddressException ae ) {
                                     System.err.println( "Internal error: can not make ICMPEchoReplay packet" );
                                     ae.printStackTrace();
+                                    break;
+                                }
+                                if( replay == null ) {
+                                    logger.warning( getId() + ": ICMP echo reply could not be created (no source address), dropping." );
                                     break;
                                 }
                                 goThroughRoutingTable( replay );

@@ -26,18 +26,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 package org.netsimulator.net;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 import org.netsimulator.util.IdGenerator;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *
  * @author maks
  */
-public class RoutingTableTest extends TestCase
+public class RoutingTableTest
 {
 
-   
-    public void testRoute() throws AddressException, NotAllowedAddressException 
+    @Before
+    public void setUp() {
+    }
+
+    @Test
+    public void testRoute() throws AddressException, NotAllowedAddressException
     {
         //////// готовим тестовые данные  ////////
         

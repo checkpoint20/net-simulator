@@ -55,23 +55,21 @@ public class ARPCache {
     }
 
     public void put(IP4Address key, MACAddress value) {
-        if(lock.tryLock()) {
-            try{
-                cache.put(key, new ResolvedAddress(value, System.currentTimeMillis()));
-            } finally {
-                lock.unlock();
-            }
+        lock.lock();
+        try {
+            cache.put(key, new ResolvedAddress(value, System.currentTimeMillis()));
+        } finally {
+            lock.unlock();
         }
     }
 
     public MACAddress get(IP4Address key) {
         MACAddress resolvedAddress = null;
-        if(lock.tryLock()) {
-            try {
-                resolvedAddress = cache.get(key) == null ? null : cache.get(key).resolvedAddress;
-            } finally {
-                lock.unlock();
-            }
+        lock.lock();
+        try {
+            resolvedAddress = cache.get(key) == null ? null : cache.get(key).resolvedAddress;
+        } finally {
+            lock.unlock();
         }
         return resolvedAddress;
     }
@@ -80,20 +78,20 @@ public class ARPCache {
      * Clean records
      */
     public void clean() {
-        if(lock.tryLock()) {
-            logger.finest("Clean ARP cache job is running.");
-            try {
-                for (IP4Address ip4Address: cache.keySet()) {               
-                    ResolvedAddress addr = cache.get(ip4Address);
-                    long offset = (System.currentTimeMillis() - addr.resolvedTime) / 1000;
-                    if (offset > timeout) {
-                        logger.log(Level.FINEST, "{0} -> {1} time sinse has been resolved {2}, going to be removed.", new Object[]{ip4Address, addr.resolvedAddress, offset});
-                        cache.remove(ip4Address);
-                    }
+        lock.lock();
+        logger.finest("Clean ARP cache job is running.");
+        try {
+            cache.entrySet().removeIf(entry -> {
+                long offset = (System.currentTimeMillis() - entry.getValue().resolvedTime) / 1000;
+                if (offset > timeout) {
+                    logger.log(Level.FINEST, "{0} -> {1} time sinse has been resolved {2}, going to be removed.",
+                            new Object[]{entry.getKey(), entry.getValue().resolvedAddress, offset});
+                    return true;
                 }
-            } finally {
-                lock.unlock();
-            }
+                return false;
+            });
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -102,7 +100,7 @@ public class ARPCache {
      * @return resolved addresses.
      */    
     public List<IP4Address> getAddresses() {
-        List<IP4Address> res = Collections.EMPTY_LIST;
+        List<IP4Address> res = Collections.emptyList();
         lock.lock();
         try {
             res = new LinkedList<IP4Address>(cache.keySet());

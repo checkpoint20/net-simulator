@@ -45,7 +45,7 @@ public class ConfigurableThreadFactory implements ThreadFactory {
                 r,
                 namePrefix + threadNumber.getAndIncrement(),
                 0);
-        if (t.isDaemon()) {
+        if (!t.isDaemon()) {
             t.setDaemon(true);
         }
         if (t.getPriority() != Thread.NORM_PRIORITY) {

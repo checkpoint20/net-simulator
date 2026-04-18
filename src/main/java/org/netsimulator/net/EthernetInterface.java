@@ -24,10 +24,10 @@ import org.netsimulator.util.ConfigurableThreadFactory;
 import org.netsimulator.util.IdGenerator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,14 +55,14 @@ public class EthernetInterface
     private int status;
     private int bandwidth;
     private String encap;
-    private int rxBytes;
-    private int txBytes;
-    private int rxPackets;
-    private int txPackets;
-    private int rxPacketsErrors;
-    private int txPacketsErrors;
-    private int rxDroped;
-    private int txDroped;
+    private final AtomicInteger rxBytes = new AtomicInteger(0);
+    private final AtomicInteger txBytes = new AtomicInteger(0);
+    private final AtomicInteger rxPackets = new AtomicInteger(0);
+    private final AtomicInteger txPackets = new AtomicInteger(0);
+    private final AtomicInteger rxPacketsErrors = new AtomicInteger(0);
+    private final AtomicInteger txPacketsErrors = new AtomicInteger(0);
+    private final AtomicInteger rxDroped = new AtomicInteger(0);
+    private final AtomicInteger txDroped = new AtomicInteger(0);
     private ARPCache arpCache;
     private String name;
     private ArrayList<TransferPacketListener> transferPacketListeners;
@@ -97,12 +97,9 @@ public class EthernetInterface
         
         arpCache = new ARPCache(ARP_CACHE_CLEAN_TIMEOUT);
         
-        arpCacheCleanExecutorService.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                arpCache.clean();
-            }
-        }, ARP_CACHE_CLEAN_TIMEOUT, ARP_CACHE_CLEAN_TIMEOUT, TimeUnit.SECONDS);
+        arpCacheCleanExecutorService.scheduleAtFixedRate(
+                () -> arpCache.clean(),
+                ARP_CACHE_CLEAN_TIMEOUT, ARP_CACHE_CLEAN_TIMEOUT, TimeUnit.SECONDS);
         
         transferPacketListeners = new ArrayList<TransferPacketListener>();
     }
@@ -158,7 +155,7 @@ public class EthernetInterface
         if(router == null /*||
            !(packet instanceof Layer2Packet)*/)
         {
-            rxDroped++;
+            rxDroped.incrementAndGet();
             return;
         }
 
@@ -176,13 +173,13 @@ public class EthernetInterface
                     {
                         case ARPPacket.REQUEST :
                             try
-                            {        
+                            {
                                 processArpRequest(arpPacket);
                             }catch(AddressException ae)
                             {
                                 ae.printStackTrace();
                             }
-                            rxPackets++;
+                            rxPackets.incrementAndGet();
                             break;
                         case ARPPacket.REPLAY :
                             try
@@ -192,29 +189,28 @@ public class EthernetInterface
                             {
                                 ae.printStackTrace();
                             }
-                            rxPackets++;
+                            rxPackets.incrementAndGet();
                             break;
                         default :
-                            rxPacketsErrors++;
+                            rxPacketsErrors.incrementAndGet();
                     }
                     break;
-                    
+
                 case Protocols.IP :
                     router.routePacket((Packet)l2packet.getData());
-                    rxPackets++;
+                    rxPackets.incrementAndGet();
                     break;
 
                 default :
-                    rxPacketsErrors++;
+                    rxPacketsErrors.incrementAndGet();
             }
         }
         
-        for(Iterator<TransferPacketListener> i = transferPacketListeners.iterator(); i.hasNext(); )
+        for (TransferPacketListener listener : transferPacketListeners)
         {
-            TransferPacketListener listener = i.next();
             listener.packetTransfered(l2packet);
             listener.packetReceived(l2packet);
-        }        
+        }
     }
 
 
@@ -225,16 +221,15 @@ public class EthernetInterface
         if(media != null)
         {
             media.transmitPacket(this, packet);
-            txPackets++;
-            for(Iterator<TransferPacketListener> i = transferPacketListeners.iterator(); i.hasNext(); )
+            txPackets.incrementAndGet();
+            for (TransferPacketListener listener : transferPacketListeners)
             {
-                TransferPacketListener listener = i.next();
                 listener.packetTransfered(packet);
                 listener.packetTransmitted(packet);
-            }            
+            }
         }else
         {
-            txPacketsErrors++;
+            txPacketsErrors.incrementAndGet();
         }
     }
 
@@ -412,43 +407,43 @@ public class EthernetInterface
 
     public int getRXBytes()
     {
-        return rxBytes;
+        return rxBytes.get();
     }
 
     public int getRXDroped()
     {
-        return rxDroped;
+        return rxDroped.get();
     }
 
     public int getRXPackets()
     {
-        return rxPackets;
+        return rxPackets.get();
     }
 
     public int getRXPacketsErrors()
     {
-        return rxPacketsErrors;
+        return rxPacketsErrors.get();
     }
-    
-    
+
+
     public int getTXBytes()
     {
-        return txBytes;
+        return txBytes.get();
     }
 
     public int getTXDroped()
     {
-        return txDroped;
+        return txDroped.get();
     }
 
     public int getTXPackets()
     {
-        return txPackets;
+        return txPackets.get();
     }
 
     public int getTXPacketsErrors()
     {
-        return txPacketsErrors;
+        return txPacketsErrors.get();
     }
     
     
