@@ -86,6 +86,11 @@ public class ICMPEchoPacket extends IP4Packet {
      * @throws AddressException 
      */
     public ICMPEchoPacket getICMPReplay() throws AddressException {
+        if (getSourceAddress() == null) {
+            logger.warning("Cannot create ICMP echo reply: original packet has no source address, reply cannot be routed.");
+            return null;
+        }
+
         ICMPEchoPacket replay
                 = new ICMPEchoPacket(
                         Protocols.ICMPEchoReply,
@@ -94,7 +99,7 @@ public class ICMPEchoPacket extends IP4Packet {
                         getTotalLength(),
                         DEFAULT_TTL,
                         null,
-                        getSourceAddress() == null ? getDestinationAddress() : getSourceAddress(),
+                        getSourceAddress(),
                         getTimestamp(),
                         getData()
                 );

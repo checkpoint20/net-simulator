@@ -52,7 +52,7 @@ public class IfconfigCLICommand extends AbstractCommand
             
     private Writer writer;
     private final IP4Router router;
-    private static final Options options = new Options();
+    private final Options options;
 
     private static final Logger LOGGER = 
             Logger.getLogger(IfconfigCLICommand.class.getName());
@@ -60,6 +60,7 @@ public class IfconfigCLICommand extends AbstractCommand
     
     public IfconfigCLICommand(IP4Router router) {
         this.router = router;
+        this.options = new Options();
 
         Option help = new Option("h", false, "display this help");
         options.addOption(help);
@@ -70,15 +71,17 @@ public class IfconfigCLICommand extends AbstractCommand
         options.addOption(statusUp);
         options.addOption(statusDown);
         
-        Option broadcast = OptionBuilder.withArgName( "address" )
-                                        .hasArg()
-                                        .withDescription( "set the protocol broadcast address for this interface" )
-                                        .create( "broadcast" );
+        Option broadcast = Option.builder("broadcast")
+                                 .argName("address")
+                                 .hasArg()
+                                 .desc("set the protocol broadcast address for this interface")
+                                 .build();
         options.addOption(broadcast);
-        Option netmask   = OptionBuilder.withArgName( "address" )
-                                        .hasArg()
-                                        .withDescription( "set the IP network mask for this interface (this value defaults to the usual class A, B or C network mask)" )
-                                        .create( "netmask" );
+        Option netmask   = Option.builder("netmask")
+                                 .argName("address")
+                                 .hasArg()
+                                 .desc("set the IP network mask for this interface (this value defaults to the usual class A, B or C network mask)")
+                                 .build();
         options.addOption(netmask);
      }
 
@@ -94,7 +97,7 @@ public class IfconfigCLICommand extends AbstractCommand
     {
         int retCode = OK_RETCODE;
         try {
-            CommandLineParser parser = new GnuParser();
+            CommandLineParser parser = new DefaultParser();
             CommandLine cmd = null;
             try {
                 cmd = parser.parse( options, argv);

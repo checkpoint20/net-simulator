@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 package org.netsimulator.net;
 
-import org.junit.*;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -31,23 +31,8 @@ public class IP4AddressTest {
     public IP4AddressTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
 
-    
+
     /**
      * Test string parsing.
      */

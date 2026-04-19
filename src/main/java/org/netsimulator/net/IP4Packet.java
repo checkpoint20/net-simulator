@@ -23,13 +23,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * The class implements pseudo IP-packet as it is described in RFC 791.
  *
- * Version 1, 2004-06-30
- *
- * Some exceptions: a) not implements TOS b) not implements fragmentation c)
- * header checksum is never computed, it is 0 every time d) not implements
- * Options (so we do not need Padding) e) version is always 4 f) Internet Header
- * Length is always 5
- *
+ * Some exceptions from the RFC:
+ *   a) does not implement TOS
+ *   b) does not implement fragmentation
+ *   c) header checksum is never computed, it is 0 every time
+ *   d) does not implement Options (so we do not need Padding)
+ *   e) version is always 4
+ *   f) Internet Header length is always 5
  */
 public class IP4Packet implements Packet, Content {
 
@@ -53,23 +53,17 @@ public class IP4Packet implements Packet, Content {
         this.version = 4;
         this.ihl = 5;
         this.headerChecksum = 0;
-        this.data = null;
+        this.data = data;
 
         this.totalLength = totalLength;
         this.ttl = new AtomicInteger(ttl);
         this.protocol = protocol;
 
-        if (srcAddress != null && !(srcAddress instanceof IP4Address)) {
-            throw new AddressException("Invalid source IP4 address.");
-        } else {
-            this.srcAddress = (IP4Address) srcAddress;
-        }
+        assert srcAddress == null || srcAddress instanceof IP4Address : "Invalid source IP4 address.";
+        this.srcAddress = srcAddress;
 
-        if (dstAddress == null || !(dstAddress instanceof IP4Address)) {
-            throw new AddressException("Invalid destination IP4 address.");
-        } else {
-            this.dstAddress = (IP4Address) dstAddress;
-        }
+        assert dstAddress == null || dstAddress instanceof IP4Address : "Invalid destination IP4 address.";
+        this.dstAddress = dstAddress;
 
     }
 
@@ -122,10 +116,7 @@ public class IP4Packet implements Packet, Content {
     }
 
     public void setSourceAddress(IP4Address srcAddress) throws AddressException {
-        if (srcAddress != null && !(srcAddress instanceof IP4Address)) {
-            throw new AddressException("Invalid source IP4 address.");
-        } else {
-            this.srcAddress = (IP4Address) srcAddress;
-        }
+        assert srcAddress == null || srcAddress instanceof IP4Address : "Invalid source IP4 address.";
+        this.srcAddress = srcAddress;
     }
 }
