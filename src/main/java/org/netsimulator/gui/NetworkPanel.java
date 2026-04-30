@@ -229,8 +229,21 @@ implements MouseListener, Runnable
     
     public void createMedia()
     {
-        PatchcordNetworkLink new_link = null ;
-        new_link = new PatchcordNetworkLink(this);
+        new PatchcordNetworkLink(this);
+        isSaved = false;
+    }
+
+    public void createMedia(int x, int y)
+    {
+        PatchcordNetworkLink link = new PatchcordNetworkLink(this);
+        link.positionAt(x, y);
+        isSaved = false;
+    }
+
+    public void createMedia(int x, int y, SocketNetworkShape socket)
+    {
+        PatchcordNetworkLink link = new PatchcordNetworkLink(this);
+        link.plugIntoSocket(socket, x, y);
         isSaved = false;
     }
 

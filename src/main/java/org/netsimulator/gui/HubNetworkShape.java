@@ -46,6 +46,7 @@ public class HubNetworkShape
     private JPopupMenu popup = new JPopupMenu();
     private JMenuItem properties_menu_item;
     private JMenuItem delete_menu_item;
+    private JMenuItem new_cable_menu_item;
     private Hub hub = null;
     private ArrayList<SocketNetworkShape> sockets = null;
     private NetworkPanel panel;
@@ -97,6 +98,10 @@ public class HubNetworkShape
         popup.addSeparator();
         delete_menu_item.addActionListener(this);
         popup.add(delete_menu_item);
+        popup.addSeparator();
+        new_cable_menu_item = new JMenuItem("New cable");
+        new_cable_menu_item.addActionListener(this);
+        popup.add(new_cable_menu_item);
 
         setSize(image.getWidth(null), image.getHeight(null));
         setLocation(20, 20);
@@ -258,6 +263,13 @@ public class HubNetworkShape
             panel.deleteDeviceShape(this);
         }
 
+        if (e.getSource() == new_cable_menu_item && popupShown) {
+            Point cursor = MouseInfo.getPointerInfo().getLocation();
+            SwingUtilities.convertPointFromScreen(cursor, panel);
+            sockets.stream().filter(s -> !s.isConnected()).findFirst()
+                    .ifPresent(s -> panel.createMedia(cursor.x, cursor.y, s));
+        }
+
         popupShown = false;
     }
 
@@ -268,6 +280,7 @@ public class HubNetworkShape
 
 
     private void processMouseEventWhenPopupTriggerIsTrue(MouseEvent e) {
+        new_cable_menu_item.setEnabled(sockets.stream().anyMatch(s -> !s.isConnected()));
         popup.show(e.getComponent(),
                 e.getX(), e.getY());
         popupShown = true;

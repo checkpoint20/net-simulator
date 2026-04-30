@@ -108,6 +108,17 @@ public class PatchcordNetworkLink
         panel.putOnPlugLayer(plug2);
     }
 
+    public void positionAt(int x, int y) {
+        plug1.moveInto(x - 80 - plug1.width / 2, y - plug1.height / 2);
+        plug2.moveInto(x - plug2.width / 2, y - plug2.height / 2);
+    }
+
+    public void plugIntoSocket(SocketNetworkShape socket, int cursorX, int cursorY) {
+        plug1.setConnectedSocket(socket);
+        plug1.moveInto(socket.x, socket.y);
+        plug2.moveInto(cursorX - plug2.width / 2, cursorY - plug2.height / 2);
+    }
+
     @Override
     public void show(Graphics2D g2d) {
 //        g2d.addRenderingHints(
@@ -256,8 +267,12 @@ public class PatchcordNetworkLink
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == delete_menu_item && popupShown) {
-            plug1.getConnectedSocket().disconnectPlug();
-            plug2.getConnectedSocket().disconnectPlug();
+            if (plug1.getConnectedSocket() != null) {
+                plug1.getConnectedSocket().disconnectPlug();
+            }
+            if (plug2.getConnectedSocket() != null) {
+                plug2.getConnectedSocket().disconnectPlug();
+            }
             panel.deletePlug(plug1);
             panel.deletePlug(plug2);
             panel.deleteMedia(this);
