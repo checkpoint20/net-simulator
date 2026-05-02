@@ -128,21 +128,22 @@ implements MouseListener, Runnable
             ie.printStackTrace();
         }
         devicesLayer.add(new_shape);
-        
-        new_shape.setName("Desktop "+devicesLayer.indexOf(new_shape));
+        int desktopIndex = devicesLayer.indexOf(new_shape);
+        new_shape.setName("Desktop " + desktopIndex);
+        new_shape.setLocation(20 + desktopIndex * 30, 20 + desktopIndex * 30);
 
         repaint();
         isSaved = false;
     }
-    
- 
 
-    
-    
+
+
+
+
     public void createHub()
     {
         int portsCount = 8;
-        
+
         HubNetworkShape new_shape = null ;
         try
         {
@@ -153,15 +154,17 @@ implements MouseListener, Runnable
             ie.printStackTrace();
         }
         devicesLayer.add(new_shape);
-        new_shape.setName("HUB "+devicesLayer.indexOf(new_shape));
+        int hubIndex = devicesLayer.indexOf(new_shape);
+        new_shape.setName("HUB " + hubIndex);
+        new_shape.setLocation(20 + hubIndex * 30, 20 + hubIndex * 30);
         repaint();
         isSaved = false;
     }
- 
 
-    
-    
-    
+
+
+
+
 
     public void createSwitch()
     {
@@ -177,22 +180,24 @@ implements MouseListener, Runnable
             ie.printStackTrace();
         }
         devicesLayer.add(new_shape);
-        new_shape.setName("Switch "+devicesLayer.indexOf(new_shape));
+        int switchIndex = devicesLayer.indexOf(new_shape);
+        new_shape.setName("Switch " + switchIndex);
+        new_shape.setLocation(20 + switchIndex * 30, 20 + switchIndex * 30);
         repaint();
         isSaved = false;
-    }    
-    
+    }
 
-    
-    
-    
-    
-    
+
+
+
+
+
+
 
     public void createRouter()
     {
         int ifsCount = 8;
-        
+
         RouterNetworkShape new_shape = null ;
         try
         {
@@ -202,8 +207,9 @@ implements MouseListener, Runnable
             ie.printStackTrace();
         }
         devicesLayer.add(new_shape);
-        
-        new_shape.setName("Router "+devicesLayer.indexOf(new_shape));
+        int routerIndex = devicesLayer.indexOf(new_shape);
+        new_shape.setName("Router " + routerIndex);
+        new_shape.setLocation(20 + routerIndex * 30, 20 + routerIndex * 30);
         repaint();
         isSaved = false;
     }    
