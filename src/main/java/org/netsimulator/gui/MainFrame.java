@@ -138,7 +138,7 @@ public class MainFrame
         switch_menu_item = new JMenuItem(rsc.getString("Commutator (Switch)"));
         switch_menu_item.addActionListener(this);
         devices_menu.add(switch_menu_item);
-        media_menu_item = new JMenuItem(rsc.getString("Pathcord"));
+        media_menu_item = new JMenuItem(rsc.getString("Cable"));
         media_menu_item.addActionListener(this);
         devices_menu.add(media_menu_item);
         menuBar.add(devices_menu);

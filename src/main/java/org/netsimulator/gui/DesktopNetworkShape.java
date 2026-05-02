@@ -40,6 +40,7 @@ public class DesktopNetworkShape
     private JMenuItem properties_menu_item;
     private JMenuItem terminal_menu_item;
     private JMenuItem delete_menu_item;
+    private JMenuItem new_cable_menu_item;
     private IP4Router router = null;
     private SocketNetworkShape socket = null;
     private TerminalDialog terminalDialog = null;
@@ -67,6 +68,10 @@ public class DesktopNetworkShape
         popup.addSeparator();
         delete_menu_item.addActionListener( this );
         popup.add( delete_menu_item );
+        popup.addSeparator();
+        new_cable_menu_item = new JMenuItem( "New cable" );
+        new_cable_menu_item.addActionListener( this );
+        popup.add( new_cable_menu_item );
 
         MediaTracker tracker = new MediaTracker(panel);
         tracker.addImage( image, 0 );
@@ -294,6 +299,12 @@ public class DesktopNetworkShape
             terminalDialog.setVisible( false );
         }
 
+        if( e.getSource() == new_cable_menu_item && popupShown ) {
+            Point cursor = MouseInfo.getPointerInfo().getLocation();
+            SwingUtilities.convertPointFromScreen(cursor, panel);
+            panel.createMedia(cursor.x, cursor.y, socket);
+        }
+
         popupShown = false;
     }
 
@@ -302,6 +313,7 @@ public class DesktopNetworkShape
     }
 
     private void processMouseEventWhenPopupTriggerIsTrue( MouseEvent e ) {
+        new_cable_menu_item.setEnabled(socket != null && !socket.isConnected());
         popup.show( e.getComponent(),
                 e.getX(), e.getY() );
         popupShown = true;
