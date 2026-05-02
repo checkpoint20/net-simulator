@@ -41,6 +41,8 @@ public class DesktopNetworkShape
     private JMenuItem terminal_menu_item;
     private JMenuItem delete_menu_item;
     private JMenuItem new_cable_menu_item;
+    private JMenuItem clone_menu_item;
+    private JMenuItem clone_with_config_menu_item;
     private IP4Router router = null;
     private SocketNetworkShape socket = null;
     private TerminalDialog terminalDialog = null;
@@ -65,6 +67,13 @@ public class DesktopNetworkShape
         popup.add( properties_menu_item );
         terminal_menu_item.addActionListener( this );
         popup.add( terminal_menu_item );
+        clone_menu_item = new JMenuItem( "Clone object" );
+        clone_with_config_menu_item = new JMenuItem( "Clone object with config" );
+        clone_menu_item.addActionListener( this );
+        clone_with_config_menu_item.addActionListener( this );
+        popup.addSeparator();
+        popup.add( clone_menu_item );
+        popup.add( clone_with_config_menu_item );
         popup.addSeparator();
         delete_menu_item.addActionListener( this );
         popup.add( delete_menu_item );
@@ -303,6 +312,54 @@ public class DesktopNetworkShape
             Point cursor = MouseInfo.getPointerInfo().getLocation();
             SwingUtilities.convertPointFromScreen(cursor, panel);
             panel.createMedia(cursor.x, cursor.y, socket);
+        }
+
+        if( e.getSource() == clone_menu_item && popupShown ) {
+            try {
+                DesktopNetworkShape clone = new DesktopNetworkShape( panel, 1, panel.getIdGenerator().getNextId() );
+                panel.putOnDevicesLayer( clone );
+                clone.setName( "Clone of " + getName() );
+                clone.setLocation( x + 30, y + 30 );
+                panel.setSaved( false );
+                panel.repaint();
+            } catch( InterruptedException ex ) {
+                ex.printStackTrace();
+            }
+        }
+
+        if( e.getSource() == clone_with_config_menu_item && popupShown ) {
+            try {
+                DesktopNetworkShape clone = new DesktopNetworkShape( panel, 1, panel.getIdGenerator().getNextId() );
+                panel.putOnDevicesLayer( clone );
+                clone.setName( "Clone of " + getName() );
+                clone.setLocation( x + 30, y + 30 );
+                if( router != null && clone.getRouter() != null ) {
+                    Interface[] origIfs = router.getInterfaces();
+                    Interface[] cloneIfs = clone.getRouter().getInterfaces();
+                    int count = Math.min( origIfs.length, cloneIfs.length );
+                    for( int i = 0; i < count; i++ ) {
+                        Interface orig = origIfs[i];
+                        Interface dest = cloneIfs[i];
+                        if( orig instanceof IP4EnabledInterface && dest instanceof IP4EnabledInterface ) {
+                            IP4EnabledInterface origIp = (IP4EnabledInterface) orig;
+                            IP4EnabledInterface destIp = (IP4EnabledInterface) dest;
+                            try {
+                                IP4Address addr = origIp.getInetAddress();
+                                if( addr != null && !(addr instanceof NullIP4Address) ) {
+                                    destIp.setInetAddress( addr );
+                                    destIp.setNetmaskAddress( origIp.getNetmaskAddress() );
+                                }
+                            } catch( Exception ex2 ) {
+                                ex2.printStackTrace();
+                            }
+                        }
+                    }
+                }
+                panel.setSaved( false );
+                panel.repaint();
+            } catch( InterruptedException ex ) {
+                ex.printStackTrace();
+            }
         }
 
         popupShown = false;
