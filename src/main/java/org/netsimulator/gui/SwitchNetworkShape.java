@@ -53,6 +53,8 @@ public class SwitchNetworkShape
     private JMenuItem terminal_menu_item;
     private JMenuItem delete_menu_item;
     private JMenuItem new_cable_menu_item;
+    private JMenuItem clone_menu_item;
+    private JMenuItem clone_with_config_menu_item;
     private Switch _switch_ = null;
     private ArrayList<SocketNetworkShape> sockets = null;        
     private TerminalDialog terminalDialog = null;
@@ -116,6 +118,13 @@ public class SwitchNetworkShape
         popup.add(properties_menu_item);
         terminal_menu_item.addActionListener(this);
         popup.add(terminal_menu_item);
+        clone_menu_item = new JMenuItem("Clone object");
+        clone_with_config_menu_item = new JMenuItem("Clone object with config");
+        clone_menu_item.addActionListener(this);
+        clone_with_config_menu_item.addActionListener(this);
+        popup.addSeparator();
+        popup.add(clone_menu_item);
+        popup.add(clone_with_config_menu_item);
         popup.addSeparator();
         delete_menu_item.addActionListener(this);
         popup.add(delete_menu_item);
@@ -374,6 +383,36 @@ public class SwitchNetworkShape
             SwingUtilities.convertPointFromScreen(cursor, panel);
             sockets.stream().filter(s -> !s.isConnected()).findFirst()
                     .ifPresent(s -> panel.createMedia(cursor.x, cursor.y, s));
+        }
+
+        if(e.getSource()==clone_menu_item && popupShown)
+        {
+            try {
+                int portsCount = sockets != null ? sockets.size() : 8;
+                SwitchNetworkShape clone = new SwitchNetworkShape(panel, portsCount, panel.getIdGenerator().getNextId());
+                panel.putOnDevicesLayer(clone);
+                clone.setName("Clone of " + getName());
+                clone.setLocation(x + 30, y + 30);
+                panel.setSaved(false);
+                panel.repaint();
+            } catch(InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if(e.getSource()==clone_with_config_menu_item && popupShown)
+        {
+            try {
+                int portsCount = sockets != null ? sockets.size() : 8;
+                SwitchNetworkShape clone = new SwitchNetworkShape(panel, portsCount, panel.getIdGenerator().getNextId());
+                panel.putOnDevicesLayer(clone);
+                clone.setName("Clone of " + getName());
+                clone.setLocation(x + 30, y + 30);
+                panel.setSaved(false);
+                panel.repaint();
+            } catch(InterruptedException ex) {
+                ex.printStackTrace();
+            }
         }
 
         popupShown = false;
