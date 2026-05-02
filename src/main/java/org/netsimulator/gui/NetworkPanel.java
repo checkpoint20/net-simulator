@@ -26,7 +26,10 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 
 public class NetworkPanel
 extends JPanel
@@ -560,33 +563,25 @@ implements MouseListener, Runnable
     public Rectangle getContentBounds()
     {
         final int gap = 30;
-        int x1=0, y1=0, x2=0, y2=0;
-        int x[] = { 0 }, y[] = { 0 };
         Collection<NetworkShape> c = getDevicesLayer();
-        
-        if( c.size() > 0 )
+
+        if( c.isEmpty() )
         {
-            x = new int[ c.size() ];
-            y = new int[ c.size() ];
+            return new Rectangle(0, 0, 0, 0);
         }
-        
-        int i = 0;
+
+        int x1 = Integer.MAX_VALUE, y1 = Integer.MAX_VALUE;
+        int x2 = Integer.MIN_VALUE, y2 = Integer.MIN_VALUE;
+
         for( NetworkShape shape : c )
         {
-            x[i] = (int)shape.getMinX(); 
-            x[i] = (int)shape.getMaxX();
-            y[i] = (int)shape.getMinY();
-            y[i] = (int)shape.getMaxY();
-            i++;
+            x1 = Math.min(x1, (int)shape.getMinX());
+            y1 = Math.min(y1, (int)shape.getMinY());
+            x2 = Math.max(x2, (int)shape.getMaxX());
+            y2 = Math.max(y2, (int)shape.getMaxY());
         }
-        
-        Arrays.sort(x);
-        Arrays.sort(y);
-        
-        x1 = x[0] - gap; x2 = x[ x.length - 1 ] + gap;
-        y1 = y[0] - gap; y2 = y[ y.length - 1 ] + gap;
-        
-        return new Rectangle(x1, y1, x2-x1, y2-y1);
+
+        return new Rectangle(x1 - gap, y1 - gap, x2 - x1 + 2 * gap, y2 - y1 + 2 * gap);
     }
 
     
